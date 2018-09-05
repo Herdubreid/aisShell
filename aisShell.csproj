@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <RootNamespace>Celin</RootNamespace>
+    <PackageVersion>0.1</PackageVersion>
+    <Authors>Finnur Bragason</Authors>
+    <Owners>Bragason and Associates Pty Ltd</Owners>
+    <Summary>A command line encaptulation of Celin.AIS</Summary>
+    <Title>aisShell</Title>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="2.2.5" />
+    <PackageReference Include="NuGet.Build.Packaging" Version="0.2.0" />
+    <PackageReference Include="Colorful.Console" Version="1.2.9" />
+    <PackageReference Include="Celin.AIS" Version="0.2.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="NLog.config" />
+    <None Remove=".sctx" />
+    <None Remove=".DS_Store" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="SubmitCmd.cs" />
+  </ItemGroup>
+</Project>
