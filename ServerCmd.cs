@@ -31,7 +31,7 @@ namespace Celin
             {
                 var cmd = new DefCmd(serverCtx);
                 OutputLine(OutFile, String.Format("Server Context {0}", serverCtx.Id));
-                cmd.Display(OutFile, Long);
+                if (All) cmd.Display(OutFile, Long);
                 else OutputLine(OutFile);
             }
             int OnExecute()
