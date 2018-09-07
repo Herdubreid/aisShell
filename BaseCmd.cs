@@ -71,8 +71,8 @@ namespace Celin
                                      ServerCtx.Current.Server.AuthResponse != null ?
                                      ServerCtx.Current.Id + ":" + ServerCtx.Current.Server.AuthResponse.username :
                                      ServerCtx.Current.Id : "",
-                                     ServerCtx.Current != null ?
-                                     ServerCtx.Current.Id : "");
+                                     FormCtx.Current != null ?
+                                     FormCtx.Current.Id : "");
             }
         }
         public static void Success(string fmt, params object[] args)
