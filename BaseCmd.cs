@@ -115,6 +115,7 @@ namespace Celin
                     }
                 }
             }
+            if (!full) OutputLine(outFile);
         }
         public void PromptOptions()
         {

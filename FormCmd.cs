@@ -17,6 +17,7 @@ namespace Celin
     [Command("fm", Description = "AIS Forms")]
     [Subcommand("d", typeof(DefCmd))]
     [Subcommand("s", typeof(SubCmd))]
+    [Subcommand("l", typeof(ListCmd))]
     [Subcommand("r", typeof(ResCmd))]
     [Subcommand("save", typeof(SaveCmd))]
     [Subcommand("load", typeof(LoadCmd))]
@@ -25,6 +26,43 @@ namespace Celin
         [Option("-id", CommandOptionType.SingleValue, Description = "Form Context Id")]
         public (bool HasValue, string Parameter) Id { get; }
         static string LastFileName { get; set; }
+        class ListCmd : BaseCmd
+        {
+            [Option("-a|--all", CommandOptionType.NoValue, Description = "List All")]
+            bool All { get; }
+            [Option("-l|--long", CommandOptionType.NoValue, Description = "Long Format")]
+            bool Long { get; }
+            FormCmd FormCmd { get; set; }
+            void Show(FormCtx formCtx)
+            {
+                var cmd = new DefCmd(formCtx);
+                OutputLine(OutFile, String.Format("Form Context {0}", formCtx.Id));
+                cmd.Display(OutFile, Long);
+                if (Long)
+                {
+                    OutputLine("  formActions");
+                    foreach (var fa in formCtx.Request.formActions)
+                    {
+                        var ctx = new DefCmd.ActCmd(fa);
+                        Output("    ");
+                        ctx.Display(OutFile, false);
+                    }
+                }
+            }
+            int OnExecute()
+            {
+                if (FormCmd.OnExecute() == 1)
+                {
+                    if (!All && FormCtx.Current != null) Show(FormCtx.Current);
+                    if (All) foreach (var ctx in FormCtx.List) Show(ctx);
+                }
+                return 1;
+            }
+            public ListCmd(FormCmd formCmd)
+            {
+                FormCmd = formCmd;
+            }
+        }
         [Command(Description = "Load Form")]
         class LoadCmd : BaseCmd
         {
@@ -164,7 +202,7 @@ namespace Celin
         public class DefCmd : BaseCmd
         {
             [Command(Description = "Form Action")]
-            class ActCmd : BaseCmd
+            public class ActCmd : BaseCmd
             {
                 [Option("-rm|--remove", CommandOptionType.NoValue, Description = "Remove Form Action")]
                 [SuppressDisplay]
@@ -210,7 +248,7 @@ namespace Celin
                         }
                         else if (ControlID.HasValue)
                         {
-                            var fa = fas.Single(e => e.controlID.Equals(ControlID.Parameter));
+                            var fa = fas.Find(e => e.controlID.Equals(ControlID.Parameter));
                             if (fa is null) Warning("ControlID {0} not found!", ControlID.Parameter);
                             else if (Remove) fas.Remove(fa);
                             else
@@ -266,7 +304,7 @@ namespace Celin
             FormCmd FormCmd { get; set; }
             int OnExecute()
             {
-                if (FormCmd.OnExecute() == 0 && FormCmd.Id.HasValue)
+                if (FormCmd.Id.HasValue && !FormCtx.Select(FormCmd.Id.Parameter))
                 {
                     if (Prompt.GetYesNo("New Form Definition?", true))
                     {
@@ -365,18 +403,13 @@ namespace Celin
                 FormCmd = formCmd;
             }
         }
-        public int OnExecute()
+        int OnExecute()
         {
-            if (Id.HasValue)
+            if (Id.HasValue && !FormCtx.Select(Id.Parameter))
             {
-                return FormCtx.Select(Id.Parameter) ? 1 : 0;
+                Error(String.Format("`{0}` not found!", Id.Parameter));
+                return 0;
             }
-            /*foreach (var ctx in FormCtx.List)
-            {
-                var cmd = new DefCmd(ctx);
-                cmd.Display(OutFile, false);
-                OutputLine(OutFile);
-            }*/
             return 1;
         }
         public static void AddCmd()

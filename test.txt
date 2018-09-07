@@ -1,8 +1,0 @@
-rowIndex                      0
-MOExist                       False
-mnAddressNumber_19            500
-sAlphaName_20                 Gas StationA
-sLongAddress_48                
-sIndustryClass_49             7000
-sSchTyp_50                    C
-sTaxID_51                      

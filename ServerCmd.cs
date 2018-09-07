@@ -12,6 +12,7 @@ namespace Celin
     [Command("sv", Description = "AIS Server Context")]
     [Subcommand("d", typeof(DefCmd))]
     [Subcommand("c", typeof(ConCmd))]
+    [Subcommand("l", typeof(ListCmd))]
     [Subcommand("save", typeof(SaveCmd))]
     [Subcommand("load", typeof(LoadCmd))]
     public class ServerCmd : BaseCmd
@@ -31,8 +32,7 @@ namespace Celin
             {
                 var cmd = new DefCmd(serverCtx);
                 OutputLine(OutFile, String.Format("Server Context {0}", serverCtx.Id));
-                if (All) cmd.Display(OutFile, Long);
-                else OutputLine(OutFile);
+                cmd.Display(OutFile, Long);
             }
             int OnExecute()
             {
