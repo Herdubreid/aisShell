@@ -9,7 +9,7 @@ namespace Celin
         public static void Main(string[] args)
         {
             ServerCmd.AddCmd();
-            FormCmd.AddCmd();
+            ServerCmd.AddCmd();
             HelpCmd.AddCmd();
             ClearCmd.AddCmd();
             QuitCmd.AddCmd();

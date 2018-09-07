@@ -16,7 +16,36 @@ namespace Celin
     [Subcommand("load", typeof(LoadCmd))]
     public class ServerCmd : BaseCmd
     {
+        [Option("-id", CommandOptionType.SingleValue, Description = "Server Id")]
+        public (bool HasValue, string Parameter) Id { get; private set; }
         static string LastFileName { get; set; }
+        [Command(Description = "List Servers")]
+        class ListCmd : BaseCmd
+        {
+            [Option("-a|--all", CommandOptionType.NoValue, Description = "List All")]
+            bool All { get; }
+            [Option("-l|--long", CommandOptionType.NoValue, Description = "Long Format")]
+            bool Long { get; }
+            ServerCmd ServerCmd { get; set; }
+            void Show(ServerCtx serverCtx)
+            {
+                var cmd = new DefCmd(serverCtx);
+                OutputLine(OutFile, String.Format("Server Context {0}", serverCtx.Id));
+                cmd.Display(OutFile, Long);
+                else OutputLine(OutFile);
+            }
+            int OnExecute()
+            {
+                ServerCmd.OnExecute();
+                if (!All && ServerCtx.Current != null) Show(ServerCtx.Current);
+                if (All) foreach (var ctx in ServerCtx.List) Show(ctx);
+                return 1;
+            }
+            public ListCmd(ServerCmd serverCmd)
+            {
+                ServerCmd = serverCmd;
+            }
+        }
         [Command(Description = "Load Servers")]
         class LoadCmd : BaseCmd
         {
@@ -87,44 +116,42 @@ namespace Celin
         [Command(Description = "Definition")]
         public class DefCmd : BaseCmd
         {
-            [Argument(0, Description = "Server Id")]
-            [PromptOption]
-            public (bool HasValue, string Parameter) Id { get; private set; }
             [Option("-b|--baseUrl", CommandOptionType.SingleValue, Description = "Base Url")]
             [PromptOption]
             public (bool HasValue, string Parameter) BaseUrl { get; private set; }
+            ServerCmd ServerCmd { get; set; }
             int OnExecute()
             {
-                var ctx = Id.HasValue ? ServerCtx.Select(Id.Parameter) : ServerCtx.Current;
-                if (ctx is null)
+                if (ServerCmd.OnExecute() == 0 && ServerCmd.Id.HasValue)
                 {
-                    PromptOptions();
-                    ServerCtx.Current = new ServerCtx(Id.Parameter, BaseUrl.Parameter);
-                    ServerCtx.List.Add(ServerCtx.Current);
+                    if (Prompt.GetYesNo("New Server Definition?", true))
+                    {
+                        PromptOptions();
+                        ServerCtx.Current = new ServerCtx(ServerCmd.Id.Parameter, BaseUrl.Parameter);
+                        ServerCtx.List.Add(ServerCtx.Current);
+                    }
                 }
-                else
+                if (ServerCtx.Current is null)
                 {
-                    ServerCtx.Current.Server.BaseUrl = BaseUrl.Parameter;
+                    Error("No Server Context!");
+                    return 1;
                 }
+                ServerCtx.Current.Server.BaseUrl = BaseUrl.Parameter;
                 return 1;
             }
             public DefCmd(ServerCtx serverCtx)
             {
-                if (serverCtx != null)
-                {
-                    Id = (false, serverCtx.Id);
-                    var rq = serverCtx.Server;
-                    BaseUrl = (false, rq.BaseUrl);
-                }
+                var rq = serverCtx.Server;
+                BaseUrl = (false, rq.BaseUrl);
             }
-            public DefCmd()
-            { }
+            public DefCmd(ServerCmd serverCmd)
+            {
+                ServerCmd = serverCmd;
+            }
         }
         [Command(Description = "Connect")]
         public class ConCmd : BaseCmd
         {
-            [Argument(0, Description = "Server Id")]
-            public (bool HasValue, string Parameter) Id { get; }
             [Option("-d|--device", CommandOptionType.SingleValue, Description = "Device")]
             [PromptOption]
             public (bool HasValue, string Parameter) Device { get; private set; }
@@ -135,12 +162,13 @@ namespace Celin
             [PromptOption(false, PromptType.Password)]
             public (bool HasValue, string Parameter) Password { get; private set; }
             public delegate bool Authenticate();
-            private int OnExecute()
+            ServerCmd ServerCmd { get; set; }
+            int OnExecute()
             {
-                var ctx = Id.HasValue ? ServerCtx.Select(Id.Parameter) : ServerCtx.Current;
-                if (ctx is null)
+                ServerCmd.OnExecute();
+                if (ServerCtx.Current is null)
                 {
-                    Warning("{0} Server Context Invalid!", Id.HasValue ? Id.Parameter : "[Current]");
+                    Error("No Server Context!");
                 }
                 else
                 {
@@ -162,13 +190,14 @@ namespace Celin
                     }
                     else
                     {
-                        Warning("\nSignon failed!");
+                        Error("\nSignon failed!");
                     }
                 }
                 return 1;
             }
-            public ConCmd()
+            public ConCmd(ServerCmd serverCmd)
             {
+                ServerCmd = serverCmd;
                 var auth = ServerCtx.Current?.Server.AuthRequest;
                 if (auth != null)
                 {
@@ -177,14 +206,18 @@ namespace Celin
                 }
             }
         }
-        private int OnExecute()
+        public int OnExecute()
         {
-            foreach (var ctx in ServerCtx.List)
+            if (Id.HasValue)
+            {
+                return ServerCtx.Select(Id.Parameter) ? 1 : 0;
+            }
+            /*foreach (var ctx in ServerCtx.List)
             {
                 var cmd = new DefCmd(ctx);
                 cmd.Display(OutFile, false);
                 OutputLine(OutFile);
-            }
+            }*/
             return 1;
         }
         public static void AddCmd()
