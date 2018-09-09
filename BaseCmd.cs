@@ -66,13 +66,11 @@ namespace Celin
         {
             get
             {
-                return String.Format("[{0}][{1}] $ ",
-                                     ServerCtx.Current != null ?
-                                     ServerCtx.Current.Server.AuthResponse != null ?
-                                     ServerCtx.Current.Id + ":" + ServerCtx.Current.Server.AuthResponse.username :
-                                     ServerCtx.Current.Id : "",
-                                     FormCtx.Current != null ?
-                                     FormCtx.Current.Id : "");
+                return String.Format("[{0}:{1}][f:{2} d:{3}] $ ",
+                                     ServerCtx.Current?.Id,
+                                     ServerCtx.Current?.Server.AuthResponse?.username,
+                                     FormCtx.Current?.Id,
+                                     DataCtx.Current?.Id);
             }
         }
         public static void Success(string fmt, params object[] args)
@@ -124,6 +122,7 @@ namespace Celin
                 var promptOption = (PromptOptionAttribute)Attribute.GetCustomAttribute(e, typeof(PromptOptionAttribute));
                 if (promptOption != null)
                 {
+                    var allowedValues = (AllowedValuesAttribute)Attribute.GetCustomAttribute(e, typeof(AllowedValuesAttribute));
                     var optionAttribute = (OptionAttribute)Attribute.GetCustomAttribute(e, typeof(OptionAttribute));
                     var argumentAttribute = (ArgumentAttribute)Attribute.GetCustomAttribute(e, typeof(ArgumentAttribute));
                     var description = optionAttribute is null ? argumentAttribute?.Description : optionAttribute.Description;
