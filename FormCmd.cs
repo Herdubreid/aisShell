@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using McMaster.Extensions.CommandLineUtils;
 using Newtonsoft.Json.Linq;
 namespace Celin
@@ -10,6 +10,7 @@ namespace Celin
     [Command("fm", Description = "Form Context")]
     [Subcommand("d", typeof(DefCmd))]
     [Subcommand("s", typeof(SubCmd))]
+    [Subcommand("ss", typeof(SubStackCmd))]
     [Subcommand("l", typeof(ListCmd))]
     [Subcommand("r", typeof(ResCmd))]
     [Subcommand("save", typeof(SaveCmd))]
@@ -96,46 +97,15 @@ namespace Celin
             public bool FormMembers { get; private set; }
             [Option("-gm|--gridMembers", CommandOptionType.NoValue, Description = "Grid Members")]
             public bool GridMembers { get; private set; }
-            void DisplayGridMembers(Response<FormCtx> res)
+            void DisplayGridMembers(Response<AIS.FormRequest> res)
             {
-                var grid = (JArray)res.Result.SelectToken(String.Format("fs_{0}.data.gridData.rowset", res.Request.Request.formName));
-                if (grid is null) Error("No Grid Member!");
-                else if (grid.Count == 0) Warning("Grid is Empty!");
-                else foreach (var e in (JObject)grid[0]) OutputLine(String.Format("{0, -30}{1}", e.Key, e.Value.HasValues ? e.Value["value"] : e.Value));
+                foreach (var e in res.GridMembers) OutputLine(String.Format("{0, -30}{1}", e.Item1, e.Item2.HasValues ? e.Item2["value"] : e.Item2));
             }
-            void DisplayFormMembers(Response<FormCtx> res)
+            void DisplayFormMembers(Response<AIS.FormRequest> res)
             {
-                var fm = (JObject)res.Result.SelectToken(String.Format("fs_{0}.data", res.Request.Request.formName));
+                var fm = (JObject)res.Result.SelectToken(String.Format("fs_{0}.data", res.Request.formName));
                 if (fm is null) Error("No Form Member!");
                 else foreach (var e in fm) OutputLine(String.Format("{0, -30}{1}", e.Key, e.Value["value"]));
-            }
-            JToken FindKey(JArray json, string key)
-            {
-                foreach (var e in json)
-                {
-                    var res = e.Children().Any() ?
-                                e.GetType() == typeof(JArray) ?
-                                FindKey((JArray)e, key) :
-                                FindKey((JObject)e, key) : null;
-                    if (res != null) return res;
-                }
-                return null;
-            }
-            JToken FindKey(JObject json, string key)
-            {
-                var res = json[key];
-                if (res is null)
-                {
-                    foreach (var e in json)
-                    {
-                        res = e.Value.Children().Any() ?
-                                    e.Value.GetType() == typeof(JArray) ?
-                                    FindKey((JArray)e.Value, key) :
-                                    FindKey((JObject)e.Value, key) : null;
-                        if (res != null) return res;
-                    }
-                }
-                return res;
             }
             int OnExecute()
             {
@@ -144,11 +114,11 @@ namespace Celin
                     var res = Index.HasValue ? FormCtx.Responses[Index.Parameter] : FormCtx.Responses.Last();
                     if (FormMembers) DisplayFormMembers(res);
                     if (GridMembers) DisplayGridMembers(res);
-                    if (!FormMembers && !GridMembers) OutputLine((Key.HasValue ? FindKey(res.Result, Key.Parameter) : res.Result).ToString());
+                    if (!FormMembers && !GridMembers) OutputLine((Key.HasValue ? res[Key.Parameter] : res.Result).ToString());
                 }
                 catch (Exception e)
                 {
-                    Error("Invalid Response Context!\n{0}", e.Message);
+                    Error("Response Error!\n{0}", e.Message);
                 }
                 return 1;
             }
@@ -301,44 +271,72 @@ namespace Celin
             FormCmd FormCmd { get; set; }
             int OnExecute()
             {
-                FormCmd.OnExecute();
-                if (ServerCtx.Current is null)
-                {
-                    Error("No Server Context!");
-                }
-                else if (ServerCtx.Current.Server.AuthResponse is null)
-                {
-                    Error("{0} not connected!", ServerCtx.Current.Id);
-                }
-                else
+                if (FormCmd.OnExecute() == 1)
                 {
                     if (FormCtx.Current is null)
                     {
                         Error("No Form Context!");
+                        return 1;
+                    }
+                    FormCtx.Current.Submit();
+
+                };
+                return 1;
+            }
+            public SubCmd(FormCmd formCmd)
+            {
+                FormCmd = formCmd;
+            }
+        }
+        [Command(Description = "Submit Stack Request")]
+        class SubStackCmd : BaseCmd
+        {
+            [Argument(0, "Action")]
+            [AllowedValues(new string[] { "open", "close", "execute" })]
+            [Required]
+            string Action { get; }
+            FormCmd FormCmd { get; set; }
+            int OnExecute()
+            {
+                if (FormCmd.OnExecute() == 0) return 1;
+                if (FormCtx.Current is null)
+                {
+                    Error("No Form Context!");
+                    return 1;
+                }
+                var rq = new AIS.StackFormRequest();
+                rq.action = Action.ToLower();
+                rq.formRequest = FormCtx.Current.Request;
+                rq.actionRequest = new AIS.ActionRequest();
+                if (ServerCtx.Current is null)
+                {
+                    BaseCmd.Error("No Server Context!");
+                }
+                else if (ServerCtx.Current.Server.AuthResponse is null)
+                {
+                    BaseCmd.Error("{0} not connected!", ServerCtx.Current.Id);
+                }
+                else
+                {
+                    var t = new Task<Tuple<bool, JObject>>(() => ServerCtx.Current.Server.Request<JObject>(rq));
+                    t.Start();
+                    while (!t.IsCompleted)
+                    {
+                        Thread.Sleep(500);
+                        Console.Write('.');
+                    }
+                    if (t.Result.Item1)
+                    {
+                        OutputLine(t.Result.Item2.ToString());
                     }
                     else
                     {
-                        var t = new Task<Tuple<bool, JObject>>(() => ServerCtx.Current.Server.Request<JObject>(FormCtx.Current.Request));
-                        t.Start();
-                        while (!t.IsCompleted)
-                        {
-                            Thread.Sleep(500);
-                            Console.Write('.');
-                        }
-                        if (t.Result.Item1)
-                        {
-                            FormCtx.Responses.Add(new Response<FormCtx>() { Request = FormCtx.Current, Result = t.Result.Item2 });
-                            Success("Responses {0}.", FormCtx.Responses.Count);
-                        }
-                        else
-                        {
-                            Error("Form submit failed!");
-                        }
+                        Error("Request failed!");
                     }
                 }
                 return 1;
             }
-            public SubCmd(FormCmd formCmd)
+            public SubStackCmd(FormCmd formCmd)
             {
                 FormCmd = formCmd;
             }
@@ -347,7 +345,7 @@ namespace Celin
         {
             if (Id.HasValue && !FormCtx.Select(Id.Parameter))
             {
-                Error("Data Context {0} not found!", Id.Parameter);
+                Error("Form Context {0} not found!", Id.Parameter);
                 return 0;
             }
             return 1;

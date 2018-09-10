@@ -153,8 +153,9 @@ namespace Celin
         public class ConCmd : BaseCmd
         {
             [Option("-d|--device", CommandOptionType.SingleValue, Description = "Device")]
-            [PromptOption]
             public (bool HasValue, string Parameter) Device { get; private set; }
+            [Option("-rc|--requiredCapabilities", CommandOptionType.SingleValue, Description = "Required Capabilities")]
+            public (bool HasValue, string Parameter) RequiredCapabilities { get; private set; }
             [Option("-u|--user", CommandOptionType.SingleValue, Description = "User name")]
             [PromptOption]
             public (bool HasValue, string Parameter) User { get; private set; }
@@ -174,7 +175,10 @@ namespace Celin
                 {
                     PromptOptions();
                     var rq = ServerCtx.Current.Server.AuthRequest;
-                    rq.deviceName = Device.Parameter;
+                    rq.deviceName = Device.HasValue ? Device.Parameter : rq.deviceName;
+                    rq.requiredCapabilities = RequiredCapabilities.HasValue ?
+                        RequiredCapabilities.Parameter :
+                        rq.requiredCapabilities;
                     rq.username = User.Parameter;
                     rq.password = Password.Parameter;
                     Task<bool> t = new Task<bool>(ServerCtx.Current.Server.Authenticate);
@@ -202,6 +206,7 @@ namespace Celin
                 if (auth != null)
                 {
                     Device = (false, auth.deviceName);
+                    RequiredCapabilities = (false, auth.requiredCapabilities);
                     User = (false, auth.username);
                 }
             }
@@ -212,12 +217,6 @@ namespace Celin
             {
                 return ServerCtx.Select(Id.Parameter) ? 1 : 0;
             }
-            /*foreach (var ctx in ServerCtx.List)
-            {
-                var cmd = new DefCmd(ctx);
-                cmd.Display(OutFile, false);
-                OutputLine(OutFile);
-            }*/
             return 1;
         }
         public static void AddCmd()

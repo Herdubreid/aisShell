@@ -21,7 +21,7 @@ namespace Celin
                 ((strCmd, listCmd, completion) =>
                 {
                     var resume = true;
-                    if (completion.Count > 0)
+                    if (strCmd.Length > 0)
                     {
                         var command = BaseCmd.Find(completion[0]);
                         if (command != null)

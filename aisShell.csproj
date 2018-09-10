@@ -30,4 +30,7 @@
   <ItemGroup>
     <Compile Remove="SubmitCmd.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Celin.AIS\Celin.AIS.csproj" />
+  </ItemGroup>
 </Project>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using McMaster.Extensions.CommandLineUtils;
 namespace Celin
 {
@@ -6,6 +7,7 @@ namespace Celin
     [Subcommand("d", typeof(DefCmd))]
     [Subcommand("l", typeof(ListCmd))]
     [Subcommand("s", typeof(SubCmd))]
+    [Subcommand("r", typeof(ResCmd))]
     [Subcommand("save", typeof(SaveCmd))]
     [Subcommand("load", typeof(LoadCmd))]
     public class DataCmd : BaseCmd
@@ -67,7 +69,7 @@ namespace Celin
             }
         }
         [Command(Description = "Define")]
-        public class DefCmd : RequestCmd<AIS.DatabrowserRequest, DataCtx>
+        class DefCmd : RequestCmd<AIS.DatabrowserRequest, DataCtx>
         {
             const string TABLE = "TARGET_TABLE";
             const string VIEW = "TARGET_VIEW";
@@ -110,7 +112,7 @@ namespace Celin
             }
         }
         [Command(Description = "Submit Request")]
-        public class SubCmd : BaseCmd
+        class SubCmd : BaseCmd
         {
             DataCmd DataCmd { get; set; }
             int OnExecute()
@@ -129,6 +131,15 @@ namespace Celin
             public SubCmd(DataCmd dataCmd)
             {
                 DataCmd = dataCmd;
+            }
+        }
+        [Command(Description = "Response")]
+        class ResCmd : BaseCmd
+        {
+            int OnExecute()
+            {
+                OutputLine(DataCtx.Responses.Count > 0 ? DataCtx.Responses.Last().Result.ToString() : "No Response!");
+                return 1;
             }
         }
         int OnExecute()
