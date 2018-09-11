@@ -19,7 +19,6 @@ namespace Celin
     {
         [Option("-c|--context", CommandOptionType.SingleValue, Description = "Context Id")]
         public (bool HasValue, string Parameter) Id { get; }
-        static string LastFileName { get; set; }
         [Command(Description = "List Parameters")]
         class ListCmd : BaseCmd
         {
@@ -38,7 +37,7 @@ namespace Celin
                     OutputLine("  formActions");
                     foreach (var fa in formCtx.Request.formActions)
                     {
-                        var ctx = new DefCmd.ActCmd(fa);
+                        var ctx = new DefCmd.FormActCmd(fa);
                         Output("    ");
                         ctx.Display(OutFile, false);
                     }
@@ -58,7 +57,7 @@ namespace Celin
                 FormCmd = formCmd;
             }
         }
-        [Command(Description = "Save Definitino")]
+        [Command(Description = "Save Definitions")]
         class SaveCmd : BaseCmd
         {
             [Argument(0, Description = "File Name")]
@@ -71,7 +70,7 @@ namespace Celin
                 return 1;
             }
         }
-        [Command(Description = "Load Definition")]
+        [Command(Description = "Load Definitions")]
         class LoadCmd : BaseCmd
         {
             [Argument(0, Description = "File Name")]
@@ -124,11 +123,11 @@ namespace Celin
             }
         }
         [Command(Description = "Define")]
-        [Subcommand("a", typeof(ActCmd))]
+        [Subcommand("fa", typeof(FormActCmd))]
         public class DefCmd : RequestCmd<AIS.FormRequest, FormCtx>
         {
             [Command(Description = "Form Action")]
-            public class ActCmd : BaseCmd
+            public class FormActCmd : BaseCmd
             {
                 [Option("-rm|--remove", CommandOptionType.NoValue, Description = "Remove Form Action")]
                 [SuppressDisplay]
@@ -154,54 +153,60 @@ namespace Celin
                 public (bool HasValue, string Parameter) Command { get; private set; }
                 [Argument(2, Description = "Value")]
                 public (bool HasValue, string Parameter) Value { get; private set; }
+                DefCmd DefCmd { get; set; }
                 int OnExecute()
                 {
-                    if (FormCtx.Current is null)
+                    if (DefCmd.OnExecute() == 0) return 0;
+
+                    var fas = FormCtx.Current.Request.formActions;
+                    if (ControlID.HasValue && Command.HasValue)
                     {
-                        Error("No Current Form Context!");
+                        fas.Add(new AIS.FormAction()
+                        {
+                            controlID = ControlID.Parameter,
+                            command = Command.Parameter,
+                            value = Value.Parameter
+                        });
+                    }
+                    else if (ControlID.HasValue)
+                    {
+                        var fa = fas.Find(e =>
+                        {
+                            return e.GetType() == typeof(AIS.FormAction) && (e as AIS.FormAction).controlID.Equals(ControlID.Parameter);
+                        });
+                        if (fa is null) Warning("ControlID {0} not found!", ControlID.Parameter);
+                        else if (Remove) fas.Remove(fa);
+                        else
+                        {
+                            var cmd = new FormActCmd(fa);
+                            cmd.Display(OutFile, true);
+                        }
                     }
                     else
                     {
-                        var fas = FormCtx.Current.Request.formActions;
-                        if (ControlID.HasValue && Command.HasValue)
+                        foreach (var fa in fas)
                         {
-                            fas.Add(new AIS.FormAction()
-                            {
-                                controlID = ControlID.Parameter,
-                                command = Command.Parameter,
-                                value = Value.Parameter
-                            });
-                        }
-                        else if (ControlID.HasValue)
-                        {
-                            var fa = fas.Find(e => e.controlID.Equals(ControlID.Parameter));
-                            if (fa is null) Warning("ControlID {0} not found!", ControlID.Parameter);
-                            else if (Remove) fas.Remove(fa);
-                            else
-                            {
-                                var cmd = new ActCmd(fa);
-                                cmd.Display(OutFile, true);
-                            }
-                        }
-                        else
-                        {
-                            foreach (var fa in fas)
-                            {
-                                var cmd = new ActCmd(fa);
-                                cmd.Display(OutFile, true);
-                            }
+                            var cmd = new FormActCmd(fa);
+                            cmd.Display(OutFile, true);
                         }
                     }
+
                     return 1;
                 }
-                public ActCmd(AIS.FormAction fa)
+                public FormActCmd(AIS.Action a)
                 {
-                    ControlID = (false, fa.controlID);
-                    Command = (false, fa.command);
-                    Value = (false, fa.value);
+                    if (a.GetType() == typeof(AIS.FormAction))
+                    {
+                        var fa = a as AIS.FormAction;
+                        ControlID = (false, fa.controlID);
+                        Command = (false, fa.command);
+                        Value = (false, fa.value);
+                    }
                 }
-                public ActCmd()
-                { }
+                public FormActCmd(DefCmd defCmd)
+                {
+                    DefCmd = defCmd;
+                }
             }
             [Option("-fn|--formName", CommandOptionType.SingleValue, Description = "Form Name")]
             [PromptOption]
@@ -226,15 +231,16 @@ namespace Celin
                         FormCtx.Current = new FormCtx(FormCmd.Id.Parameter);
                         FormCtx.List.Add(FormCtx.Current);
                     }
+                    else return 0;
                 }
                 if (FormCtx.Current is null)
                 {
                     Error("No Form Context!");
-                    return 1;
+                    return 0;
                 }
                 RequestCtx = FormCtx.Current;
                 var rq = FormCtx.Current.Request;
-                rq.formName = FormName.HasValue ? FormName.Parameter : rq.formName;
+                rq.formName = FormName.HasValue ? FormName.Parameter.ToUpper() : rq.formName;
                 rq.version = Version.HasValue ? Version.Parameter : rq.version;
                 rq.formServiceAction = FormServiceAction.HasValue ? FormServiceAction.Parameter : rq.formServiceAction;
                 rq.stopOnWarning = StopOnWarning.HasValue ? StopOnWarning.Parameter.ToUpper() : rq.stopOnWarning;
@@ -251,11 +257,6 @@ namespace Celin
                 var rq = formCtx.Request;
                 FormName = (false, rq.formName);
                 Version = (false, rq.version);
-                //FindOnEntry = (false, rq.findOnEntry);
-                //ReturnControlIDs = (false, rq.returnControlIDs);
-                //MaxPageSize = (false, Convert.ToInt32(rq.maxPageSize));
-                //AliasNaming = (false, rq.aliasNaming ? "TRUE" : "FALSE");
-                //OutputType = (false, rq.outputType);
                 FormServiceAction = (false, rq.formServiceAction);
                 StopOnWarning = (false, rq.stopOnWarning);
                 QueryObjectName = (false, rq.queryObjectName);
@@ -266,7 +267,7 @@ namespace Celin
             }
         }
         [Command(Description = "Submit Request")]
-        public class SubCmd : BaseCmd
+        class SubCmd : BaseCmd
         {
             FormCmd FormCmd { get; set; }
             int OnExecute()

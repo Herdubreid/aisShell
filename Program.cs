@@ -10,6 +10,7 @@ namespace Celin
         {
             ServerCmd.AddCmd();
             FormCmd.AddCmd();
+            StackFormCmd.AddCmd();
             DataCmd.AddCmd();
             HelpCmd.AddCmd();
             ClearCmd.AddCmd();

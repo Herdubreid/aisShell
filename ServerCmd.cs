@@ -1,12 +1,7 @@
 ﻿using System;
-using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using McMaster.Extensions.CommandLineUtils;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 namespace Celin
 {
     [Command("sv", Description = "AIS Server Context")]
@@ -17,9 +12,8 @@ namespace Celin
     [Subcommand("load", typeof(LoadCmd))]
     public class ServerCmd : BaseCmd
     {
-        [Option("-id", CommandOptionType.SingleValue, Description = "Server Id")]
+        [Option("-c|--context", CommandOptionType.SingleValue, Description = "Server Context")]
         public (bool HasValue, string Parameter) Id { get; private set; }
-        static string LastFileName { get; set; }
         [Command(Description = "List Servers")]
         class ListCmd : BaseCmd
         {
@@ -46,7 +40,7 @@ namespace Celin
                 ServerCmd = serverCmd;
             }
         }
-        [Command(Description = "Load Servers")]
+        [Command(Description = "Load Definitions")]
         class LoadCmd : BaseCmd
         {
             [Argument(0, Description = "File Name")]
@@ -55,33 +49,11 @@ namespace Celin
             int OnExecute()
             {
                 PromptOptions();
-                var fname = FileName.Parameter + ".sctx";
-                try
-                {
-                    using (StreamReader sr = File.OpenText(fname))
-                    {
-                        var data = (JArray)JsonConvert.DeserializeObject(sr.ReadToEnd());
-                        if (data.Count > 0)
-                        {
-                            ServerCtx.List = data.ToObject<List<ServerCtx>>();
-                            ServerCtx.Current = ServerCtx.List.First();
-                            LastFileName = FileName.Parameter;
-                        }
-                        else Warning("Not data to load!");
-                    }
-                }
-                catch (Exception e)
-                {
-                    Error(e.Message);
-                }
+                ServerCtx.Load(FileName.Parameter + ".sctx");
                 return 1;
             }
-            public LoadCmd()
-            {
-                FileName = (false, LastFileName);
-            }
         }
-        [Command(Description = "Save Servers")]
+        [Command(Description = "Save Definitions")]
         class SaveCmd : BaseCmd
         {
             [Argument(0, Description = "File Name")]
@@ -90,30 +62,11 @@ namespace Celin
             int OnExecute()
             {
                 PromptOptions();
-                var fname = FileName.Parameter + ".sctx";
-                if (!File.Exists(fname) || Prompt.GetYesNo("Do you want to overwrite existing file?", false))
-                {
-                    try
-                    {
-                        using (StreamWriter sw = File.CreateText(fname))
-                        {
-                            sw.Write(JsonConvert.SerializeObject(ServerCtx.List));
-                        }
-                        LastFileName = FileName.Parameter;
-                    }
-                    catch (Exception e)
-                    {
-                        Error(e.Message);
-                    }
-                }
+                ServerCtx.Save(FileName.Parameter + ".sctx");
                 return 1;
             }
-            public SaveCmd()
-            {
-                FileName = (false, LastFileName);
-            }
         }
-        [Command(Description = "Definition")]
+        [Command(Description = "Define")]
         public class DefCmd : BaseCmd
         {
             [Option("-b|--baseUrl", CommandOptionType.SingleValue, Description = "Base Url")]
@@ -229,7 +182,7 @@ namespace Celin
         }
         public static void RemoveCmd()
         {
-            Commands.Remove(Commands.Single<Cmd>(c => c.Type == typeof(ServerCmd)));
+            Commands.Remove(Commands.Find(c => c.Type == typeof(ServerCmd)));
         }
     }
 }

@@ -2,7 +2,7 @@
 using McMaster.Extensions.CommandLineUtils;
 namespace Celin
 {
-    public class RequestCmd<T1, T2> : BaseCmd
+    public abstract class RequestCmd<T1, T2> : BaseCmd
         where T1 : AIS.Request, new()
         where T2 : ICtxId
     {

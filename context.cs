@@ -7,8 +7,16 @@ using System.Collections.Generic;
 using McMaster.Extensions.CommandLineUtils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Converters;
 namespace Celin
 {
+    public class ActionConverter : CustomCreationConverter<AIS.Action>
+    {
+        public override AIS.Action Create(Type objectType)
+        {
+            return new AIS.FormAction();
+        }
+    }
     public class Response<T> where T : AIS.Request
     {
         public T Request { get; set; }
@@ -94,10 +102,10 @@ namespace Celin
             {
                 using (StreamReader sr = File.OpenText(fname))
                 {
-                    var data = (JArray)JsonConvert.DeserializeObject(sr.ReadToEnd());
-                    if (data.Count > 0)
+                    var list = JsonConvert.DeserializeObject<List<T>>(sr.ReadToEnd(), new ActionConverter());
+                    if (list != null && list.Count > 0)
                     {
-                        List = data.ToObject<List<T>>();
+                        List = list;
                         Current = List.First();
                     }
                     else BaseCmd.Warning("No data to load!");
@@ -188,6 +196,7 @@ namespace Celin
     }
     public class StackFormCtx : RequestCtx<AIS.StackFormRequest, StackFormCtx>
     {
+        public FormCtx FormCtx { get; set; }
         public StackFormCtx(string id) : base(id)
         {
         }

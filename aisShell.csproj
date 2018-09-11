@@ -29,6 +29,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="SubmitCmd.cs" />
+    <Compile Remove="ContextCmd.cs" />
+    <Compile Remove="DefFormCmd.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Celin.AIS\Celin.AIS.csproj" />
