@@ -21,6 +21,7 @@
     <None Remove="NLog.config" />
     <None Remove=".sctx" />
     <None Remove=".DS_Store" />
+    <None Remove="test.txt.txt" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="NLog.config">

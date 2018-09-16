@@ -41,7 +41,7 @@ namespace Celin
             }
         }
         [Command(Description = "List Parameters")]
-        class ListCmd : BaseCmd
+        class ListCmd : OutCmd
         {
             [Option("-a|--all", CommandOptionType.NoValue, Description = "List All")]
             bool All { get; }
@@ -50,7 +50,7 @@ namespace Celin
             DataCmd DataCmd { get; set; }
             void Show(DataCtx dataCtx)
             {
-                var cmd = new DefCmd(dataCtx);
+                var cmd = new DefCmd(dataCtx.Request);
                 OutputLine(OutFile, String.Format("Data Context {0}", dataCtx.Id));
                 cmd.Display(OutFile, Long);
             }
@@ -69,7 +69,7 @@ namespace Celin
             }
         }
         [Command(Description = "Define")]
-        class DefCmd : RequestCmd<AIS.DatabrowserRequest, DataCtx>
+        class DefCmd : RequestCmd<AIS.DatabrowserRequest>
         {
             const string TABLE = "TARGET_TABLE";
             const string VIEW = "TARGET_VIEW";
@@ -95,16 +95,16 @@ namespace Celin
                     Error("No Data Context!");
                     return 1;
                 }
-                RequestCtx = DataCtx.Current;
+                Request = DataCtx.Current.Request;
                 var rq = DataCtx.Current.Request;
                 rq.targetName = TargetName.HasValue ? TargetName.Parameter.ToUpper() : rq.targetName;
                 rq.targetType = ViewTarget ? VIEW : TABLE;
                 return 1;
             }
-            public DefCmd(DataCtx dataCtx) : base(dataCtx)
+            public DefCmd(AIS.DatabrowserRequest rq) : base(rq)
             {
-                TargetName = (false, dataCtx.Request.targetName);
-                ViewTarget = dataCtx.Request.targetType.Equals(VIEW);
+                TargetName = (false, rq.targetName);
+                ViewTarget = rq.targetType.Equals(VIEW);
             }
             public DefCmd(DataCmd dataCmd)
             {
@@ -134,12 +134,11 @@ namespace Celin
             }
         }
         [Command(Description = "Response")]
-        class ResCmd : BaseCmd
+        class ResCmd : ResponseCmd<AIS.DatabrowserRequest>
         {
-            int OnExecute()
+            public ResCmd()
             {
-                OutputLine(DataCtx.Responses.Count > 0 ? DataCtx.Responses.Last().Result.ToString() : "No Response!");
-                return 1;
+                Responses = DataCtx.Responses;
             }
         }
         int OnExecute()

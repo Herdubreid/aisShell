@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
 using McMaster.Extensions.CommandLineUtils;
-using Newtonsoft.Json.Linq;
 namespace Celin
 {
     [Command("fm", Description = "Form Context")]
     [Subcommand("d", typeof(DefCmd))]
     [Subcommand("s", typeof(SubCmd))]
-    [Subcommand("ss", typeof(SubStackCmd))]
     [Subcommand("l", typeof(ListCmd))]
     [Subcommand("r", typeof(ResCmd))]
     [Subcommand("save", typeof(SaveCmd))]
@@ -20,7 +14,7 @@ namespace Celin
         [Option("-c|--context", CommandOptionType.SingleValue, Description = "Context Id")]
         public (bool HasValue, string Parameter) Id { get; }
         [Command(Description = "List Parameters")]
-        class ListCmd : BaseCmd
+        class ListCmd : OutCmd
         {
             [Option("-a|--all", CommandOptionType.NoValue, Description = "List All")]
             bool All { get; }
@@ -29,15 +23,15 @@ namespace Celin
             FormCmd FormCmd { get; set; }
             void Show(FormCtx formCtx)
             {
-                var cmd = new DefCmd(formCtx);
+                var cmd = new DefCmd(formCtx.Request);
                 OutputLine(OutFile, String.Format("Form Context {0}", formCtx.Id));
                 cmd.Display(OutFile, Long);
                 if (Long)
                 {
-                    OutputLine("  formActions");
+                    OutputLine("  formActions:");
                     foreach (var fa in formCtx.Request.formActions)
                     {
-                        var ctx = new DefCmd.FormActCmd(fa);
+                        var ctx = new FormActionCmd(fa as AIS.FormAction);
                         Output("    ");
                         ctx.Display(OutFile, false);
                     }
@@ -84,144 +78,35 @@ namespace Celin
             }
         }
         [Command(Description = "Response")]
-        class ResCmd : BaseCmd
+        class ResCmd : ResponseCmd<AIS.FormRequest>
         {
-            [Option("-i|--index", CommandOptionType.SingleValue, Description = "Response's Zero Based Index")]
-            public (bool HasValue, int Parameter) Index { get; private set; }
-            [Option("-k|--key", CommandOptionType.SingleValue, Description = "Response Key Name")]
-            public (bool HasValue, string Parameter) Key { get; private set; }
-            [Option("-d|--depth", CommandOptionType.SingleValue, Description = "Iteration Depth")]
-            public (bool HasValue, int Parameter) Depth { get; set; }
-            [Option("-fm|--formMembers", CommandOptionType.NoValue, Description = "Form Members")]
-            public bool FormMembers { get; private set; }
-            [Option("-gm|--gridMembers", CommandOptionType.NoValue, Description = "Grid Members")]
-            public bool GridMembers { get; private set; }
-            void DisplayGridMembers(Response<AIS.FormRequest> res)
+            public ResCmd()
             {
-                foreach (var e in res.GridMembers) OutputLine(String.Format("{0, -30}{1}", e.Item1, e.Item2.HasValues ? e.Item2["value"] : e.Item2));
-            }
-            void DisplayFormMembers(Response<AIS.FormRequest> res)
-            {
-                var fm = (JObject)res.Result.SelectToken(String.Format("fs_{0}.data", res.Request.formName));
-                if (fm is null) Error("No Form Member!");
-                else foreach (var e in fm) OutputLine(String.Format("{0, -30}{1}", e.Key, e.Value["value"]));
-            }
-            int OnExecute()
-            {
-                try
-                {
-                    var res = Index.HasValue ? FormCtx.Responses[Index.Parameter] : FormCtx.Responses.Last();
-                    if (FormMembers) DisplayFormMembers(res);
-                    if (GridMembers) DisplayGridMembers(res);
-                    if (!FormMembers && !GridMembers) OutputLine((Key.HasValue ? res[Key.Parameter] : res.Result).ToString());
-                }
-                catch (Exception e)
-                {
-                    Error("Response Error!\n{0}", e.Message);
-                }
-                return 1;
+                Responses = FormCtx.Responses;
             }
         }
-        [Command(Description = "Define")]
+        [Command(Description = "Define Form Request")]
         [Subcommand("fa", typeof(FormActCmd))]
-        public class DefCmd : RequestCmd<AIS.FormRequest, FormCtx>
+        public class DefCmd : FormRequestCmd
         {
             [Command(Description = "Form Action")]
-            public class FormActCmd : BaseCmd
+            public class FormActCmd : FormActionCmd
             {
-                [Option("-rm|--remove", CommandOptionType.NoValue, Description = "Remove Form Action")]
-                [SuppressDisplay]
-                public bool Remove { get; private set; }
-                [Argument(0, Description = "Control Id")]
-                public (bool HasValue, string Parameter) ControlID { get; private set; }
-                [Argument(1, Description = "Command")]
-                [AllowedValues(new string[]
-                {
-                "SetControlValue",
-                "SetQBEValue",
-                "DoAction",
-                "SetRadioButton",
-                "SetComboValue",
-                "SetCheckboxValue",
-                "SelectRow",
-                "UnSelectRow",
-                "UnSelectAllRows",
-                "SelectAllRows",
-                "ClickGridCell",
-                "ClickGridColumnAggregate"
-                })]
-                public (bool HasValue, string Parameter) Command { get; private set; }
-                [Argument(2, Description = "Value")]
-                public (bool HasValue, string Parameter) Value { get; private set; }
                 DefCmd DefCmd { get; set; }
-                int OnExecute()
+                protected override int OnExecute()
                 {
                     if (DefCmd.OnExecute() == 0) return 0;
+                    FormActions = FormCtx.Current.Request.formActions;
 
-                    var fas = FormCtx.Current.Request.formActions;
-                    if (ControlID.HasValue && Command.HasValue)
-                    {
-                        fas.Add(new AIS.FormAction()
-                        {
-                            controlID = ControlID.Parameter,
-                            command = Command.Parameter,
-                            value = Value.Parameter
-                        });
-                    }
-                    else if (ControlID.HasValue)
-                    {
-                        var fa = fas.Find(e =>
-                        {
-                            return e.GetType() == typeof(AIS.FormAction) && (e as AIS.FormAction).controlID.Equals(ControlID.Parameter);
-                        });
-                        if (fa is null) Warning("ControlID {0} not found!", ControlID.Parameter);
-                        else if (Remove) fas.Remove(fa);
-                        else
-                        {
-                            var cmd = new FormActCmd(fa);
-                            cmd.Display(OutFile, true);
-                        }
-                    }
-                    else
-                    {
-                        foreach (var fa in fas)
-                        {
-                            var cmd = new FormActCmd(fa);
-                            cmd.Display(OutFile, true);
-                        }
-                    }
-
-                    return 1;
-                }
-                public FormActCmd(AIS.Action a)
-                {
-                    if (a.GetType() == typeof(AIS.FormAction))
-                    {
-                        var fa = a as AIS.FormAction;
-                        ControlID = (false, fa.controlID);
-                        Command = (false, fa.command);
-                        Value = (false, fa.value);
-                    }
+                    return base.OnExecute();
                 }
                 public FormActCmd(DefCmd defCmd)
                 {
                     DefCmd = defCmd;
                 }
             }
-            [Option("-fn|--formName", CommandOptionType.SingleValue, Description = "Form Name")]
-            [PromptOption]
-            public (bool HasValue, string Parameter) FormName { get; private set; }
-            [Option("-v|--version", CommandOptionType.SingleValue, Description = "Version Name")]
-            public (bool HasValue, string Parameter) Version { get; private set; }
-            [Option("-fa|--formAction", CommandOptionType.SingleValue, Description = "Form Service Action")]
-            public (bool HasValue, string Parameter) FormServiceAction { get; private set; }
-            [Option("-sw|--stopOnWarning", CommandOptionType.SingleValue, Description = "Stop on Warning")]
-            [AllowedValues(new string[] { "true", "false" }, IgnoreCase = true)]
-            public (bool HasValue, string Parameter) StopOnWarning { get; private set; }
-            [Option("-qn|--queryName", CommandOptionType.SingleValue, Description = "Query Object Name")]
-            public (bool HasValue, string Parameter) QueryObjectName { get; private set; }
             FormCmd FormCmd { get; set; }
-            int OnExecute()
+            protected override int OnExecute()
             {
                 if (FormCmd.Id.HasValue && !FormCtx.Select(FormCmd.Id.Parameter))
                 {
@@ -238,29 +123,13 @@ namespace Celin
                     Error("No Form Context!");
                     return 0;
                 }
-                RequestCtx = FormCtx.Current;
-                var rq = FormCtx.Current.Request;
-                rq.formName = FormName.HasValue ? FormName.Parameter.ToUpper() : rq.formName;
-                rq.version = Version.HasValue ? Version.Parameter : rq.version;
-                rq.formServiceAction = FormServiceAction.HasValue ? FormServiceAction.Parameter : rq.formServiceAction;
-                rq.stopOnWarning = StopOnWarning.HasValue ? StopOnWarning.Parameter.ToUpper() : rq.stopOnWarning;
-                rq.queryObjectName = QueryObjectName.HasValue ? QueryObjectName.Parameter : rq.queryObjectName;
 
-                var cmd = new DefCmd(FormCtx.Current);
-                cmd.Display(OutFile, false);
-                OutputLine(OutFile);
+                Request = FormCtx.Current.Request;
 
-                return 1;
+                return base.OnExecute();
             }
-            public DefCmd(FormCtx formCtx) : base(formCtx)
-            {
-                var rq = formCtx.Request;
-                FormName = (false, rq.formName);
-                Version = (false, rq.version);
-                FormServiceAction = (false, rq.formServiceAction);
-                StopOnWarning = (false, rq.stopOnWarning);
-                QueryObjectName = (false, rq.queryObjectName);
-            }
+            public DefCmd(AIS.FormRequest rq) : base(rq)
+            {}
             public DefCmd(FormCmd formCmd)
             {
                 FormCmd = formCmd;
@@ -285,59 +154,6 @@ namespace Celin
                 return 1;
             }
             public SubCmd(FormCmd formCmd)
-            {
-                FormCmd = formCmd;
-            }
-        }
-        [Command(Description = "Submit Stack Request")]
-        class SubStackCmd : BaseCmd
-        {
-            [Argument(0, "Action")]
-            [AllowedValues(new string[] { "open", "close", "execute" })]
-            [Required]
-            string Action { get; }
-            FormCmd FormCmd { get; set; }
-            int OnExecute()
-            {
-                if (FormCmd.OnExecute() == 0) return 1;
-                if (FormCtx.Current is null)
-                {
-                    Error("No Form Context!");
-                    return 1;
-                }
-                var rq = new AIS.StackFormRequest();
-                rq.action = Action.ToLower();
-                rq.formRequest = FormCtx.Current.Request;
-                rq.actionRequest = new AIS.ActionRequest();
-                if (ServerCtx.Current is null)
-                {
-                    BaseCmd.Error("No Server Context!");
-                }
-                else if (ServerCtx.Current.Server.AuthResponse is null)
-                {
-                    BaseCmd.Error("{0} not connected!", ServerCtx.Current.Id);
-                }
-                else
-                {
-                    var t = new Task<Tuple<bool, JObject>>(() => ServerCtx.Current.Server.Request<JObject>(rq));
-                    t.Start();
-                    while (!t.IsCompleted)
-                    {
-                        Thread.Sleep(500);
-                        Console.Write('.');
-                    }
-                    if (t.Result.Item1)
-                    {
-                        OutputLine(t.Result.Item2.ToString());
-                    }
-                    else
-                    {
-                        Error("Request failed!");
-                    }
-                }
-                return 1;
-            }
-            public SubStackCmd(FormCmd formCmd)
             {
                 FormCmd = formCmd;
             }

@@ -15,7 +15,7 @@ namespace Celin
         [Option("-c|--context", CommandOptionType.SingleValue, Description = "Server Context")]
         public (bool HasValue, string Parameter) Id { get; private set; }
         [Command(Description = "List Servers")]
-        class ListCmd : BaseCmd
+        class ListCmd : OutCmd
         {
             [Option("-a|--all", CommandOptionType.NoValue, Description = "List All")]
             bool All { get; }
@@ -67,7 +67,7 @@ namespace Celin
             }
         }
         [Command(Description = "Define")]
-        public class DefCmd : BaseCmd
+        public class DefCmd : OutCmd
         {
             [Option("-b|--baseUrl", CommandOptionType.SingleValue, Description = "Base Url")]
             [PromptOption]
