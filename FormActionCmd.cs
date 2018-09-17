@@ -6,7 +6,7 @@ namespace Celin
     public class FormActionCmd : OutCmd
     {
         [Option("-rm|--remove", CommandOptionType.NoValue, Description = "Remove Form Action")]
-        bool Remove { get; set; }
+        protected bool Remove { get; set; }
         [Argument(0, Description = "Control Id")]
         public (bool HasValue, string Parameter) ControlID { get; private set; }
         [Argument(1, Description = "Command")]
@@ -48,19 +48,12 @@ namespace Celin
                 });
                 if (fa is null) Warning("ControlID {0} not found!", ControlID.Parameter);
                 else if (Remove) FormActions.Remove(fa);
-                else
-                {
-                    var cmd = new FormActionCmd(fa as AIS.FormAction);
-                    cmd.Display(OutFile, true);
-                }
             }
-            else
+
+            foreach (var fa in FormActions)
             {
-                foreach (var fa in FormActions)
-                {
-                    var cmd = new FormActionCmd(fa as AIS.FormAction);
-                    cmd.Display(OutFile, true);
-                }
+                var cmd = new FormActionCmd(fa as AIS.FormAction);
+                cmd.Display(OutFile, false);
             }
 
             return 1;

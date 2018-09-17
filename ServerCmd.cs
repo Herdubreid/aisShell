@@ -72,6 +72,10 @@ namespace Celin
             [Option("-b|--baseUrl", CommandOptionType.SingleValue, Description = "Base Url")]
             [PromptOption]
             public (bool HasValue, string Parameter) BaseUrl { get; private set; }
+            [Option("-d|--device", CommandOptionType.SingleValue, Description = "Device")]
+            public (bool HasValue, string Parameter) Device { get; private set; }
+            [Option("-rc|--requiredCapabilities", CommandOptionType.SingleValue, Description = "Required Capabilities")]
+            public (bool HasValue, string Parameter) RequiredCapabilities { get; private set; }
             ServerCmd ServerCmd { get; set; }
             int OnExecute()
             {
@@ -90,12 +94,22 @@ namespace Celin
                     return 1;
                 }
                 ServerCtx.Current.Server.BaseUrl = BaseUrl.Parameter;
+                var rq = ServerCtx.Current.Server.AuthRequest;
+                if (Device.HasValue) rq.deviceName = Device.Parameter;
+                if (RequiredCapabilities.HasValue) rq.requiredCapabilities = RequiredCapabilities.Parameter;
+
                 return 1;
             }
             public DefCmd(ServerCtx serverCtx)
             {
                 var rq = serverCtx.Server;
                 BaseUrl = (false, rq.BaseUrl);
+                var auth = ServerCtx.Current?.Server.AuthRequest;
+                if (auth != null)
+                {
+                    Device = (false, auth.deviceName);
+                    RequiredCapabilities = (false, auth.requiredCapabilities);
+                }
             }
             public DefCmd(ServerCmd serverCmd)
             {
@@ -105,16 +119,12 @@ namespace Celin
         [Command(Description = "Connect")]
         public class ConCmd : BaseCmd
         {
-            [Option("-d|--device", CommandOptionType.SingleValue, Description = "Device")]
-            public (bool HasValue, string Parameter) Device { get; private set; }
-            [Option("-rc|--requiredCapabilities", CommandOptionType.SingleValue, Description = "Required Capabilities")]
-            public (bool HasValue, string Parameter) RequiredCapabilities { get; private set; }
             [Option("-u|--user", CommandOptionType.SingleValue, Description = "User name")]
             [PromptOption]
             public (bool HasValue, string Parameter) User { get; private set; }
             [Option("-p|--password", CommandOptionType.SingleValue, Description = "Password")]
             [PromptOption(false, PromptType.Password)]
-            public (bool HasValue, string Parameter) Password { get; private set; }
+            public (bool HasValue, string Parameter) Password { get; set; }
             public delegate bool Authenticate();
             ServerCmd ServerCmd { get; set; }
             int OnExecute()
@@ -128,10 +138,6 @@ namespace Celin
                 {
                     PromptOptions();
                     var rq = ServerCtx.Current.Server.AuthRequest;
-                    rq.deviceName = Device.HasValue ? Device.Parameter : rq.deviceName;
-                    rq.requiredCapabilities = RequiredCapabilities.HasValue ?
-                        RequiredCapabilities.Parameter :
-                        rq.requiredCapabilities;
                     rq.username = User.Parameter;
                     rq.password = Password.Parameter;
                     Task<bool> t = new Task<bool>(ServerCtx.Current.Server.Authenticate);
@@ -158,8 +164,6 @@ namespace Celin
                 var auth = ServerCtx.Current?.Server.AuthRequest;
                 if (auth != null)
                 {
-                    Device = (false, auth.deviceName);
-                    RequiredCapabilities = (false, auth.requiredCapabilities);
                     User = (false, auth.username);
                 }
             }

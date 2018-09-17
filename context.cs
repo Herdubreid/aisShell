@@ -197,9 +197,7 @@ namespace Celin
     public class StackFormCtx : RequestCtx<AIS.StackFormRequest, StackFormCtx>
     {
         public StackFormCtx(string id) : base(id)
-        {
-            Request.formRequest = new AIS.FormRequest();
-        }
+        { }
     }
     public class ServerCtx : CtxId<ServerCtx>
     {
