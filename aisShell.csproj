@@ -15,7 +15,7 @@
     <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="2.2.5" />
     <PackageReference Include="NuGet.Build.Packaging" Version="0.2.0" />
     <PackageReference Include="Colorful.Console" Version="1.2.9" />
-    <PackageReference Include="Celin.AIS" Version="0.3.0" />
+    <PackageReference Include="Celin.AIS" Version="0.4.0" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="NLog.config" />
@@ -32,8 +32,5 @@
     <Compile Remove="SubmitCmd.cs" />
     <Compile Remove="ContextCmd.cs" />
     <Compile Remove="DefFormCmd.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Celin.AIS\Celin.AIS.csproj" />
   </ItemGroup>
 </Project>
