@@ -12,6 +12,7 @@ namespace Celin
             FormCmd.AddCmd();
             StackFormCmd.AddCmd();
             DataCmd.AddCmd();
+            OutFileCmd.AddCmd();
             HelpCmd.AddCmd();
             ClearCmd.AddCmd();
             QuitCmd.AddCmd();
@@ -31,7 +32,15 @@ namespace Celin
                         }
                         else
                         {
-                            Console.WriteLine("{0}: command not found! Type 'help' for available commands.", completion[0]);
+                            command = BaseCmd.Context is null ? null : BaseCmd.Find(BaseCmd.Context.Cmd);
+                            if (command != null)
+                            {
+                                command.Execute(completion.ToArray());
+                            }
+                            else
+                            {
+                                Console.WriteLine("{0}: command not found! Type 'help' for available commands.", completion[0]);
+                            }
                         }
                     }
                     InteractivePrompt.Prompt = BaseCmd.PromptTx;

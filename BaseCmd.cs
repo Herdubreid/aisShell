@@ -35,15 +35,16 @@ namespace Celin
     public class BaseCmd
     {
         public static List<Cmd> Commands { get; } = new List<Cmd>();
+        public static ICtxId Context { get; set; }
         public static string PromptTx
         {
             get
             {
-                return String.Format("[{0}:{1}][f:{2} d:{3}] $ ",
+                var ctxFmt = " {0}:{1}";
+                return String.Format("[{0}:{1}]{2} $ ",
                                      ServerCtx.Current?.Id,
                                      ServerCtx.Current?.Server.AuthResponse?.username,
-                                     FormCtx.Current?.Id,
-                                     DataCtx.Current?.Id);
+                                     Context is null ? String.Empty : String.Format(ctxFmt, Context.Cmd, Context.Id));
             }
         }
         public static void Success(string fmt, params object[] args)

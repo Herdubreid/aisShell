@@ -31,6 +31,12 @@ namespace Celin
                     var rq = Request as AIS.DatabrowserRequest;
                     return String.Format("fs_DATABROWSE_{0}", rq.targetName);
                 }
+                if (typeof(T) == typeof(AIS.StackFormRequest))
+                {
+                    var rq = Request as AIS.StackFormRequest;
+                    return String.Format("fs_{0}", rq.formRequest.formName);
+                }
+
                 return null;
             }
         }
@@ -81,6 +87,7 @@ namespace Celin
     }
     public interface ICtxId
     {
+        string Cmd { get; set; }
         string Id { get; set; }
     }
     public abstract class CtxId<T> : ICtxId where T : ICtxId
@@ -134,8 +141,10 @@ namespace Celin
             }
         }
         public string Id { get; set; }
-        protected CtxId(string id)
+        public string Cmd { get; set; }
+        protected CtxId(string cmd, string id)
         {
+            Cmd = cmd;
             Id = id;
         }
     }
@@ -175,34 +184,34 @@ namespace Celin
                 }
             }
         }
-        protected RequestCtx(string id) : base(id)
+        protected RequestCtx(string cmd, string id) : base(cmd, id)
         {
             Request.maxPageSize = "10";
         }
     }
     public class DataCtx : RequestCtx<AIS.DatabrowserRequest, DataCtx>
     {
-        public DataCtx(string id) : base(id)
+        public DataCtx(string id) : base("dt", id)
         {
             Request.findOnEntry = "TRUE";
         }
     }
     public class FormCtx : RequestCtx<AIS.FormRequest, FormCtx>
     {
-        public FormCtx(string id) : base(id)
+        public FormCtx(string id) : base("fm", id)
         {
             Request.formServiceAction = "R";
         }
     }
     public class StackFormCtx : RequestCtx<AIS.StackFormRequest, StackFormCtx>
     {
-        public StackFormCtx(string id) : base(id)
+        public StackFormCtx(string id) : base("sfm", id)
         { }
     }
     public class ServerCtx : CtxId<ServerCtx>
     {
         public AIS.Server Server { get; set; }
-        public ServerCtx(string id, string baseUrl) : base(id)
+        public ServerCtx(string id, string baseUrl) : base("sv", id)
         {
             Server = new AIS.Server(baseUrl);
         }

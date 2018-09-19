@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using McMaster.Extensions.CommandLineUtils;
 namespace Celin
 {
@@ -55,8 +56,9 @@ namespace Celin
                     }
                 }
             }
-            int OnExecute()
+            protected override int OnExecute()
             {
+                base.OnExecute();
                 if (StackFormCmd.OnExecute() == 1)
                 {
                     if (!All && StackFormCtx.Current != null) Show(StackFormCtx.Current);
@@ -93,6 +95,7 @@ namespace Celin
             {
                 PromptOptions();
                 StackFormCtx.Load(FileName.Parameter + ".sfctx");
+                Context = StackFormCtx.Current;
                 return 1;
             }
         }
@@ -105,7 +108,7 @@ namespace Celin
             [Subcommand("fa", typeof(FormActCmd))]
             public class FormReqCmd : FormRequestCmd
             {
-                [Command(Description = "Form Action")]
+                [Command(Description = "Form Action", ThrowOnUnexpectedArgument = false)]
                 public class FormActCmd : FormActionCmd
                 {
                     FormReqCmd FormReqCmd { get; set; }
@@ -128,7 +131,10 @@ namespace Celin
 
                     if (StackFormCtx.Current.Request.formRequest is null)
                     {
-                        StackFormCtx.Current.Request.formRequest = new AIS.FormRequest();
+                        StackFormCtx.Current.Request.formRequest = new AIS.FormRequest()
+                        {
+                            formServiceAction = "R"
+                        };
                     }
                     Request = StackFormCtx.Current.Request.formRequest;
 
@@ -145,7 +151,7 @@ namespace Celin
             [Subcommand("fa", typeof(ActCmd))]
             public class StackActCmd : OutCmd
             {
-                [Command(Description = "Stack Form Action")]
+                [Command(Description = "Stack Form Action", ThrowOnUnexpectedArgument = false)]
                 class ActCmd : FormActionCmd
                 {
                     StackActCmd StackActCmd { get; set; }
@@ -161,7 +167,7 @@ namespace Celin
                         StackActCmd = stackActCmd;
                     }
                 }
-                [Option("-ri|--returnIds", CommandOptionType.SingleValue, Description = "Return Control IDs")]
+                [Option("-rc|--returnControlIds", CommandOptionType.SingleValue, Description = "Return Control IDs")]
                 public (bool HasValue, string Parameter) ReturnControlIDs { get; set; }
                 [Option("-fo|--formOID", CommandOptionType.SingleValue, Description = "Open Form Id")]
                 public (bool HasValue, string Parameter) FormOID { get; set; }
@@ -169,13 +175,14 @@ namespace Celin
                 [AllowedValues(new string[] { "true", "false" })]
                 public (bool HasValue, string Parameter) StopOnWarning { get; set; }
                 DefCmd DefCmd { get; set; }
-                int OnExecute()
+                protected override int OnExecute()
                 {
+                    base.OnExecute();
                     if (DefCmd.OnExecute() == 0) return 0;
 
                     var rq = StackFormCtx.Current.Request.actionRequest;
                     rq.returnControlIDs = ReturnControlIDs.HasValue ? ReturnControlIDs.Parameter : rq.returnControlIDs;
-                    rq.formOID = FormOID.HasValue ? FormOID.Parameter : rq.formOID;
+                    rq.formOID = FormOID.HasValue ? FormOID.Parameter.ToUpper() : rq.formOID;
                     rq.stopOnWarning = StopOnWarning.HasValue ? StopOnWarning.Parameter.ToUpper() : rq.stopOnWarning;
 
                     var cmd = new StackActCmd(rq);
@@ -201,8 +208,9 @@ namespace Celin
             [Option("-ri|--rid", CommandOptionType.SingleValue, Description = "Rid")]
             public (bool HasValue, string Parameter) Rid { get; set; }
             StackFormCmd StackFormCmd { get; set; }
-            int OnExecute()
+            protected override int OnExecute()
             {
+                base.OnExecute();
                 if (StackFormCmd.Id.HasValue && !StackFormCtx.Select(StackFormCmd.Id.Parameter))
                 {
                     if (Prompt.GetYesNo("New Stack Form Definition?", true))
@@ -210,6 +218,7 @@ namespace Celin
                         PromptOptions();
                         StackFormCtx.Current = new StackFormCtx(StackFormCmd.Id.Parameter);
                         StackFormCtx.List.Add(StackFormCtx.Current);
+                        Context = StackFormCtx.Current;
                     }
                     else return 0;
                 }
@@ -264,41 +273,40 @@ namespace Celin
                 StackFormCmd = stackFormCmd;
             }
         }
+        protected bool SetStackParameters(int? index)
+        {
+            var ctx = StackFormCtx.Current;
+            try
+            {
+                var res = index.HasValue ? StackFormCtx.Responses[index.Value] : StackFormCtx.Responses.Last();
+                ctx.Request.stackId = res.Result["stackId"].ToObject<Int16>();
+                ctx.Request.stateId = res.Result["stateId"].ToObject<Int16>();
+                ctx.Request.rid = res.Result["rid"].ToString();
+            }
+            catch (Exception e)
+            {
+                Error("Response Error!\n{0}", e.Message);
+                return false;
+            }
+            return true;
+        }
         [Command(Description = "Execute Form Action")]
         class ExecuteCmd : BaseCmd
         {
             [Option("-ri|--responseIndex", CommandOptionType.SingleValue, Description = "Stack Parameters Response Index")]
-            protected (bool HasValue, int Paramter) ResponseIndex { get; set; }
+            protected int? ResponseIndex { get; set; }
             StackFormCmd StackFormCmd { get; set; }
             int OnExecute()
             {
                 if (StackFormCmd.OnExecute() == 0) return 0;
-
                 if (StackFormCtx.Current is null)
                 {
                     Error("No Stack Form Context!");
                     return 0;
                 }
-
-                var ctx = StackFormCtx.Current;
-
-                if (ResponseIndex.HasValue)
-                {
-                    try
-                    {
-                        var res = StackFormCtx.Responses[ResponseIndex.Paramter];
-                        ctx.Request.stackId = res.Result["stackId"].ToObject<Int16>();
-                        ctx.Request.stateId = res.Result["stateId"].ToObject<Int16>();
-                        ctx.Request.rid = res.Result["rid"].ToString();
-                    }
-                    catch (Exception e)
-                    {
-                        Error("Response Error!\n{0}", e.Message);
-                    }
-                }
-
-                ctx.Request.action = "execute";
-                ctx.Submit();
+                if (!StackFormCmd.SetStackParameters(ResponseIndex)) return 0;
+                StackFormCtx.Current.Request.action = "execute";
+                StackFormCtx.Current.Submit();
 
                 return 1;
             }
@@ -311,7 +319,7 @@ namespace Celin
         class CloseCmd : BaseCmd
         {
             [Option("-ri|--responseIndex", CommandOptionType.SingleValue, Description = "Stack Parameters Response Index")]
-            protected (bool HasValue, int Paramter) ResponseIndex { get; set; }
+            protected int? ResponseIndex { get; set; }
             StackFormCmd StackFormCmd { get; set; }
             int OnExecute()
             {
@@ -322,26 +330,10 @@ namespace Celin
                     Error("No Stack Form Context!");
                     return 0;
                 }
+                if (!StackFormCmd.SetStackParameters(ResponseIndex)) return 0;
 
-                var ctx = StackFormCtx.Current;
-
-                if (ResponseIndex.HasValue)
-                {
-                    try
-                    {
-                        var res = StackFormCtx.Responses[ResponseIndex.Paramter];
-                        ctx.Request.stackId = res.Result["stackId"].ToObject<Int16>();
-                        ctx.Request.stateId = res.Result["stateId"].ToObject<Int16>();
-                        ctx.Request.rid = res.Result["rid"].ToString();
-                    }
-                    catch (Exception e)
-                    {
-                        Error("Response Error!\n{0}", e.Message);
-                    }
-                }
-
-                ctx.Request.action = "close";
-                ctx.Submit();
+                StackFormCtx.Current.Request.action = "close";
+                StackFormCtx.Current.Submit();
 
                 return 1;
             }
@@ -360,8 +352,9 @@ namespace Celin
                 [Argument(0, Description = "Result Key")]
                 string Key { get; set; }
                 ResCmd ResCmd { get; set; }
-                int OnExecute()
+                protected override int OnExecute()
                 {
+                    base.OnExecute();
                     var ndx = 0;
                     foreach (var rs in ResCmd.Responses)
                     {
@@ -387,6 +380,7 @@ namespace Celin
                 Error("Stack Form Context {0} not found!", Id.Parameter);
                 return 0;
             }
+            Context = StackFormCtx.Current;
             return 1;
         }
         public static void AddCmd()

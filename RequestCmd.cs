@@ -8,7 +8,7 @@ namespace Celin
         [Option("-f|--find", CommandOptionType.SingleValue, Description = "Find on Entry")]
         [AllowedValues(new string[] { "true", "false" }, IgnoreCase = true)]
         public (bool HasValue, string Parameter) FindOnEntry { get; private set; }
-        [Option("-ri|--returnIds", CommandOptionType.SingleValue, Description = "Return Control IDs")]
+        [Option("-rc|--returnControlIds", CommandOptionType.SingleValue, Description = "Return Control IDs")]
         public (bool HasValue, string Parameter) ReturnControlIDs { get; private set; }
         [Option("-mp|--maxPage", CommandOptionType.SingleValue, Description = "Max Page Size")]
         public (bool HasValue, int Parameter) MaxPageSize { get; private set; }

@@ -48,5 +48,14 @@ namespace Celin
         {
             Display(OutFile, full);
         }
+        protected static string DefaultOutFile { get; set; } = null;
+        protected virtual int OnExecute()
+        {
+            if (!OutFile.HasValue)
+            {
+                OutFile = (DefaultOutFile != null, DefaultOutFile);
+            }
+            return 1;
+        }
     }
 }

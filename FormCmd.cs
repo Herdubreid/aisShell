@@ -37,8 +37,9 @@ namespace Celin
                     }
                 }
             }
-            int OnExecute()
+            protected override int OnExecute()
             {
+                base.OnExecute();
                 if (FormCmd.OnExecute() == 1)
                 {
                     if (!All && FormCtx.Current != null) Show(FormCtx.Current);
@@ -74,6 +75,7 @@ namespace Celin
             {
                 PromptOptions();
                 FormCtx.Load(FileName.Parameter + ".fctx");
+                Context = FormCtx.Current;
                 return 1;
             }
         }
@@ -89,7 +91,7 @@ namespace Celin
         [Subcommand("fa", typeof(FormActCmd))]
         public class DefCmd : FormRequestCmd
         {
-            [Command(Description = "Form Action")]
+            [Command(Description = "Form Action", ThrowOnUnexpectedArgument = false)]
             public class FormActCmd : FormActionCmd
             {
                 DefCmd DefCmd { get; set; }
@@ -115,6 +117,7 @@ namespace Celin
                         PromptOptions();
                         FormCtx.Current = new FormCtx(FormCmd.Id.Parameter);
                         FormCtx.List.Add(FormCtx.Current);
+                        Context = FormCtx.Current;
                     }
                     else return 0;
                 }
@@ -165,6 +168,7 @@ namespace Celin
                 Error("Form Context {0} not found!", Id.Parameter);
                 return 0;
             }
+            Context = FormCtx.Current;
             return 1;
         }
         public static void AddCmd()

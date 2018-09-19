@@ -16,8 +16,9 @@ namespace Celin
         public (bool HasValue, string Parameter) StopOnWarning { get; private set; }
         [Option("-qn|--queryName", CommandOptionType.SingleValue, Description = "Query Object Name")]
         public (bool HasValue, string Parameter) QueryObjectName { get; private set; }
-        protected virtual int OnExecute()
+        protected override int OnExecute()
         {
+            base.OnExecute();
             var rq = Request;
             rq.formName = FormName.HasValue ? FormName.Parameter.ToUpper() : rq.formName;
             rq.version = Version.HasValue ? Version.Parameter : rq.version;
@@ -26,7 +27,7 @@ namespace Celin
             rq.queryObjectName = QueryObjectName.HasValue ? QueryObjectName.Parameter : rq.queryObjectName;
 
             var cmd = new FormRequestCmd(Request);
-            cmd.Display(false);
+            cmd.Display(OutFile, false);
 
             return 1;
         }

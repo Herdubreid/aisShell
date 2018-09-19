@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Linq;
 using System.Collections.Generic;
 using McMaster.Extensions.CommandLineUtils;
 namespace Celin
@@ -29,15 +29,20 @@ namespace Celin
         [Argument(2, Description = "Value")]
         public (bool HasValue, string Parameter) Value { get; private set; }
         public List<AIS.Action> FormActions { get; set; }
-        protected virtual int OnExecute()
+        protected List<string> RemainingArguments { get; }
+        protected override int OnExecute()
         {
+            base.OnExecute();
             if (ControlID.HasValue && Command.HasValue)
             {
+                var value = Value.HasValue ? RemainingArguments.Count > 0
+                                 ? Value.Parameter + " " + RemainingArguments.Aggregate((a, s) => a + " " + s)
+                                 : Value.Parameter : "";
                 FormActions.Add(new AIS.FormAction()
                 {
                     controlID = ControlID.Parameter,
                     command = Command.Parameter,
-                    value = Value.Parameter
+                    value = value
                 });
             }
             else if (ControlID.HasValue)

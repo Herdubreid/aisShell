@@ -28,8 +28,9 @@ namespace Celin
                 OutputLine(OutFile, String.Format("Server Context {0}", serverCtx.Id));
                 cmd.Display(OutFile, Long);
             }
-            int OnExecute()
+            protected override int OnExecute()
             {
+                base.OnExecute();
                 ServerCmd.OnExecute();
                 if (!All && ServerCtx.Current != null) Show(ServerCtx.Current);
                 if (All) foreach (var ctx in ServerCtx.List) Show(ctx);
@@ -77,8 +78,9 @@ namespace Celin
             [Option("-rc|--requiredCapabilities", CommandOptionType.SingleValue, Description = "Required Capabilities")]
             public (bool HasValue, string Parameter) RequiredCapabilities { get; private set; }
             ServerCmd ServerCmd { get; set; }
-            int OnExecute()
+            protected override int OnExecute()
             {
+                base.OnExecute();
                 if (ServerCmd.OnExecute() == 0 && ServerCmd.Id.HasValue)
                 {
                     if (Prompt.GetYesNo("New Server Definition?", true))

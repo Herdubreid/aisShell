@@ -37,6 +37,7 @@ namespace Celin
             {
                 PromptOptions();
                 DataCtx.Load(FileName.Parameter + ".dctx");
+                Context = DataCtx.Current;
                 return 1;
             }
         }
@@ -54,8 +55,9 @@ namespace Celin
                 OutputLine(OutFile, String.Format("Data Context {0}", dataCtx.Id));
                 cmd.Display(OutFile, Long);
             }
-            int OnExecute()
+            protected override int OnExecute()
             {
+                base.OnExecute();
                 if (DataCmd.OnExecute() == 1)
                 {
                     if (!All && DataCtx.Current != null) Show(DataCtx.Current);
@@ -79,8 +81,9 @@ namespace Celin
             [Option("-v|--view", Description = "View Target Type")]
             public bool ViewTarget { get; }
             DataCmd DataCmd { get; set; }
-            int OnExecute()
+            protected override int OnExecute()
             {
+                base.OnExecute();
                 if (DataCmd.Id.HasValue && !DataCtx.Select(DataCmd.Id.Parameter))
                 {
                     if (Prompt.GetYesNo("New Data Definition?", true))
@@ -88,6 +91,7 @@ namespace Celin
                         PromptOptions();
                         DataCtx.Current = new DataCtx(DataCmd.Id.Parameter);
                         DataCtx.List.Add(DataCtx.Current);
+                        Context = DataCtx.Current;
                     }
                 }
                 if (DataCtx.Current is null)
@@ -148,6 +152,7 @@ namespace Celin
                 Error("Data Context '{0}' not found!", Id.Parameter);
                 return 0;
             }
+            Context = DataCtx.Current;
             return 1;
         }
         public static void AddCmd()
