@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using McMaster.Extensions.CommandLineUtils;
+using Newtonsoft.Json;
 namespace Celin
 {
     public abstract class OutCmd : BaseCmd
@@ -25,30 +26,15 @@ namespace Celin
         {
             OutputLine(OutFile, result);
         }
-        public void Display(ValueTuple<bool, string> outFile, bool full)
+        public void Export(object obj)
         {
-            foreach (var e in GetType().GetProperties())
+            var json = JsonConvert.SerializeObject(obj, Formatting.Indented, new JsonSerializerSettings()
             {
-                var optionAttribute = (OptionAttribute)Attribute.GetCustomAttribute(e, typeof(OptionAttribute));
-                var argumentAttribute = (ArgumentAttribute)Attribute.GetCustomAttribute(e, typeof(ArgumentAttribute));
-                var description = optionAttribute is null ? argumentAttribute?.Description : optionAttribute.Description;
-                if (description != null)
-                {
-                    if (full) Output(outFile, String.Format("  {0, -20}->", description));
-                    var parameter = e.PropertyType == typeof(ValueTuple<bool, string>) ? ((ValueTuple<bool, string>)e.GetValue(this)).Item2
-                        : e.PropertyType == typeof(ValueTuple<bool, int>) ? ((ValueTuple<bool, int>)e.GetValue(this)).Item2.ToString() : e.GetValue(this).ToString();
-                    Output(outFile, parameter);
-                    if (full) OutputLine(outFile);
-                    else if (parameter != null) Output(outFile, " ");
-                }
-            }
-            if (!full) OutputLine(outFile);
+                NullValueHandling = NullValueHandling.Ignore
+            });
+            OutputLine(json);
         }
-        public void Display(bool full)
-        {
-            Display(OutFile, full);
-        }
-        protected static string DefaultOutFile { get; set; } = null;
+        public static string DefaultOutFile { get; set; } = null;
         protected virtual int OnExecute()
         {
             if (!OutFile.HasValue)

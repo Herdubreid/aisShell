@@ -30,7 +30,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="SubmitCmd.cs" />
-    <Compile Remove="ContextCmd.cs" />
     <Compile Remove="DefFormCmd.cs" />
+    <Compile Remove="ContextCmd.cs" />
+    <Compile Remove="RowEventCmd.cs" />
   </ItemGroup>
 </Project>

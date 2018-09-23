@@ -5,7 +5,7 @@ namespace Celin
 {
     [Command("dt", Description = "Data Context")]
     [Subcommand("d", typeof(DefCmd))]
-    [Subcommand("l", typeof(ListCmd))]
+    [Subcommand("ex", typeof(ExpCmd))]
     [Subcommand("s", typeof(SubCmd))]
     [Subcommand("r", typeof(ResCmd))]
     [Subcommand("save", typeof(SaveCmd))]
@@ -13,7 +13,9 @@ namespace Celin
     public class DataCmd : BaseCmd
     {
         [Option("-c|--context", CommandOptionType.SingleValue, Description = "Context Id")]
-        public (bool HasValue, string Parameter) Id { get; }
+        (bool HasValue, string Parameter) Id { get; }
+        [Option("-l|--listContexts", CommandOptionType.NoValue, Description = "List Contexts")]
+        bool List { get; }
         [Command(Description = "Save Definition")]
         class SaveCmd : BaseCmd
         {
@@ -41,31 +43,23 @@ namespace Celin
                 return 1;
             }
         }
-        [Command(Description = "List Parameters")]
-        class ListCmd : OutCmd
+        [Command(Description = "Export Request")]
+        class ExpCmd : OutCmd
         {
-            [Option("-a|--all", CommandOptionType.NoValue, Description = "List All")]
+            [Option("-a|--all", CommandOptionType.NoValue, Description = "Export All")]
             bool All { get; }
-            [Option("-l|--long", CommandOptionType.NoValue, Description = "Long Format")]
-            bool Long { get; }
             DataCmd DataCmd { get; set; }
-            void Show(DataCtx dataCtx)
-            {
-                var cmd = new DefCmd(dataCtx.Request);
-                OutputLine(OutFile, String.Format("Data Context {0}", dataCtx.Id));
-                cmd.Display(OutFile, Long);
-            }
             protected override int OnExecute()
             {
                 base.OnExecute();
                 if (DataCmd.OnExecute() == 1)
                 {
-                    if (!All && DataCtx.Current != null) Show(DataCtx.Current);
-                    if (All) foreach (var ctx in DataCtx.List) Show(ctx);
+                    if (!All && DataCtx.Current != null) Export(DataCtx.Current.Request);
+                    if (All) foreach (var ctx in DataCtx.List) Export(ctx.Request);
                 }
                 return 1;
             }
-            public ListCmd(DataCmd dataCmd)
+            public ExpCmd(DataCmd dataCmd)
             {
                 DataCmd = dataCmd;
             }
@@ -147,6 +141,7 @@ namespace Celin
         }
         int OnExecute()
         {
+            if (List) foreach (var c in DataCtx.List) Console.WriteLine(c.Id);
             if (Id.HasValue && !DataCtx.Select(Id.Parameter))
             {
                 Error("Data Context '{0}' not found!", Id.Parameter);

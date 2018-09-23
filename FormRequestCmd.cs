@@ -6,10 +6,11 @@ namespace Celin
     {
         [Option("-fn|--formName", CommandOptionType.SingleValue, Description = "Form Name")]
         [PromptOption]
-        public (bool HasValue, string Parameter) FormName { get; private set; }
+        public (bool HasValue, string Parameter) FormName { get; set; }
         [Option("-v|--version", CommandOptionType.SingleValue, Description = "Version Name")]
         public (bool HasValue, string Parameter) Version { get; private set; }
-        [Option("-fa|--formAction", CommandOptionType.SingleValue, Description = "Form Service Action")]
+        [Option("-fs|--formServicAction", CommandOptionType.SingleValue, Description = "Form Service Action")]
+        [AllowedValues(new string[] { "u", "r" })]
         public (bool HasValue, string Parameter) FormServiceAction { get; private set; }
         [Option("-sw|--stopOnWarning", CommandOptionType.SingleValue, Description = "Stop on Warning")]
         [AllowedValues(new string[] { "true", "false" }, IgnoreCase = true)]
@@ -22,12 +23,11 @@ namespace Celin
             var rq = Request;
             rq.formName = FormName.HasValue ? FormName.Parameter.ToUpper() : rq.formName;
             rq.version = Version.HasValue ? Version.Parameter : rq.version;
-            rq.formServiceAction = FormServiceAction.HasValue ? FormServiceAction.Parameter : rq.formServiceAction;
+            rq.formServiceAction = FormServiceAction.HasValue ? FormServiceAction.Parameter.ToUpper() : rq.formServiceAction;
             rq.stopOnWarning = StopOnWarning.HasValue ? StopOnWarning.Parameter.ToUpper() : rq.stopOnWarning;
             rq.queryObjectName = QueryObjectName.HasValue ? QueryObjectName.Parameter : rq.queryObjectName;
 
             var cmd = new FormRequestCmd(Request);
-            cmd.Display(OutFile, false);
 
             return 1;
         }

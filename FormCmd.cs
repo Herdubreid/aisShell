@@ -1,53 +1,42 @@
 ﻿using System;
+using System.Collections.Generic;
 using McMaster.Extensions.CommandLineUtils;
 namespace Celin
 {
     [Command("fm", Description = "Form Context")]
     [Subcommand("d", typeof(DefCmd))]
+    [Subcommand("fi", typeof(FormInpCmd))]
+    [Subcommand("fa", typeof(FormActCmd))]
+    [Subcommand("gi", typeof(GridInsCmd))]
+    [Subcommand("gu", typeof(GridUpdCmd))]
     [Subcommand("s", typeof(SubCmd))]
-    [Subcommand("l", typeof(ListCmd))]
+    [Subcommand("ex", typeof(ExpCmd))]
     [Subcommand("r", typeof(ResCmd))]
     [Subcommand("save", typeof(SaveCmd))]
     [Subcommand("load", typeof(LoadCmd))]
     public class FormCmd : BaseCmd
     {
         [Option("-c|--context", CommandOptionType.SingleValue, Description = "Context Id")]
-        public (bool HasValue, string Parameter) Id { get; }
-        [Command(Description = "List Parameters")]
-        class ListCmd : OutCmd
+        (bool HasValue, string Parameter) Id { get; }
+        [Option("-l|--listContexts", CommandOptionType.NoValue, Description = "List Contexts")]
+        bool List { get; }
+        [Command(Description = "Export Request")]
+        class ExpCmd : OutCmd
         {
-            [Option("-a|--all", CommandOptionType.NoValue, Description = "List All")]
+            [Option("-a|--all", CommandOptionType.NoValue, Description = "Export All")]
             bool All { get; }
-            [Option("-l|--long", CommandOptionType.NoValue, Description = "Long Format")]
-            bool Long { get; }
             FormCmd FormCmd { get; set; }
-            void Show(FormCtx formCtx)
-            {
-                var cmd = new DefCmd(formCtx.Request);
-                OutputLine(OutFile, String.Format("Form Context {0}", formCtx.Id));
-                cmd.Display(OutFile, Long);
-                if (Long)
-                {
-                    OutputLine("  formActions:");
-                    foreach (var fa in formCtx.Request.formActions)
-                    {
-                        var ctx = new FormActionCmd(fa as AIS.FormAction);
-                        Output("    ");
-                        ctx.Display(OutFile, false);
-                    }
-                }
-            }
             protected override int OnExecute()
             {
                 base.OnExecute();
                 if (FormCmd.OnExecute() == 1)
                 {
-                    if (!All && FormCtx.Current != null) Show(FormCtx.Current);
-                    if (All) foreach (var ctx in FormCtx.List) Show(ctx);
+                    if (!All && FormCtx.Current != null) Export(FormCtx.Current.Request);
+                    if (All) foreach (var ctx in FormCtx.List) Export(ctx.Request);
                 }
                 return 1;
             }
-            public ListCmd(FormCmd formCmd)
+            public ExpCmd(FormCmd formCmd)
             {
                 FormCmd = formCmd;
             }
@@ -87,26 +76,81 @@ namespace Celin
                 Responses = FormCtx.Responses;
             }
         }
-        [Command(Description = "Define Form Request")]
-        [Subcommand("fa", typeof(FormActCmd))]
+        [Command(Description = "Grid Insert")]
+        public class GridInsCmd : GridActionCmd<AIS.GridInsert>
+        {
+            public override List<AIS.RowEvent> RowEvents(AIS.GridInsert action)
+            {
+                return action.gridRowInsertEvents;
+            }
+            FormCmd FormCmd { get; set; }
+            protected override int OnExecute()
+            {
+                if (FormCmd.OnExecute() == 0) return 0;
+                FormActions = FormCtx.Current.Request.formActions;
+
+                return base.OnExecute();
+            }
+            public GridInsCmd(FormCmd formCmd)
+            {
+                FormCmd = formCmd;
+            }
+        }
+        [Command(Description = "Grid Update")]
+        public class GridUpdCmd : GridActionCmd<AIS.GridUpdate>
+        {
+            public override List<AIS.RowEvent> RowEvents(AIS.GridUpdate action)
+            {
+                return action.gridRowUpdateEvents;
+            }
+            FormCmd FormCmd { get; set; }
+            protected override int OnExecute()
+            {
+                if (FormCmd.OnExecute() == 0) return 0;
+                FormActions = FormCtx.Current.Request.formActions;
+
+                return base.OnExecute();
+            }
+            public GridUpdCmd(FormCmd formCmd)
+            {
+                FormCmd = formCmd;
+            }
+        }
+        [Command(Description = "Form Input", ThrowOnUnexpectedArgument = false)]
+        public class FormInpCmd : FormInputCmd
+        {
+            FormCmd FormCmd { get; set; }
+            protected override int OnExecute()
+            {
+                if (FormCmd.OnExecute() == 0) return 0;
+                FormInputs = FormCtx.Current.Request.formInputs;
+
+                return base.OnExecute();
+            }
+            public FormInpCmd(FormCmd formCmd)
+            {
+                FormCmd = formCmd;
+            }
+        }
+        [Command(Description = "Form Action", ThrowOnUnexpectedArgument = false)]
+        public class FormActCmd : FormActionCmd
+        {
+            FormCmd FormCmd { get; set; }
+            protected override int OnExecute()
+            {
+                if (FormCmd.OnExecute() == 0) return 0;
+                FormActions = FormCtx.Current.Request.formActions;
+
+                return base.OnExecute();
+            }
+            public FormActCmd(FormCmd formCmd)
+            {
+                FormCmd = formCmd;
+            }
+        }
+        [Command(Description = "Form Definition")]
         public class DefCmd : FormRequestCmd
         {
-            [Command(Description = "Form Action", ThrowOnUnexpectedArgument = false)]
-            public class FormActCmd : FormActionCmd
-            {
-                DefCmd DefCmd { get; set; }
-                protected override int OnExecute()
-                {
-                    if (DefCmd.OnExecute() == 0) return 0;
-                    FormActions = FormCtx.Current.Request.formActions;
-
-                    return base.OnExecute();
-                }
-                public FormActCmd(DefCmd defCmd)
-                {
-                    DefCmd = defCmd;
-                }
-            }
             FormCmd FormCmd { get; set; }
             protected override int OnExecute()
             {
@@ -131,8 +175,6 @@ namespace Celin
 
                 return base.OnExecute();
             }
-            public DefCmd(AIS.FormRequest rq) : base(rq)
-            {}
             public DefCmd(FormCmd formCmd)
             {
                 FormCmd = formCmd;
@@ -161,14 +203,16 @@ namespace Celin
                 FormCmd = formCmd;
             }
         }
-        int OnExecute()
+        protected int OnExecute()
         {
+            if (List) foreach (var c in FormCtx.List) Console.WriteLine(c.Id);
             if (Id.HasValue && !FormCtx.Select(Id.Parameter))
             {
                 Error("Form Context {0} not found!", Id.Parameter);
                 return 0;
             }
             Context = FormCtx.Current;
+
             return 1;
         }
         public static void AddCmd()

@@ -10,11 +10,38 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Converters;
 namespace Celin
 {
+    public class GridConverter : CustomCreationConverter<AIS.Grid>
+    {
+        public override AIS.Grid Create(Type objectType)
+        {
+            return null;
+        }
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            var jsonObject = JObject.Load(reader);
+
+            if (jsonObject.ContainsKey("gridRowInsertEvents"))
+            {
+                return jsonObject.ToObject<AIS.GridInsert>();
+            }
+            return jsonObject.ToObject<AIS.GridUpdate>();
+        }
+    }
     public class ActionConverter : CustomCreationConverter<AIS.Action>
     {
         public override AIS.Action Create(Type objectType)
         {
-            return new AIS.FormAction();
+            return null;
+        }
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            var jsonObject = JObject.Load(reader);
+            if (jsonObject.ContainsKey("controlID"))
+            {
+                return jsonObject.ToObject<AIS.FormAction>();
+            }
+            var ga = JsonConvert.DeserializeObject<AIS.GridAction>(jsonObject.ToString(), new GridConverter());
+            return ga;
         }
     }
     public class Response<T> where T : AIS.Request
@@ -90,7 +117,8 @@ namespace Celin
         string Cmd { get; set; }
         string Id { get; set; }
     }
-    public abstract class CtxId<T> : ICtxId where T : ICtxId
+    public abstract class CtxId<T> : ICtxId
+        where T : ICtxId
     {
         public static List<T> List { get; set; } = new List<T>();
         public static T Current { get; set; }

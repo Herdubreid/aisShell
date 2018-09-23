@@ -51,14 +51,8 @@ namespace Celin
                 {
                     return e.GetType() == typeof(AIS.FormAction) && (e as AIS.FormAction).controlID.Equals(ControlID.Parameter);
                 });
-                if (fa is null) Warning("ControlID {0} not found!", ControlID.Parameter);
+                if (fa is null) Error("ControlID {0} not found!", ControlID.Parameter);
                 else if (Remove) FormActions.Remove(fa);
-            }
-
-            foreach (var fa in FormActions)
-            {
-                var cmd = new FormActionCmd(fa as AIS.FormAction);
-                cmd.Display(OutFile, false);
             }
 
             return 1;
@@ -69,8 +63,6 @@ namespace Celin
             Command = (false, a.command);
             Value = (false, a.value);
         }
-        public FormActionCmd()
-        {
-        }
+        public FormActionCmd() { }
     }
 }

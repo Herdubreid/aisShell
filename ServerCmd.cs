@@ -7,36 +7,30 @@ namespace Celin
     [Command("sv", Description = "AIS Server Context")]
     [Subcommand("d", typeof(DefCmd))]
     [Subcommand("c", typeof(ConCmd))]
-    [Subcommand("l", typeof(ListCmd))]
+    [Subcommand("ex", typeof(ExpCmd))]
     [Subcommand("save", typeof(SaveCmd))]
     [Subcommand("load", typeof(LoadCmd))]
     public class ServerCmd : BaseCmd
     {
         [Option("-c|--context", CommandOptionType.SingleValue, Description = "Server Context")]
         public (bool HasValue, string Parameter) Id { get; private set; }
-        [Command(Description = "List Servers")]
-        class ListCmd : OutCmd
+        [Option("-l|--listContexts", CommandOptionType.NoValue, Description = "List Contexts")]
+        bool List { get; }
+        [Command(Description = "Export Servers")]
+        class ExpCmd : OutCmd
         {
-            [Option("-a|--all", CommandOptionType.NoValue, Description = "List All")]
+            [Option("-a|--all", CommandOptionType.NoValue, Description = "Export All")]
             bool All { get; }
-            [Option("-l|--long", CommandOptionType.NoValue, Description = "Long Format")]
-            bool Long { get; }
             ServerCmd ServerCmd { get; set; }
-            void Show(ServerCtx serverCtx)
-            {
-                var cmd = new DefCmd(serverCtx);
-                OutputLine(OutFile, String.Format("Server Context {0}", serverCtx.Id));
-                cmd.Display(OutFile, Long);
-            }
             protected override int OnExecute()
             {
                 base.OnExecute();
                 ServerCmd.OnExecute();
-                if (!All && ServerCtx.Current != null) Show(ServerCtx.Current);
-                if (All) foreach (var ctx in ServerCtx.List) Show(ctx);
+                if (!All && ServerCtx.Current != null) Export(ServerCtx.Current.Server);
+                if (All) foreach (var ctx in ServerCtx.List) Export(ctx.Server);
                 return 1;
             }
-            public ListCmd(ServerCmd serverCmd)
+            public ExpCmd(ServerCmd serverCmd)
             {
                 ServerCmd = serverCmd;
             }
@@ -95,7 +89,7 @@ namespace Celin
                     Error("No Server Context!");
                     return 1;
                 }
-                ServerCtx.Current.Server.BaseUrl = BaseUrl.Parameter;
+                if (BaseUrl.HasValue) ServerCtx.Current.Server.BaseUrl = BaseUrl.Parameter;
                 var rq = ServerCtx.Current.Server.AuthRequest;
                 if (Device.HasValue) rq.deviceName = Device.Parameter;
                 if (RequiredCapabilities.HasValue) rq.requiredCapabilities = RequiredCapabilities.Parameter;
@@ -172,9 +166,11 @@ namespace Celin
         }
         public int OnExecute()
         {
-            if (Id.HasValue)
+            if (List) foreach (var c in ServerCtx.List) Console.WriteLine(c.Id);
+            if (Id.HasValue && !ServerCtx.Select(Id.Parameter))
             {
-                return ServerCtx.Select(Id.Parameter) ? 1 : 0;
+                Error("Server Context '{0}' not found!", Id.Parameter);
+                return 0;
             }
             return 1;
         }
