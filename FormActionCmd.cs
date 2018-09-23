@@ -6,9 +6,9 @@ namespace Celin
     public class FormActionCmd : OutCmd
     {
         [Option("-rm|--remove", CommandOptionType.NoValue, Description = "Remove Form Action")]
-        protected bool Remove { get; set; }
+        protected bool Remove { get; }
         [Argument(0, Description = "Control Id")]
-        public (bool HasValue, string Parameter) ControlID { get; private set; }
+        protected (bool HasValue, string Parameter) ControlID { get; }
         [Argument(1, Description = "Command")]
         [AllowedValues(new string[]
         {
@@ -25,9 +25,9 @@ namespace Celin
                 "ClickGridCell",
                 "ClickGridColumnAggregate"
         })]
-        public (bool HasValue, string Parameter) Command { get; private set; }
+        protected (bool HasValue, string Parameter) Command { get; }
         [Argument(2, Description = "Value")]
-        public (bool HasValue, string Parameter) Value { get; private set; }
+        protected (bool HasValue, string Parameter) Value { get; }
         public List<AIS.Action> FormActions { get; set; }
         protected List<string> RemainingArguments { get; }
         protected override int OnExecute()

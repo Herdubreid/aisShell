@@ -7,7 +7,7 @@ namespace Celin
     [Command("sv", Description = "AIS Server Context")]
     [Subcommand("d", typeof(DefCmd))]
     [Subcommand("c", typeof(ConCmd))]
-    [Subcommand("ex", typeof(ExpCmd))]
+    [Subcommand("exp", typeof(ExpCmd))]
     [Subcommand("save", typeof(SaveCmd))]
     [Subcommand("load", typeof(LoadCmd))]
     public class ServerCmd : BaseCmd

@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Linq;
 using McMaster.Extensions.CommandLineUtils;
 namespace Celin
 {
     [Command("dt", Description = "Data Context")]
     [Subcommand("d", typeof(DefCmd))]
-    [Subcommand("ex", typeof(ExpCmd))]
+    [Subcommand("qry", typeof(QryCmd))]
+    [Subcommand("exp", typeof(ExpCmd))]
     [Subcommand("s", typeof(SubCmd))]
     [Subcommand("r", typeof(ResCmd))]
     [Subcommand("save", typeof(SaveCmd))]
@@ -64,6 +64,39 @@ namespace Celin
                 DataCmd = dataCmd;
             }
         }
+        [Command(Description = "Query")]
+        [Subcommand("cn", typeof(CondCmd))]
+        class QryCmd : QueryCmd
+        {
+            [Command(Description = "Condition", ThrowOnUnexpectedArgument = false)]
+            class CondCmd : ConditionCmd
+            {
+                protected override int OnExecute()
+                {
+                    if (QryCmd.OnExecute() == 0) return 0;
+                    Request = DataCtx.Current.Request;
+
+                    return base.OnExecute();
+                }
+                QryCmd QryCmd { get; set; }
+                public CondCmd(QryCmd qryCmd)
+                {
+                    QryCmd = qryCmd;
+                }
+            }
+            protected override int OnExecute()
+            {
+                if (DataCmd.OnExecute() == 0) return 0;
+                Request = DataCtx.Current.Request;
+
+                return base.OnExecute();
+            }
+            DataCmd DataCmd { get; set; }
+            public QryCmd(DataCmd dataCmd)
+            {
+                DataCmd = dataCmd;
+            }
+        }
         [Command(Description = "Define")]
         class DefCmd : RequestCmd<AIS.DatabrowserRequest>
         {
@@ -98,11 +131,6 @@ namespace Celin
                 rq.targetName = TargetName.HasValue ? TargetName.Parameter.ToUpper() : rq.targetName;
                 rq.targetType = ViewTarget ? VIEW : TABLE;
                 return 1;
-            }
-            public DefCmd(AIS.DatabrowserRequest rq) : base(rq)
-            {
-                TargetName = (false, rq.targetName);
-                ViewTarget = rq.targetType.Equals(VIEW);
             }
             public DefCmd(DataCmd dataCmd)
             {

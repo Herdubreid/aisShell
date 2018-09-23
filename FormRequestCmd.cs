@@ -1,5 +1,4 @@
-﻿using System;
-using McMaster.Extensions.CommandLineUtils;
+﻿using McMaster.Extensions.CommandLineUtils;
 namespace Celin
 {
     public class FormRequestCmd : RequestCmd<AIS.FormRequest>
@@ -10,7 +9,7 @@ namespace Celin
         [Option("-v|--version", CommandOptionType.SingleValue, Description = "Version Name")]
         public (bool HasValue, string Parameter) Version { get; private set; }
         [Option("-fs|--formServicAction", CommandOptionType.SingleValue, Description = "Form Service Action")]
-        [AllowedValues(new string[] { "u", "r" })]
+        [AllowedValues(new string[] { "r", "c", "u", "d" })]
         public (bool HasValue, string Parameter) FormServiceAction { get; private set; }
         [Option("-sw|--stopOnWarning", CommandOptionType.SingleValue, Description = "Stop on Warning")]
         [AllowedValues(new string[] { "true", "false" }, IgnoreCase = true)]
@@ -27,20 +26,7 @@ namespace Celin
             rq.stopOnWarning = StopOnWarning.HasValue ? StopOnWarning.Parameter.ToUpper() : rq.stopOnWarning;
             rq.queryObjectName = QueryObjectName.HasValue ? QueryObjectName.Parameter : rq.queryObjectName;
 
-            var cmd = new FormRequestCmd(Request);
-
             return 1;
-        }
-        public FormRequestCmd(AIS.FormRequest rq) : base(rq)
-        {
-            FormName = (false, rq.formName);
-            Version = (false, rq.version);
-            FormServiceAction = (false, rq.formServiceAction);
-            StopOnWarning = (false, rq.stopOnWarning);
-            QueryObjectName = (false, rq.queryObjectName);
-        }
-        public FormRequestCmd()
-        {
         }
     }
 }

@@ -9,8 +9,9 @@ namespace Celin
     [Subcommand("fa", typeof(FormActCmd))]
     [Subcommand("gi", typeof(GridInsCmd))]
     [Subcommand("gu", typeof(GridUpdCmd))]
+    [Subcommand("qry", typeof(QryCmd))]
     [Subcommand("s", typeof(SubCmd))]
-    [Subcommand("ex", typeof(ExpCmd))]
+    [Subcommand("exp", typeof(ExpCmd))]
     [Subcommand("r", typeof(ResCmd))]
     [Subcommand("save", typeof(SaveCmd))]
     [Subcommand("load", typeof(LoadCmd))]
@@ -74,6 +75,39 @@ namespace Celin
             public ResCmd()
             {
                 Responses = FormCtx.Responses;
+            }
+        }
+        [Command(Description = "Query")]
+        [Subcommand("cn", typeof(CondCmd))]
+        class QryCmd : QueryCmd
+        {
+            [Command(Description = "Condition", ThrowOnUnexpectedArgument = false)]
+            class CondCmd : ConditionCmd
+            {
+                protected override int OnExecute()
+                {
+                    if (QryCmd.OnExecute() == 0) return 0;
+                    Request = FormCtx.Current.Request;
+
+                    return base.OnExecute();
+                }
+                QryCmd QryCmd { get; set; }
+                public CondCmd(QryCmd qryCmd)
+                {
+                    QryCmd = qryCmd;
+                }
+            }
+            protected override int OnExecute()
+            {
+                if (FormCmd.OnExecute() == 0) return 0;
+                Request = FormCtx.Current.Request;
+
+                return base.OnExecute();
+            }
+            FormCmd FormCmd { get; set; }
+            public QryCmd(FormCmd formCmd)
+            {
+                FormCmd = formCmd;
             }
         }
         [Command(Description = "Grid Insert")]

@@ -12,7 +12,7 @@ namespace Celin
     [Subcommand("o", typeof(OpenCmd))]
     [Subcommand("e", typeof(ExecuteCmd))]
     [Subcommand("c", typeof(CloseCmd))]
-    [Subcommand("ex", typeof(ExpCmd))]
+    [Subcommand("exp", typeof(ExpCmd))]
     [Subcommand("r", typeof(ResCmd))]
     [Subcommand("save", typeof(SaveCmd))]
     [Subcommand("load", typeof(LoadCmd))]
@@ -76,8 +76,41 @@ namespace Celin
         [Subcommand("fi", typeof(FormInpCmd))]
         [Subcommand("gu", typeof(GridUpdCmd))]
         [Subcommand("gi", typeof(GridInsCmd))]
+        [Subcommand("qry", typeof(QryCmd))]
         public class FormReqCmd : FormRequestCmd
         {
+            [Command(Description = "Query")]
+            [Subcommand("cn", typeof(CondCmd))]
+            class QryCmd : QueryCmd
+            {
+                [Command(Description = "Condition", ThrowOnUnexpectedArgument = false)]
+                class CondCmd : ConditionCmd
+                {
+                    protected override int OnExecute()
+                    {
+                        if (QryCmd.OnExecute() == 0) return 0;
+                        Request = StackFormCtx.Current.Request.formRequest;
+                        return base.OnExecute();
+                    }
+                    QryCmd QryCmd { get; set; }
+                    public CondCmd(QryCmd qryCmd)
+                    {
+                        QryCmd = qryCmd;
+                    }
+                }
+                protected override int OnExecute()
+                {
+                    if (FormReqCmd.OnExecute() == 0) return 0;
+                    Request = StackFormCtx.Current.Request.formRequest;
+
+                    return base.OnExecute();
+                }
+                FormReqCmd FormReqCmd { get; set; }
+                public QryCmd(FormReqCmd formReqCmd)
+                {
+                    FormReqCmd = formReqCmd;
+                }
+            }
             [Command(Description = "Grid Insert")]
             public class GridInsCmd : GridActionCmd<AIS.GridInsert>
             {
@@ -166,8 +199,6 @@ namespace Celin
 
                 return base.OnExecute();
             }
-            public FormReqCmd(AIS.FormRequest rq) : base(rq)
-            { }
             public FormReqCmd(StackFormCmd stackFormCmd)
             {
                 StackFormCmd = stackFormCmd;
