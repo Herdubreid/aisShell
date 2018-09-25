@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aisShell", "aisShell.csproj", "{DED818B0-BAA9-4508-8FD7-9FC1DE714EDA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Celin.AIS", "..\Celin.AIS\Celin.AIS.csproj", "{4BA076AB-80EE-4DDD-856B-F7BA3DB851DA}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,13 +19,5 @@ Global
 		{DED818B0-BAA9-4508-8FD7-9FC1DE714EDA}.Debug|x86.Build.0 = Debug|Any CPU
 		{DED818B0-BAA9-4508-8FD7-9FC1DE714EDA}.Release|x86.ActiveCfg = Release|Any CPU
 		{DED818B0-BAA9-4508-8FD7-9FC1DE714EDA}.Release|x86.Build.0 = Release|Any CPU
-		{4BA076AB-80EE-4DDD-856B-F7BA3DB851DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4BA076AB-80EE-4DDD-856B-F7BA3DB851DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4BA076AB-80EE-4DDD-856B-F7BA3DB851DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4BA076AB-80EE-4DDD-856B-F7BA3DB851DA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4BA076AB-80EE-4DDD-856B-F7BA3DB851DA}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{4BA076AB-80EE-4DDD-856B-F7BA3DB851DA}.Debug|x86.Build.0 = Debug|Any CPU
-		{4BA076AB-80EE-4DDD-856B-F7BA3DB851DA}.Release|x86.ActiveCfg = Release|Any CPU
-		{4BA076AB-80EE-4DDD-856B-F7BA3DB851DA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

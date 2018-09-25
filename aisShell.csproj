@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="2.2.5" />
-    <PackageReference Include="NuGet.Build.Packaging" Version="0.2.0" />
+    <PackageReference Include="NuGet.Build.Packaging" Version="0.2.2" />
     <PackageReference Include="Colorful.Console" Version="1.2.9" />
     <PackageReference Include="Celin.AIS" Version="0.6.0" />
   </ItemGroup>
@@ -34,4 +34,21 @@
     <Compile Remove="ContextCmd.cs" />
     <Compile Remove="RowEventCmd.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\" />
+    <Folder Include="src\cmd\" />
+    <Folder Include="src\cmd\base\" />
+    <Folder Include="src\ctxs\" />
+    <Folder Include="src\ctxs\base\" />
+    <Folder Include="files\" />
+  </ItemGroup>
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <DotNetNamingPolicy DirectoryNamespaceAssociation="None" ResourceNamePolicy="FileFormatDefault" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
 </Project>

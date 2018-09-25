@@ -35,7 +35,7 @@ namespace Celin
     public class BaseCmd
     {
         public static List<Cmd> Commands { get; } = new List<Cmd>();
-        public static ICtxId Context { get; set; }
+        public static IBaseCtx Context { get; set; }
         public static string PromptTx
         {
             get

@@ -5,11 +5,12 @@ namespace Celin
 {
     public abstract class OutCmd : BaseCmd
     {
+        public static readonly string Extension = ".json";
         [Option("-of|--outFile", CommandOptionType.SingleValue, Description = "Write Result to File")]
         protected (bool HasValue, string Parameter) OutFile { get; set; }
         public void Output(ValueTuple<bool, string> outFile, string result)
         {
-            if (outFile.Item1) using (StreamWriter sw = File.AppendText(outFile.Item2 + ".txt")) sw.Write(result);
+            if (outFile.Item1) using (StreamWriter sw = File.AppendText(outFile.Item2 + Extension)) sw.Write(result);
             else Console.Write(result);
         }
         public void Output(string result)
@@ -18,7 +19,7 @@ namespace Celin
         }
         public void OutputLine(ValueTuple<bool, string> outFile, string result = null)
         {
-            if (outFile.Item1) using (StreamWriter sw = File.AppendText(outFile.Item2 + ".txt")) sw.WriteLine(result);
+            if (outFile.Item1) using (StreamWriter sw = File.AppendText(outFile.Item2 + Extension)) sw.WriteLine(result);
             else Console.WriteLine(result);
         }
         public void OutputLine(string result = null)

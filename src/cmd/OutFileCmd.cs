@@ -12,7 +12,7 @@ namespace Celin
         protected int OnExecute()
         {
             OutCmd.DefaultOutFile = Clear ? null : OutFile.HasValue ? OutFile.Parameter : null;
-            Success(OutCmd.DefaultOutFile is null ? "No Default Output File" : string.Format("Output Default {0}.txt", OutCmd.DefaultOutFile));
+            Success(OutCmd.DefaultOutFile is null ? "No Default Output File" : string.Format("Output Default {0}{1}", OutCmd.DefaultOutFile, OutCmd.Extension));
 
             return 1;
         }

@@ -1,0 +1,33 @@
+// Create Stack Form Request
+sfm -c step1 d fr -fn p01012_w01012b -rc 54|1[19,20] -mp 5
+// Add Form Actions
+fr fa 54 SetControlValue E
+fr fa 15 DoAction
+// Open
+o
+
+// Create Stack Form Action
+sfm -c step2 d sa -fo w01012b -rc 28
+// Add Stack Form Actions
+sa fa 1.3 SelectRow
+sa fa 14 DoAction
+// Execute
+e
+
+// Create Stack Form Action
+sfm -c step3 d sa -fo w01012a -rc 28
+// Add Stack Form Actions
+sa fa 28 SetControlValue AIS APP Stack TEST
+sa fa 11 DoAction
+// Execute
+e
+
+// Create Stack Form Action
+sfm -c step4 sa -fo w01012a -rc 54|1[19,20]
+// Add Form Action
+sa fa 12
+// Execute
+e
+
+// Close
+c
