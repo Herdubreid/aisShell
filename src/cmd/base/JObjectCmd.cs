@@ -9,6 +9,48 @@ namespace Celin
         private JToken _jToken;
         [Option("-k|--key", CommandOptionType.SingleValue, Description = "Object Key")]
         protected (bool HasValue, string Parameter) Key { get; }
+        [Option("-d|--depth", CommandOptionType.SingleValue, Description = "Iteration Depth")]
+        protected int? Depth { get; set; }
+        protected void Trim(ref JArray jArray, ref int depth)
+        {
+            depth++;
+            if (Depth.HasValue && Depth.Value < depth) jArray.RemoveAll();
+            foreach (var e in jArray)
+            {
+                switch (e.Type)
+                {
+                    case JTokenType.Array:
+                        var a = e as JArray;
+                        Trim(ref a, ref depth);
+                        break;
+                    case JTokenType.Object:
+                        var o = e as JObject;
+                        Trim(ref o, ref depth);
+                        break;
+                }
+            }
+            depth--;
+        }
+        protected void Trim(ref JObject jObject, ref int depth)
+        {
+            depth++;
+            foreach (var e in jObject)
+            {
+                switch (e.Value.Type)
+                {
+                    case JTokenType.Array:
+                        var a = e.Value as JArray;
+                        Trim(ref a, ref depth);
+                        break;
+                    case JTokenType.Object:
+                        var o = e.Value as JObject;
+                        if (Depth.HasValue && Depth.Value < depth) o.RemoveAll();
+                        else Trim(ref o, ref depth);
+                        break;
+                }
+            }
+            depth--;
+        }
         protected JToken JToken
         {
             get => _jToken;
@@ -21,6 +63,21 @@ namespace Celin
                 else
                 {
                     _jToken = value;
+                }
+                if (Depth.HasValue && _jToken != null)
+                {
+                    var depth = 0;
+                    switch (JToken.Type)
+                    {
+                        case JTokenType.Object:
+                            var o = JToken as JObject;
+                            Trim(ref o, ref depth);
+                            break;
+                        case JTokenType.Array:
+                            var a = JToken as JArray;
+                            Trim(ref a, ref depth);
+                            break;
+                    }
                 }
             }
         }
@@ -74,18 +131,22 @@ namespace Celin
             }
             return res;
         }
-        protected bool NullJToken()
+        protected bool NullJToken
         {
-            if (JToken is null)
+            get
             {
-                Warning("Key '{0}' not found!", Key.Parameter);
-                return true;
+                if (JToken is null)
+                {
+                    Warning("Key '{0}' not found!", Key.Parameter);
+                    return true;
+                }
+                return false;
             }
-            return false;
         }
+
         protected void Dump()
         {
-            if (NullJToken()) return;
+            if (NullJToken) return;
             if (JToken.Type == JTokenType.Array) foreach (var e in JToken as JArray) OutputLine(e.ToString());
             else OutputLine(JToken.ToString());
         }

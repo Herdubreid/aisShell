@@ -53,7 +53,7 @@ namespace Celin
                 protected override int OnExecute()
                 {
                     ExpCmd.Iter = true;
-                    if (ExpCmd.OnExecute() == 0 || ExpCmd.NullJToken()) return 0;
+                    if (ExpCmd.OnExecute() == 0 || ExpCmd.NullJToken) return 0;
                     JToken = ExpCmd.JToken;
                     return base.OnExecute();
                 }

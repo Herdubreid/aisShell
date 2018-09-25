@@ -31,7 +31,7 @@ namespace Celin
                 protected override int OnExecute()
                 {
                     ExpCmd.Iter = true;
-                    if (ExpCmd.OnExecute() == 0 || ExpCmd.NullJToken()) return 0;
+                    if (ExpCmd.OnExecute() == 0 || ExpCmd.NullJToken) return 0;
                     JToken = ExpCmd.JToken;
                     return base.OnExecute();
                 }
@@ -93,7 +93,7 @@ namespace Celin
                 protected override int OnExecute()
                 {
                     ResCmd.Iter = true;
-                    if (ResCmd.OnExecute() == 0 || ResCmd.NullJToken()) return 0;
+                    if (ResCmd.OnExecute() == 0 || ResCmd.NullJToken) return 0;
                     JToken = ResCmd.JToken;
                     return base.OnExecute();
                 }
