@@ -44,20 +44,16 @@ namespace Celin
             }
         }
         [Command(Description = "Export Request")]
-        class ExpCmd : OutCmd
+        class ExpCmd : JObjectCmd
         {
-            [Option("-a|--all", CommandOptionType.NoValue, Description = "Export All")]
-            bool All { get; }
             DataCmd DataCmd { get; set; }
             protected override int OnExecute()
             {
-                base.OnExecute();
-                if (DataCmd.OnExecute() == 1)
-                {
-                    if (!All && DataCtx.Current != null) Export(DataCtx.Current.Request);
-                    if (All) foreach (var ctx in DataCtx.List) Export(ctx.Request);
-                }
-                return 1;
+                if (DataCmd.OnExecute() == 0) return 0;
+                Object = DataCtx.Current.Request;
+                Dump();
+
+                return base.OnExecute();
             }
             public ExpCmd(DataCmd dataCmd)
             {

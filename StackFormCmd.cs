@@ -23,20 +23,16 @@ namespace Celin
         [Option("-l|--listContexts", CommandOptionType.NoValue, Description = "List Contexts")]
         bool List { get; }
         [Command(Description = "Export Request")]
-        class ExpCmd : OutCmd
+        class ExpCmd : JObjectCmd
         {
-            [Option("-a|--all", CommandOptionType.NoValue, Description = "Export All")]
-            bool All { get; }
             StackFormCmd StackFormCmd { get; set; }
             protected override int OnExecute()
             {
-                base.OnExecute();
-                if (StackFormCmd.OnExecute() == 1)
-                {
-                    if (!All && StackFormCtx.Current != null) Export(StackFormCtx.Current.Request);
-                    if (All) foreach (var ctx in StackFormCtx.List) Export(ctx.Request);
-                }
-                return 1;
+                if (StackFormCmd.OnExecute() == 0) return 0;
+                Object = StackFormCtx.Current.Request;
+                Dump();
+
+                return base.OnExecute();
             }
             public ExpCmd(StackFormCmd stackFormCmd)
             {
@@ -412,7 +408,7 @@ namespace Celin
                     var ndx = 0;
                     foreach (var rs in ResCmd.Responses)
                     {
-                        OutputLine(string.Format("{0, 3} {1}", ndx++, rs[Key]));
+                        OutputLine(string.Format("{0, 3} {1}", ndx++, ResCmd.FindKey(rs.Result)));
                     }
 
                     return 1;

@@ -21,7 +21,7 @@ namespace Celin
             base.OnExecute();
             var rq = Request;
             rq.formName = FormName.HasValue ? FormName.Parameter.ToUpper() : rq.formName;
-            rq.version = Version.HasValue ? Version.Parameter : rq.version;
+            rq.version = Version.HasValue ? Version.Parameter.ToUpper() : rq.version;
             rq.formServiceAction = FormServiceAction.HasValue ? FormServiceAction.Parameter.ToUpper() : rq.formServiceAction;
             rq.stopOnWarning = StopOnWarning.HasValue ? StopOnWarning.Parameter.ToUpper() : rq.stopOnWarning;
             rq.queryObjectName = QueryObjectName.HasValue ? QueryObjectName.Parameter : rq.queryObjectName;

@@ -2,16 +2,13 @@
 using System.Linq;
 using System.Collections.Generic;
 using McMaster.Extensions.CommandLineUtils;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 namespace Celin
 {
-    public abstract class ResponseCmd<T> : OutCmd where T : AIS.Request
+    public abstract class ResponseCmd<T> : JObjectCmd where T : AIS.Request
     {
-        [Option("-i|--index", CommandOptionType.SingleValue, Description = "Response's Zero Based Index")]
-        protected (bool HasValue, int Parameter) Index { get; private set; }
-        [Option("-k|--key", CommandOptionType.SingleValue, Description = "Response Key Name")]
-        protected (bool HasValue, string Parameter) Key { get; private set; }
+        [Option("-i|--index", CommandOptionType.SingleValue, Description = "Zero Based Index")]
+        protected (bool HasValue, int Parameter) Index { get; }
         [Option("-d|--depth", CommandOptionType.SingleValue, Description = "Iteration Depth")]
         protected int? Depth { get; set; }
         [Option("-fm|--formMembers", CommandOptionType.NoValue, Description = "Form Members")]
@@ -107,7 +104,7 @@ namespace Celin
                 if (GridMembers) DisplayGridMembers(res);
                 if (!FormMembers && !GridMembers)
                 {
-                    var j = Key.HasValue ? res[Key.Parameter] : res.Result;
+                    var j = FindKey(res.Result);
                     if (j.Type == JTokenType.Object) OutputChildren(j as JObject, ref depth);
                     if (j.Type == JTokenType.Array) OutputChildren(Key.Parameter, j as JArray, ref depth);
                 }

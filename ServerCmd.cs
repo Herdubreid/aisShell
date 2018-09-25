@@ -17,18 +17,16 @@ namespace Celin
         [Option("-l|--listContexts", CommandOptionType.NoValue, Description = "List Contexts")]
         bool List { get; }
         [Command(Description = "Export Servers")]
-        class ExpCmd : OutCmd
+        class ExpCmd : JObjectCmd
         {
-            [Option("-a|--all", CommandOptionType.NoValue, Description = "Export All")]
-            bool All { get; }
             ServerCmd ServerCmd { get; set; }
             protected override int OnExecute()
             {
-                base.OnExecute();
-                ServerCmd.OnExecute();
-                if (!All && ServerCtx.Current != null) Export(ServerCtx.Current.Server);
-                if (All) foreach (var ctx in ServerCtx.List) Export(ctx.Server);
-                return 1;
+                if (ServerCmd.OnExecute() == 0) return 0;
+                Object = ServerCtx.Current.Server;
+                Dump();
+
+                return base.OnExecute();
             }
             public ExpCmd(ServerCmd serverCmd)
             {

@@ -79,38 +79,6 @@ namespace Celin
                 return result;
             }
         }
-        JToken FindKey(JArray json, string key)
-        {
-            foreach (var e in json)
-            {
-                var res = e.Children().Any() ?
-                            e.GetType() == typeof(JArray) ?
-                            FindKey((JArray)e, key) :
-                            FindKey((JObject)e, key) : null;
-                if (res != null) return res;
-            }
-            return null;
-        }
-        JToken FindKey(JObject json, string key)
-        {
-            var res = json[key];
-            if (res is null)
-            {
-                foreach (var e in json)
-                {
-                    res = e.Value.Children().Any() ?
-                                e.Value.GetType() == typeof(JArray) ?
-                                FindKey((JArray)e.Value, key) :
-                                FindKey((JObject)e.Value, key) : null;
-                    if (res != null) return res;
-                }
-            }
-            return res;
-        }
-        public JToken this[string key]
-        {
-            get => FindKey(Result, key);
-        }
     }
     public interface ICtxId
     {

@@ -1,10 +1,13 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using McMaster.Extensions.CommandLineUtils;
 namespace Celin
 {
     public class FormActionCmd : OutCmd
     {
+        [Option("-i|--index", CommandOptionType.SingleValue, Description = "Add or Remove Zero-based Index")]
+        protected (bool HasValue, int Parameter) Index { get; }
         [Option("-rm|--remove", CommandOptionType.NoValue, Description = "Remove Form Action")]
         protected bool Remove { get; }
         [Argument(0, Description = "Control Id")]
@@ -33,27 +36,39 @@ namespace Celin
         protected override int OnExecute()
         {
             base.OnExecute();
-            if (ControlID.HasValue && Command.HasValue)
+            try
             {
-                var value = Value.HasValue ? RemainingArguments.Count > 0
-                                 ? Value.Parameter + " " + RemainingArguments.Aggregate((a, s) => a + " " + s)
-                                 : Value.Parameter : "";
-                FormActions.Add(new AIS.FormAction()
+
+                if (ControlID.HasValue && Command.HasValue)
                 {
-                    controlID = ControlID.Parameter,
-                    command = Command.Parameter,
-                    value = value
-                });
-            }
-            else if (ControlID.HasValue)
-            {
-                var fa = FormActions.Find(e =>
+                    var value = Value.HasValue ? RemainingArguments.Count > 0
+                                     ? Value.Parameter + " " + RemainingArguments.Aggregate((a, s) => a + " " + s)
+                                     : Value.Parameter : "";
+                    var fa = new AIS.FormAction()
+                    {
+                        controlID = ControlID.Parameter,
+                        command = Command.Parameter,
+                        value = value
+                    };
+                    if (Index.HasValue)
+                    {
+                        FormActions.Insert(Index.Parameter, fa);
+                    }
+                    else FormActions.Add(fa);
+                }
+                else if (ControlID.HasValue || Index.HasValue)
                 {
-                    return e.GetType() == typeof(AIS.FormAction) && (e as AIS.FormAction).controlID.Equals(ControlID.Parameter);
-                });
-                if (fa is null) Error("ControlID {0} not found!", ControlID.Parameter);
-                else if (Remove) FormActions.Remove(fa);
+                    var fa = Index.HasValue
+                                  ? FormActions[Index.Parameter]
+                                  : FormActions.Find(e =>
+                                  {
+                                      return e.GetType() == typeof(AIS.FormAction) && (e as AIS.FormAction).controlID.Equals(ControlID.Parameter);
+                                  });
+                    if (fa is null) Error("ControlID {0} not found!", ControlID.Parameter);
+                    else if (Remove) FormActions.Remove(fa);
+                }
             }
+            catch (Exception e) { Error(e.Message); }
 
             return 1;
         }

@@ -22,20 +22,16 @@ namespace Celin
         [Option("-l|--listContexts", CommandOptionType.NoValue, Description = "List Contexts")]
         bool List { get; }
         [Command(Description = "Export Request")]
-        class ExpCmd : OutCmd
+        class ExpCmd : JObjectCmd
         {
-            [Option("-a|--all", CommandOptionType.NoValue, Description = "Export All")]
-            bool All { get; }
             FormCmd FormCmd { get; set; }
             protected override int OnExecute()
             {
-                base.OnExecute();
-                if (FormCmd.OnExecute() == 1)
-                {
-                    if (!All && FormCtx.Current != null) Export(FormCtx.Current.Request);
-                    if (All) foreach (var ctx in FormCtx.List) Export(ctx.Request);
-                }
-                return 1;
+                if (FormCmd.OnExecute() == 0) return 0;
+                Object = FormCtx.Current.Request;
+                Dump();
+
+                return base.OnExecute();
             }
             public ExpCmd(FormCmd formCmd)
             {

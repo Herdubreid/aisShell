@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using McMaster.Extensions.CommandLineUtils;
-using Newtonsoft.Json;
 namespace Celin
 {
     public abstract class OutCmd : BaseCmd
@@ -25,14 +24,6 @@ namespace Celin
         public void OutputLine(string result = null)
         {
             OutputLine(OutFile, result);
-        }
-        public void Export(object obj)
-        {
-            var json = JsonConvert.SerializeObject(obj, Formatting.Indented, new JsonSerializerSettings()
-            {
-                NullValueHandling = NullValueHandling.Ignore
-            });
-            OutputLine(json);
         }
         public static string DefaultOutFile { get; set; } = null;
         protected virtual int OnExecute()
