@@ -6,7 +6,7 @@ namespace Celin
     public class OutFileCmd : BaseCmd
     {
         [Argument(0, Description = "Default Output File")]
-        (bool HasValue, string Parameter) OutFile { get; }
+        protected (bool HasValue, string Parameter) OutFile { get; }
         [Option("-c|--clear", CommandOptionType.NoValue, Description = "Clear Default Output File")]
         bool Clear { get; set; }
         protected int OnExecute()

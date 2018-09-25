@@ -18,20 +18,38 @@ namespace Celin
     public class FormCmd : BaseCmd
     {
         [Option("-c|--context", CommandOptionType.SingleValue, Description = "Context Id")]
-        (bool HasValue, string Parameter) Id { get; }
+        protected (bool HasValue, string Parameter) Id { get; }
         [Option("-l|--listContexts", CommandOptionType.NoValue, Description = "List Contexts")]
-        bool List { get; }
+        protected bool List { get; }
         [Command(Description = "Export Request")]
+        [Subcommand("it", typeof(IterCmd))]
         class ExpCmd : JObjectCmd
         {
-            FormCmd FormCmd { get; set; }
+            [Command(Description = "Iterate")]
+            class IterCmd : JArrayCmd
+            {
+                protected override int OnExecute()
+                {
+                    ExpCmd.Iter = true;
+                    if (ExpCmd.OnExecute() == 0 || ExpCmd.NullJToken()) return 0;
+                    JToken = ExpCmd.JToken;
+                    return base.OnExecute();
+                }
+                ExpCmd ExpCmd { get; set; }
+                public IterCmd(ExpCmd expCmd)
+                {
+                    ExpCmd = expCmd;
+                }
+            }
+            protected FormCmd FormCmd { get; set; }
             protected override int OnExecute()
             {
+                base.OnExecute();
                 if (FormCmd.OnExecute() == 0) return 0;
                 Object = FormCtx.Current.Request;
-                Dump();
+                if (!Iter) Dump();
 
-                return base.OnExecute();
+                return 1;
             }
             public ExpCmd(FormCmd formCmd)
             {
@@ -66,8 +84,25 @@ namespace Celin
             }
         }
         [Command(Description = "Response")]
+        [Subcommand("it", typeof(IterCmd))]
         class ResCmd : ResponseCmd<AIS.FormRequest>
         {
+            [Command(Description = "Iterate")]
+            class IterCmd : JArrayCmd
+            {
+                protected override int OnExecute()
+                {
+                    ResCmd.Iter = true;
+                    if (ResCmd.OnExecute() == 0 || ResCmd.NullJToken()) return 0;
+                    JToken = ResCmd.JToken;
+                    return base.OnExecute();
+                }
+                ResCmd ResCmd { get; set; }
+                public IterCmd(ResCmd resCmd)
+                {
+                    ResCmd = resCmd;
+                }
+            }
             public ResCmd()
             {
                 Responses = FormCtx.Responses;

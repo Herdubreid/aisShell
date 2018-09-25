@@ -19,18 +19,35 @@ namespace Celin
     public class StackFormCmd : BaseCmd
     {
         [Option("-c|--context", CommandOptionType.SingleValue, Description = "Context Id")]
-        (bool HasValue, string Parameter) Id { get; }
+        protected (bool HasValue, string Parameter) Id { get; }
         [Option("-l|--listContexts", CommandOptionType.NoValue, Description = "List Contexts")]
         bool List { get; }
         [Command(Description = "Export Request")]
+        [Subcommand("it", typeof(IterCmd))]
         class ExpCmd : JObjectCmd
         {
+            [Command(Description = "Iterate")]
+            class IterCmd : JArrayCmd
+            {
+                protected override int OnExecute()
+                {
+                    ExpCmd.Iter = true;
+                    if (ExpCmd.OnExecute() == 0 || ExpCmd.NullJToken()) return 0;
+                    JToken = ExpCmd.JToken;
+                    return base.OnExecute();
+                }
+                ExpCmd ExpCmd { get; set; }
+                public IterCmd(ExpCmd expCmd)
+                {
+                    ExpCmd = expCmd;
+                }
+            }
             StackFormCmd StackFormCmd { get; set; }
             protected override int OnExecute()
             {
                 if (StackFormCmd.OnExecute() == 0) return 0;
                 Object = StackFormCtx.Current.Request;
-                Dump();
+                if (!Iter) Dump();
 
                 return base.OnExecute();
             }
@@ -221,12 +238,12 @@ namespace Celin
                 }
             }
             [Option("-rc|--returnControlIds", CommandOptionType.SingleValue, Description = "Return Control IDs")]
-            public (bool HasValue, string Parameter) ReturnControlIDs { get; set; }
+            protected (bool HasValue, string Parameter) ReturnControlIDs { get; set; }
             [Option("-fo|--formOID", CommandOptionType.SingleValue, Description = "Open Form Id")]
-            public (bool HasValue, string Parameter) FormOID { get; set; }
+            protected (bool HasValue, string Parameter) FormOID { get; set; }
             [Option("-sw|--stopOnWarning", CommandOptionType.SingleValue, Description = "Stop on Warning")]
             [AllowedValues(new string[] { "true", "false" })]
-            public (bool HasValue, string Parameter) StopOnWarning { get; set; }
+            protected (bool HasValue, string Parameter) StopOnWarning { get; set; }
             StackFormCmd StackFormCmd { get; set; }
             protected override int OnExecute()
             {
@@ -255,11 +272,11 @@ namespace Celin
         public class DefCmd : OutCmd
         {
             [Option("-sk|--stackId", CommandOptionType.SingleValue, Description = "Stack Id")]
-            public (bool HasValue, int Parameter) StackId { get; set; }
+            protected (bool HasValue, int Parameter) StackId { get; set; }
             [Option("-st|--stateId", CommandOptionType.SingleValue, Description = "State Id")]
-            public (bool HasValue, int Parameter) StateId { get; set; }
+            protected (bool HasValue, int Parameter) StateId { get; set; }
             [Option("-ri|--rid", CommandOptionType.SingleValue, Description = "Rid")]
-            public (bool HasValue, string Parameter) Rid { get; set; }
+            protected (bool HasValue, string Parameter) Rid { get; set; }
             StackFormCmd StackFormCmd { get; set; }
             protected override int OnExecute()
             {

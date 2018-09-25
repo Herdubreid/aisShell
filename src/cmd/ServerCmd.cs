@@ -13,7 +13,7 @@ namespace Celin
     public class ServerCmd : BaseCmd
     {
         [Option("-c|--context", CommandOptionType.SingleValue, Description = "Server Context")]
-        public (bool HasValue, string Parameter) Id { get; private set; }
+        protected (bool HasValue, string Parameter) Id { get; private set; }
         [Option("-l|--listContexts", CommandOptionType.NoValue, Description = "List Contexts")]
         bool List { get; }
         [Command(Description = "Export Servers")]
@@ -66,9 +66,9 @@ namespace Celin
             [PromptOption]
             public (bool HasValue, string Parameter) BaseUrl { get; private set; }
             [Option("-d|--device", CommandOptionType.SingleValue, Description = "Device")]
-            public (bool HasValue, string Parameter) Device { get; private set; }
+            protected (bool HasValue, string Parameter) Device { get; private set; }
             [Option("-rc|--requiredCapabilities", CommandOptionType.SingleValue, Description = "Required Capabilities")]
-            public (bool HasValue, string Parameter) RequiredCapabilities { get; private set; }
+            protected (bool HasValue, string Parameter) RequiredCapabilities { get; private set; }
             ServerCmd ServerCmd { get; set; }
             protected override int OnExecute()
             {

@@ -6,14 +6,29 @@ namespace Celin
 {
     public abstract class JObjectCmd : OutCmd
     {
-        [Argument(0, Description = "Json Key")]
+        private JToken _jToken;
+        [Option("-k|--key", CommandOptionType.SingleValue, Description = "Object Key")]
         protected (bool HasValue, string Parameter) Key { get; }
-        protected JObject JObject { get; set; }
+        protected JToken JToken
+        {
+            get => _jToken;
+            set
+            {
+                if (Key.HasValue && value.Type == JTokenType.Object)
+                {
+                    _jToken = FindKey(value as JObject);
+                }
+                else
+                {
+                    _jToken = value;
+                }
+            }
+        }
         protected Object Object
         {
             set
             {
-                JObject = JObject.FromObject(value, new JsonSerializer()
+                JToken = JToken.FromObject(value, new JsonSerializer()
                 {
                     NullValueHandling = NullValueHandling.Ignore
                 });
@@ -59,22 +74,25 @@ namespace Celin
             }
             return res;
         }
+        protected bool NullJToken()
+        {
+            if (JToken is null)
+            {
+                Warning("Key '{0}' not found!", Key.Parameter);
+                return true;
+            }
+            return false;
+        }
         protected void Dump()
         {
-            if (Key.HasValue)
-            {
-                var token = FindKey(JObject);
-                if (token is null) Warning("Key '{0}' not found!", Key.Parameter);
-                else if (token.Type == JTokenType.Array) foreach (var e in token as JArray) OutputLine(e.ToString());
-                else OutputLine(token.ToString());
-            }
-            else OutputLine(JObject.ToString());
+            if (NullJToken()) return;
+            if (JToken.Type == JTokenType.Array) foreach (var e in JToken as JArray) OutputLine(e.ToString());
+            else OutputLine(JToken.ToString());
         }
+        protected bool Iter { get; set; } = false;
         protected override int OnExecute()
         {
-            base.OnExecute();
-
-            return 1;
+            return base.OnExecute();
         }
     }
 }

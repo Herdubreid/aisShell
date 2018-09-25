@@ -7,23 +7,22 @@ namespace Celin
         where T : AIS.Grid, new()
     {
         [Option("-g|--gridId", CommandOptionType.SingleValue, Description = "Grid Id")]
-        public (bool HasValue, string Parameter) Id { get; set; }
+        protected (bool HasValue, string Parameter) Id { get; set; }
         [Option("-r|--rowNumber", CommandOptionType.SingleValue, Description = "Row Number")]
-        public (bool HasValue, int Parameter) RowNumber { get; set; }
+        protected (bool HasValue, int Parameter) RowNumber { get; set; }
         [Option("-rm|--remove", CommandOptionType.NoValue, Description = "Remove Column Event")]
         protected bool Remove { get; }
         [Argument(0, Description = "Control Id")]
-        public (bool HasValue, string Parameter) ColumnID { get; set; }
+        protected (bool HasValue, string Parameter) ColumnID { get; set; }
         [Argument(1, Description = "Command")]
         [AllowedValues(new string[]
         {
                 "SetGridCellValue",
                 "SetGridComboValue"
         })]
-        public (bool HasValue, string Parameter) Command { get; set; }
+        protected (bool HasValue, string Parameter) Command { get; set; }
         [Argument(2, Description = "Value")]
-        public (bool HasValue, string Parameter) Value { get; set; }
-        //public T GridAction { get; set; }
+        protected (bool HasValue, string Parameter) Value { get; set; }
         public virtual List<AIS.RowEvent> RowEvents(T action)
         {
             return null;

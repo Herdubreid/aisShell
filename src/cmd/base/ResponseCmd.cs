@@ -15,37 +15,22 @@ namespace Celin
         protected bool FormMembers { get; private set; }
         [Option("-gm|--gridMembers", CommandOptionType.NoValue, Description = "Grid Members")]
         protected bool GridMembers { get; private set; }
-        [Option("-gr|--gridRowIndex", CommandOptionType.SingleValue, Description = "Grid Row Index")]
-        protected int? GridRowIndex { get; set; }
         public bool OutputChildren(string key, JArray jArray, ref int depth)
         {
             if (Depth.HasValue && depth > Depth.Value) return false;
             OutputLine("[");
-            if (key.Equals("rowset") && GridRowIndex.HasValue)
+            foreach (var t in jArray)
             {
-                Output(String.Format("{0," + depth + "}", String.Empty));
-                try
+                if (t.Type == JTokenType.Object)
                 {
-                    OutputChildren(jArray[GridRowIndex.Value] as JObject, ref depth);
+                    Output(String.Format("{0," + depth + "}", String.Empty));
+                    OutputChildren(t as JObject, ref depth);
                 }
-                catch (Exception)
+                if (t.Type == JTokenType.Array)
                 {
-                    OutputLine("[...]");
-                    Error("Grid Line {0} not Found!", GridRowIndex.Value);
+                    OutputChildren(key, t as JArray, ref depth);
                 }
             }
-            else foreach (var t in jArray)
-                {
-                    if (t.Type == JTokenType.Object)
-                    {
-                        Output(String.Format("{0," + depth + "}", String.Empty));
-                        OutputChildren(t as JObject, ref depth);
-                    }
-                    if (t.Type == JTokenType.Array)
-                    {
-                        OutputChildren(key, t as JArray, ref depth);
-                    }
-                }
             OutputLine(String.Format("{0," + depth + "}],", String.Empty));
             return true;
         }
@@ -104,9 +89,16 @@ namespace Celin
                 if (GridMembers) DisplayGridMembers(res);
                 if (!FormMembers && !GridMembers)
                 {
-                    var j = FindKey(res.Result);
-                    if (j.Type == JTokenType.Object) OutputChildren(j as JObject, ref depth);
-                    if (j.Type == JTokenType.Array) OutputChildren(Key.Parameter, j as JArray, ref depth);
+                    if (Iter)
+                    {
+                        JToken = res.Result;
+                    }
+                    else
+                    {
+                        var j = FindKey(res.Result);
+                        if (j.Type == JTokenType.Object) OutputChildren(j as JObject, ref depth);
+                        if (j.Type == JTokenType.Array) OutputChildren(Key.Parameter, j as JArray, ref depth);
+                    }
                 }
             }
             catch (Exception e)

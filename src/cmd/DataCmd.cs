@@ -13,9 +13,9 @@ namespace Celin
     public class DataCmd : BaseCmd
     {
         [Option("-c|--context", CommandOptionType.SingleValue, Description = "Context Id")]
-        (bool HasValue, string Parameter) Id { get; }
+        protected (bool HasValue, string Parameter) Id { get; }
         [Option("-l|--listContexts", CommandOptionType.NoValue, Description = "List Contexts")]
-        bool List { get; }
+        protected bool List { get; }
         [Command(Description = "Save Definition")]
         class SaveCmd : BaseCmd
         {
@@ -44,14 +44,31 @@ namespace Celin
             }
         }
         [Command(Description = "Export Request")]
+        [Subcommand("it", typeof(IterCmd))]
         class ExpCmd : JObjectCmd
         {
+            [Command(Description = "Iterate")]
+            class IterCmd :JArrayCmd
+            {
+                protected override int OnExecute()
+                {
+                    ExpCmd.Iter = true;
+                    if (ExpCmd.OnExecute() == 0 || ExpCmd.NullJToken()) return 0;
+                    JToken = ExpCmd.JToken;
+                    return base.OnExecute();
+                }
+                ExpCmd ExpCmd { get; set; }
+                public IterCmd(ExpCmd expCmd)
+                {
+                    ExpCmd = expCmd;
+                }
+            }
             DataCmd DataCmd { get; set; }
             protected override int OnExecute()
             {
                 if (DataCmd.OnExecute() == 0) return 0;
                 Object = DataCtx.Current.Request;
-                Dump();
+                if (!Iter) Dump();
 
                 return base.OnExecute();
             }

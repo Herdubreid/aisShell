@@ -8,10 +8,10 @@ namespace Celin
         [Option("-rm|--remove", CommandOptionType.NoValue, Description = "Remove Form Input")]
         protected bool Remove { get; }
         [Argument(0, Description = "Id")]
-        public (bool HasValue, string Parameter) Id { get; set; }
+        protected (bool HasValue, string Parameter) Id { get; set; }
         [Argument(1, Description = "Value")]
-        public (bool HasValue, string Parameter) Value { get; set; }
-        public List<AIS.Input> FormInputs { get; set; }
+        protected (bool HasValue, string Parameter) Value { get; set; }
+        protected List<AIS.Input> FormInputs { get; set; }
         protected List<string> RemainingArguments { get; }
         protected override int OnExecute()
         {

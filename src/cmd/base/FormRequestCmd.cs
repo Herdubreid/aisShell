@@ -7,15 +7,15 @@ namespace Celin
         [PromptOption]
         public (bool HasValue, string Parameter) FormName { get; set; }
         [Option("-v|--version", CommandOptionType.SingleValue, Description = "Version Name")]
-        public (bool HasValue, string Parameter) Version { get; private set; }
+        protected (bool HasValue, string Parameter) Version { get; private set; }
         [Option("-fs|--formServicAction", CommandOptionType.SingleValue, Description = "Form Service Action")]
         [AllowedValues(new string[] { "r", "c", "u", "d" })]
-        public (bool HasValue, string Parameter) FormServiceAction { get; private set; }
+        protected (bool HasValue, string Parameter) FormServiceAction { get; private set; }
         [Option("-sw|--stopOnWarning", CommandOptionType.SingleValue, Description = "Stop on Warning")]
         [AllowedValues(new string[] { "true", "false" }, IgnoreCase = true)]
-        public (bool HasValue, string Parameter) StopOnWarning { get; private set; }
+        protected (bool HasValue, string Parameter) StopOnWarning { get; private set; }
         [Option("-qn|--queryName", CommandOptionType.SingleValue, Description = "Query Object Name")]
-        public (bool HasValue, string Parameter) QueryObjectName { get; private set; }
+        protected (bool HasValue, string Parameter) QueryObjectName { get; private set; }
         protected override int OnExecute()
         {
             base.OnExecute();
