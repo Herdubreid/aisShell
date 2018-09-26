@@ -17,7 +17,6 @@ namespace Celin
             ClearCmd.AddCmd();
             QuitCmd.AddCmd();
             var startupMsg = "Celin's AIS Command Shell";
-            List<string> completionList = new List<string>();
             InteractivePrompt.Prompt = BaseCmd.PromptTx;
             InteractivePrompt.Run(
                 ((strCmd, listCmd, completion) =>
@@ -45,7 +44,7 @@ namespace Celin
                     }
                     InteractivePrompt.Prompt = BaseCmd.PromptTx;
                     return resume;
-                }), startupMsg, completionList);
+                }), startupMsg);
         }
     }
 }

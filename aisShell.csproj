@@ -42,6 +42,9 @@
     <Folder Include="src\ctxs\base\" />
     <Folder Include="files\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Celin.AIS\Celin.AIS.csproj" />
+  </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
       <Properties>

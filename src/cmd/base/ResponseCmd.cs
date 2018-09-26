@@ -15,7 +15,7 @@ namespace Celin
             try
             {
                 var res = Index.HasValue ? Responses[Index.Parameter] : Responses.Last();
-                JToken = res.Result;
+                JToken = res.Result.DeepClone();
                 if (!Iter) Dump();
             }
             catch (Exception e)

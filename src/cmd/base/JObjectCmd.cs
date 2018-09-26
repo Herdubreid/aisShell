@@ -13,8 +13,7 @@ namespace Celin
         protected int? Depth { get; set; }
         protected void Trim(ref JArray jArray, ref int depth)
         {
-            depth++;
-            if (Depth.HasValue && Depth.Value < depth) jArray.RemoveAll();
+            if (Depth.HasValue && Depth.Value < depth)jArray.RemoveAll();
             foreach (var e in jArray)
             {
                 switch (e.Type)
@@ -29,7 +28,6 @@ namespace Celin
                         break;
                 }
             }
-            depth--;
         }
         protected void Trim(ref JObject jObject, ref int depth)
         {

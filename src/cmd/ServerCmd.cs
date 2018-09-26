@@ -4,9 +4,10 @@ using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 namespace Celin
 {
-    [Command("sv", Description = "AIS Server Context")]
+    [Command("sv", Description = "Server Context")]
     [Subcommand("d", typeof(DefCmd))]
     [Subcommand("c", typeof(ConCmd))]
+    [Subcommand("lo", typeof(LogoutCmd))]
     [Subcommand("exp", typeof(ExpCmd))]
     [Subcommand("save", typeof(SaveCmd))]
     [Subcommand("load", typeof(LoadCmd))]
@@ -119,39 +120,32 @@ namespace Celin
             [Option("-p|--password", CommandOptionType.SingleValue, Description = "Password")]
             [PromptOption(false, PromptType.Password)]
             public (bool HasValue, string Parameter) Password { get; set; }
-            public delegate bool Authenticate();
-            ServerCmd ServerCmd { get; set; }
+            //public delegate bool Authenticate();
             int OnExecute()
             {
-                ServerCmd.OnExecute();
-                if (ServerCtx.Current is null)
+                if (ServerCmd.OnExecute() == 0) return 0;
+                PromptOptions();
+                var rq = ServerCtx.Current.Server.AuthRequest;
+                rq.username = User.Parameter;
+                rq.password = Password.Parameter;
+                Task<bool> t = new Task<bool>(ServerCtx.Current.Server.Authenticate);
+                t.Start();
+                while (!t.IsCompleted)
                 {
-                    Error("No Server Context!");
+                    Thread.Sleep(500);
+                    Console.Write('.');
+                }
+                if (t.Result)
+                {
+                    Success("\nSignon success!");
                 }
                 else
                 {
-                    PromptOptions();
-                    var rq = ServerCtx.Current.Server.AuthRequest;
-                    rq.username = User.Parameter;
-                    rq.password = Password.Parameter;
-                    Task<bool> t = new Task<bool>(ServerCtx.Current.Server.Authenticate);
-                    t.Start();
-                    while (!t.IsCompleted)
-                    {
-                        Thread.Sleep(500);
-                        Console.Write('.');
-                    }
-                    if (t.Result)
-                    {
-                        Success("\nSignon success");
-                    }
-                    else
-                    {
-                        Error("\nSignon failed!");
-                    }
+                    Error("\nSignon failed!");
                 }
                 return 1;
             }
+            ServerCmd ServerCmd { get; set; }
             public ConCmd(ServerCmd serverCmd)
             {
                 ServerCmd = serverCmd;
@@ -162,12 +156,49 @@ namespace Celin
                 }
             }
         }
+        [Command(Description = "Logout")]
+        public class LogoutCmd : BaseCmd
+        {
+            int OnExecute()
+            {
+                if (ServerCmd.OnExecute() == 0) return 0;
+                if (!Prompt.GetYesNo("Do you want to log out?", false)) return 0;
+                var rq = new AIS.LogoutRequest();
+                Task<bool> t = new Task<bool>(ServerCtx.Current.Server.Logout);
+                t.Start();
+                while (!t.IsCompleted)
+                {
+                    Thread.Sleep(500);
+                    Console.Write('.');
+                }
+                if (t.Result)
+                {
+                    Success("\nLogged out successfully!");
+                }
+                else
+                {
+                    Error("\nLogout failed!");
+                }
+
+                return 1;
+            }
+            ServerCmd ServerCmd { get; set; }
+            public LogoutCmd(ServerCmd serverCmd)
+            {
+                ServerCmd = serverCmd;
+            }
+        }
         public int OnExecute()
         {
             if (List) foreach (var c in ServerCtx.List) Console.WriteLine(c.Id);
             if (Id.HasValue && !ServerCtx.Select(Id.Parameter))
             {
                 Error("Server Context '{0}' not found!", Id.Parameter);
+                return 0;
+            }
+            if (ServerCtx.Current is null)
+            {
+                Error("No Server Context!");
                 return 0;
             }
             return 1;

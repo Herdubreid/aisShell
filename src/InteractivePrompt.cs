@@ -1,17 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Drawing;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Console = Colorful.Console;
 
 namespace Cintio
 {
     public static class InteractivePrompt
     {
-        public static string Prompt { get; set; } = ">";
-        private static int startingCursorLeft;
-        private static int startingCursorTop;
-        private static ConsoleKeyInfo key, lastKey;
+        public static string Prompt { get; set; } = "$";
+        static int startingCursorLeft;
+        static int startingCursorTop;
+        static ConsoleKeyInfo key, lastKey;
 
+        static bool Comment(string msg)
+        {
+            return Regex.Match(msg, @"^//").Success;
+        }
+        static void Output(string msg)
+        {
+            if (Comment(msg)) Console.Write(msg, Color.DarkGreen);
+            else
+            {
+                Console.Write(msg);
+            }
+        }
         private static bool InputIsOnNewLine(List<char> input, int inputPosition)
         {
             return (inputPosition + Prompt.Length > Console.BufferWidth - 1);
@@ -117,7 +131,7 @@ namespace Cintio
                     return;
                 }
 
-                Console.Write(String.Concat(input));
+                Output(String.Concat(input));
                 Console.SetCursorPosition(mod(cursorLeft, Console.BufferWidth), cursorTop);
             }
             catch (Exception e)
@@ -182,16 +196,14 @@ namespace Cintio
         /// <param name="lambda">This func is provided for the user to handle the input.  Input is provided in both string and List&lt;char&gt;. A return response is provided as a string.</param>
         /// <param name="prompt">The prompt for the interactive shell</param>
         /// <param name="startupMsg">Startup msg to display to user</param>
-        public static void Run(Func<string, List<char>, List<string>, bool> lambda, string startupMsg, List<string> completionList = null)
+        public static void Run(Func<string, List<char>, List<string>, bool> lambda, string startupMsg)
         {
             Console.WriteLine(startupMsg);
             List<List<char>> inputHistory = new List<List<char>>();
-            IEnumerator<string> wordIterator = null;
             bool resume = true;
 
             while (resume)
             {
-                string completion = null;
                 List<char> input = new List<char>();
                 startingCursorLeft = Prompt.Length;
                 startingCursorTop = Console.CursorTop;
@@ -217,59 +229,6 @@ namespace Cintio
                             {
                                 var pos = HandleMoveRight(input, ++inputPosition);
                                 Console.SetCursorPosition(pos.Item1, pos.Item2);
-                            }
-                            break;
-                        case ConsoleKey.Tab:
-                            if (completionList != null && completionList.Count > 0)
-                            {
-                                int tempPosition = inputPosition;
-                                List<char> word = new List<char>();
-                                while (tempPosition-- > 0 && !string.IsNullOrWhiteSpace(input[tempPosition].ToString()))
-                                    word.Insert(0, input[tempPosition]);
-
-                                if (lastKey.Key == ConsoleKey.Tab)
-                                {
-                                    wordIterator.MoveNext();
-                                    if (completion != null)
-                                    {
-                                        ClearLine(input, inputPosition);
-                                        for (var i = 0; i < completion.Length; i++)
-                                        {
-                                            input.RemoveAt(--inputPosition);
-                                        }
-                                        RewriteLine(input, inputPosition);
-                                    }
-                                    else
-                                    {
-                                        ClearLine(input, inputPosition);
-                                        for (var i = 0; i < string.Concat(word).Length; i++)
-                                        {
-                                            input.RemoveAt(--inputPosition);
-                                        }
-                                        RewriteLine(input, inputPosition);
-                                    }
-                                }
-                                else
-                                {
-                                    ClearLine(input, inputPosition);
-                                    for (var i = 0; i < string.Concat(word).Length; i++)
-                                    {
-                                        input.RemoveAt(--inputPosition);
-                                    }
-                                    RewriteLine(input, inputPosition);
-                                    wordIterator = GetMatch(completionList, string.Concat(word)).GetEnumerator();
-                                    while (wordIterator.Current == null)
-                                        wordIterator.MoveNext();
-                                }
-
-
-                                completion = wordIterator.Current;
-                                ClearLine(input, inputPosition);
-                                foreach (var c in completion.ToCharArray())
-                                {
-                                    input.Insert(inputPosition++, c);
-                                }
-                                RewriteLine(input, inputPosition);
                             }
                             break;
                         case ConsoleKey.Home:
@@ -355,8 +314,8 @@ namespace Cintio
                 } while (key.Key != ConsoleKey.Enter);
 
                 var cmd = string.Concat(input).Trim();
-
-                if (!inputHistory.Contains(input))
+                if (Comment(cmd)) cmd = "";
+                else if (!inputHistory.Contains(input))
                     inputHistory.Add(input);
 
                 Console.WriteLine();
