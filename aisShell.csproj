@@ -7,7 +7,7 @@
     <PackageVersion>0.1</PackageVersion>
     <Authors>Finnur Bragason</Authors>
     <Owners>Bragason and Associates Pty Ltd</Owners>
-    <Summary>A command line encaptulation of Celin.AIS</Summary>
+    <Summary>A command line encapsulation of Celin.AIS</Summary>
     <Title>aisShell</Title>
   </PropertyGroup>
 
@@ -41,6 +41,7 @@
     <Folder Include="src\ctxs\" />
     <Folder Include="src\ctxs\base\" />
     <Folder Include="files\" />
+    <Folder Include="docs\" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>
