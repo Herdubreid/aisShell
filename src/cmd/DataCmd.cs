@@ -121,9 +121,8 @@ namespace Celin
             [Option("-v|--view", Description = "View Target Type")]
             public bool ViewTarget { get; }
             DataCmd DataCmd { get; set; }
-            protected override int OnExecute()
+            protected virtual int OnExecute()
             {
-                base.OnExecute();
                 if (DataCmd.Id.HasValue && !DataCtx.Select(DataCmd.Id.Parameter))
                 {
                     if (Prompt.GetYesNo("New Data Definition?", false))

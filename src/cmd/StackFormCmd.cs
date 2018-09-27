@@ -6,8 +6,7 @@ using McMaster.Extensions.CommandLineUtils;
 namespace Celin
 {
     [Command("sfm", Description = "Stack Form Context")]
-    [Subcommand("d", typeof(DefCmd))]
-    [Subcommand("fr", typeof(FormReqCmd))]
+    [Subcommand("fm", typeof(FormReqCmd))]
     [Subcommand("sa", typeof(StackActCmd))]
     [Subcommand("o", typeof(OpenCmd))]
     [Subcommand("e", typeof(ExecuteCmd))]
@@ -182,7 +181,7 @@ namespace Celin
             }
             [Command(Description = "Form Action", ThrowOnUnexpectedArgument = false)]
             public class FormActCmd : FormActionCmd
-            {
+            {   
                 FormReqCmd FormReqCmd { get; set; }
                 protected override int OnExecute()
                 {
@@ -199,8 +198,18 @@ namespace Celin
             StackFormCmd StackFormCmd { get; set; }
             protected override int OnExecute()
             {
-                if (StackFormCmd.OnExecute() == 0) return 0;
-
+                if (StackFormCmd.Id.HasValue && !StackFormCtx.Select(StackFormCmd.Id.Parameter))
+                {
+                    if (Prompt.GetYesNo("New Stack Form Definition?", false))
+                    {
+                        PromptOptions();
+                        StackFormCtx.Current = new StackFormCtx(StackFormCmd.Id.Parameter);
+                        StackFormCtx.List.Add(StackFormCtx.Current);
+                        Context = StackFormCtx.Current;
+                    }
+                    else return 0;
+                }
+                if (StackFormCmd.NullCtx) return 0;
                 if (StackFormCtx.Current.Request.formRequest is null)
                 {
                     StackFormCtx.Current.Request.formRequest = new AIS.FormRequest()
@@ -219,7 +228,7 @@ namespace Celin
         }
         [Command(Description = "Stack Action")]
         [Subcommand("fa", typeof(ActCmd))]
-        public class StackActCmd : OutCmd
+        public class StackActCmd : BaseCmd
         {
             [Command(Description = "Stack Form Action", ThrowOnUnexpectedArgument = false)]
             class ActCmd : FormActionCmd
@@ -245,11 +254,20 @@ namespace Celin
             [AllowedValues(new string[] { "true", "false" })]
             protected (bool HasValue, string Parameter) StopOnWarning { get; set; }
             StackFormCmd StackFormCmd { get; set; }
-            protected override int OnExecute()
+            protected virtual int OnExecute()
             {
-                base.OnExecute();
-                if (StackFormCmd.OnExecute() == 0) return 0;
-
+                if (StackFormCmd.Id.HasValue && !StackFormCtx.Select(StackFormCmd.Id.Parameter))
+                {
+                    if (Prompt.GetYesNo("New Stack Form Definition?", false))
+                    {
+                        PromptOptions();
+                        StackFormCtx.Current = new StackFormCtx(StackFormCmd.Id.Parameter);
+                        StackFormCtx.List.Add(StackFormCtx.Current);
+                        Context = StackFormCtx.Current;
+                    }
+                    else return 0;
+                }
+                if (StackFormCmd.NullCtx) return 0;
                 var rq = StackFormCtx.Current.Request.actionRequest;
                 rq.returnControlIDs = ReturnControlIDs.HasValue ? ReturnControlIDs.Parameter : rq.returnControlIDs;
                 rq.formOID = FormOID.HasValue ? FormOID.Parameter.ToUpper() : rq.formOID;
@@ -264,49 +282,6 @@ namespace Celin
                 StopOnWarning = (false, rq.stopOnWarning);
             }
             public StackActCmd(StackFormCmd stackFormCmd)
-            {
-                StackFormCmd = stackFormCmd;
-            }
-        }
-        [Command(Description = "Define")]
-        public class DefCmd : OutCmd
-        {
-            [Option("-sk|--stackId", CommandOptionType.SingleValue, Description = "Stack Id")]
-            protected (bool HasValue, int Parameter) StackId { get; set; }
-            [Option("-st|--stateId", CommandOptionType.SingleValue, Description = "State Id")]
-            protected (bool HasValue, int Parameter) StateId { get; set; }
-            [Option("-ri|--rid", CommandOptionType.SingleValue, Description = "Rid")]
-            protected (bool HasValue, string Parameter) Rid { get; set; }
-            StackFormCmd StackFormCmd { get; set; }
-            protected override int OnExecute()
-            {
-                base.OnExecute();
-                if (StackFormCmd.Id.HasValue && !StackFormCtx.Select(StackFormCmd.Id.Parameter))
-                {
-                    if (Prompt.GetYesNo("New Stack Form Definition?", false))
-                    {
-                        PromptOptions();
-                        StackFormCtx.Current = new StackFormCtx(StackFormCmd.Id.Parameter);
-                        StackFormCtx.List.Add(StackFormCtx.Current);
-                        Context = StackFormCtx.Current;
-                    }
-                    else return 0;
-                }
-                if (StackFormCmd.NullCtx) return 0;
-                var rq = StackFormCtx.Current.Request;
-                rq.stackId = StackId.HasValue ? StackId.Parameter : rq.stackId;
-                rq.stateId = StateId.HasValue ? StateId.Parameter : rq.stateId;
-                rq.rid = Rid.HasValue ? Rid.Parameter : rq.rid;
-
-                return 1;
-            }
-            public DefCmd(AIS.StackFormRequest rq)
-            {
-                StackId = (false, rq.stackId);
-                StateId = (false, rq.stateId);
-                Rid = (false, rq.rid);
-            }
-            public DefCmd(StackFormCmd stackFormCmd)
             {
                 StackFormCmd = stackFormCmd;
             }
@@ -345,7 +320,7 @@ namespace Celin
             }
             return true;
         }
-        [Command(Description = "Execute Form Action")]
+        [Command(Description = "Execute Stack Action")]
         class ExecuteCmd : BaseCmd
         {
             [Option("-ri|--responseIndex", CommandOptionType.SingleValue, Description = "Stack Parameters Response Index")]

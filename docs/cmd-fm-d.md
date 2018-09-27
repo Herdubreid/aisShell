@@ -1,9 +1,6 @@
 # Form Definition Usage
 ### Command `fm d`
 ```
-[:] $ fm d -h
-Form Definition
-
 Usage: fm d [options]
 
 Options:
@@ -17,7 +14,6 @@ Options:
   -mp|--maxPage           Max Page Size
   -an|--aliasNaming       Alias Naming
   -ot|--outputType        Output Type
-  -of|--outFile           Write Result to File
   -?|-h|--help            Show help information
 ```
 ### Options

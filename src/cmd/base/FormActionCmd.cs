@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using McMaster.Extensions.CommandLineUtils;
 namespace Celin
 {
-    public class FormActionCmd : OutCmd
+    public class FormActionCmd : BaseCmd
     {
         [Option("-i|--index", CommandOptionType.SingleValue, Description = "Add or Remove Zero-based Index")]
         protected (bool HasValue, int Parameter) Index { get; }
@@ -33,9 +33,8 @@ namespace Celin
         protected (bool HasValue, string Parameter) Value { get; }
         public List<AIS.Action> FormActions { get; set; }
         protected List<string> RemainingArguments { get; }
-        protected override int OnExecute()
+        protected virtual int OnExecute()
         {
-            base.OnExecute();
             try
             {
 

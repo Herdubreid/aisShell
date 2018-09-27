@@ -1,9 +1,6 @@
 # Stack Form Context Usage
 ### Command `sfm`
 ```
-[:] $ sfm -h
-Stack Form Context
-
 Usage: sfm [options] [command]
 
 Options:
@@ -13,8 +10,7 @@ Options:
 
 Commands:
   c                  Close Form
-  d                  Define
-  e                  Execute Form Action
+  e                  Execute Stack Action
   exp                Export Request
   fr                 Form Request
   load               Load Definition
@@ -22,6 +18,18 @@ Commands:
   r                  Response
   sa                 Stack Action
   save               Save Definition
-
-Run 'sfm [command] --help' for more information about a command.
 ```
+An AIS Stack Application Request.
+### Options
+- [`-c|--context and -|--listContexts`](./opt-context-and-list.md)
+### Commands
+- `o` - Open
+Opens the form request.
+- `e` - Execute Stack Action
+Executes the stack action.
+- `c` - Close
+Closes an active stack request.
+- [`fr` - Form Request](./cmd-sfm-fr.md)
+- [`sa` - Stack Action](./cmd-sfm-sa.md)
+- [`exp` - Export](./cmd-exp.md)
+- [`save` and `load`](./cmd-save-and-load.md)

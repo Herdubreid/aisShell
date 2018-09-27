@@ -2,7 +2,7 @@
 using McMaster.Extensions.CommandLineUtils;
 namespace Celin
 {
-    public abstract class RequestCmd<T1> : OutCmd
+    public abstract class RequestCmd<T1> : BaseCmd
         where T1 : AIS.Request, new()
     {
         [Option("-f|--find", CommandOptionType.SingleValue, Description = "Find on Entry")]

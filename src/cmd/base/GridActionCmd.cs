@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using McMaster.Extensions.CommandLineUtils;
 namespace Celin
 {
-    public class GridActionCmd<T> : OutCmd
+    public class GridActionCmd<T> : BaseCmd
         where T : AIS.Grid, new()
     {
         [Option("-g|--gridId", CommandOptionType.SingleValue, Description = "Grid Id")]
@@ -29,10 +29,8 @@ namespace Celin
         }
         public List<AIS.Action> FormActions { get; set; }
         protected List<string> RemainingArguments { get; }
-        protected override int OnExecute()
+        protected virtual int OnExecute()
         {
-            base.OnExecute();
-
             var action = FormActions.Find(a =>
             {
                 if (a.GetType() == typeof(AIS.GridAction))

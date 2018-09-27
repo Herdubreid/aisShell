@@ -16,9 +16,8 @@ namespace Celin
         protected (bool HasValue, string Parameter) StopOnWarning { get; private set; }
         [Option("-qn|--queryName", CommandOptionType.SingleValue, Description = "Query Object Name")]
         protected (bool HasValue, string Parameter) QueryObjectName { get; private set; }
-        protected override int OnExecute()
+        protected virtual int OnExecute()
         {
-            base.OnExecute();
             var rq = Request;
             rq.formName = FormName.HasValue ? FormName.Parameter.ToUpper() : rq.formName;
             rq.version = Version.HasValue ? Version.Parameter.ToUpper() : rq.version;

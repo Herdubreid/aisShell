@@ -20,8 +20,6 @@ Commands:
   r                  Response
   s                  Submit Request
   save               Save Definitions
-
-Run 'fm [command] --help' for more information about a command.
 ```
 An AIS Form Request definition.
 ### Options
@@ -33,18 +31,18 @@ An AIS Form Request definition.
 - [`gi` - Grid Insert](./cmd-gi.md)
 - [`gu` - Grid Update](./cmd-gu.md)
 - [`save` and `load`](./cmd-save-and-load.md)
-- [`exp` - Export](./cmd-exp.md)
+- [`exp` - Export Request](./cmd-exp.md)
 - [`s` Submit](./cmd-submit.md)  
 - [`r` Response](./cmd-respones.md)
 
 ### Examples
-#### Create a new `Form Context` 'wwab': 
+#### Create a new `Form Context` _wwab_: 
 ```
 [e1:demo] $ fm -c wwab d -fn p01012_w01012b -mp 30 -rc 54|1[19,20]
 New Form Definition? [Y/n] y
 [e1:demo] fm:wwab $ 
 ```
-This is now the the default context, showing in the prompt with 'fm:wwab'.
+This is now the the default context, showing in the prompt with _fm:wwab_.
 #### Submit Form Request
 ```csh
 [e1:demo] fm:wwab $ s

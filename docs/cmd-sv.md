@@ -1,9 +1,6 @@
 ﻿# Usage
 ### Command `sv`
 ```
-[:] $ sv -h
-Server Context
-
 Usage: sv [options] [command]
 
 Options:
@@ -18,8 +15,6 @@ Commands:
   lo                 Logout
   load               Load Definitions
   save               Save Definitions
-
-Run 'sv [command] --help' for more information about a command.
 ```
 Before any AIS requests can be made, a server context must be defined and connected.
 
@@ -40,19 +35,19 @@ Options:
 - `-b|--baseUrl`  
 The AIS Url with a trailing '/'.
 - `-d|--device`  
-The device name making the request.  Defaults to 'celin'.
+The device name making the request.  Defaults to _celin_.
 - `-rc|--requiredCapabilities`  
 Required capabilities in subsequent requests.  See your `<AIS Url>/defaultconfig` for available capabilities.  Defaults to 'grid,processingOption'.
 
 ### Examples
-#### Create a new `Server Context` 'e1':
+#### Create a new `Server Context` _e1_:
 ```csh
 [:] $ sv -c e1 d -b http://e1.celin.io:9300/jderest/
 Server Context 'e1' not found!
 New Server Definition? [Y/n] y
 [e1:] $ 
 ```
-The 'e1' context is now the default `Server Context` and displayed in the prompt.
+The _e1_ context is now the default `Server Context` and displayed in the prompt.
 
 #### Connect / Authenticate
 ```csh

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using McMaster.Extensions.CommandLineUtils;
 namespace Celin
 {
-    public class FormInputCmd : OutCmd
+    public class FormInputCmd : BaseCmd
     {
         [Option("-rm|--remove", CommandOptionType.NoValue, Description = "Remove Form Input")]
         protected bool Remove { get; }
@@ -13,9 +13,8 @@ namespace Celin
         protected (bool HasValue, string Parameter) Value { get; set; }
         protected List<AIS.Input> FormInputs { get; set; }
         protected List<string> RemainingArguments { get; }
-        protected override int OnExecute()
+        protected virtual int OnExecute()
         {
-            base.OnExecute();
             var ia = Id.HasValue ? FormInputs.Find(e => e.id.Equals(Id.Parameter)) : null;
             if (Id.HasValue && Value.HasValue)
             {

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using McMaster.Extensions.CommandLineUtils;
 namespace Celin
 {
-    public abstract class ConditionCmd : OutCmd
+    public abstract class ConditionCmd : BaseCmd
     {
         [Option("-rm|--remove", CommandOptionType.NoValue, Description = "Remove Condition")]
         protected bool Remove { get; }
@@ -44,9 +44,8 @@ namespace Celin
         protected (bool HasValue, string Parameter) Value { get; }
         protected AIS.Request Request { get; set; }
         protected List<string> RemainingArguments { get; }
-        protected override int OnExecute()
+        protected virtual int OnExecute()
         {
-            base.OnExecute();
             if (ControlId.HasValue && Operator.HasValue && ValueType.HasValue)
             {
                 var value = (Value.HasValue ? RemainingArguments.Count > 0
@@ -77,7 +76,7 @@ namespace Celin
             return 1;
         }
     }
-    public abstract class QueryCmd : OutCmd
+    public abstract class QueryCmd : BaseCmd
     {
         [Option("-mt|--matchType", CommandOptionType.SingleValue, Description = "Match Type")]
         [AllowedValues(new string[] { "match_all", "match_any" }, IgnoreCase = true)]
@@ -89,9 +88,8 @@ namespace Celin
         [AllowedValues(new string[] { "true", "false" }, IgnoreCase = true)]
         protected (bool HasValue, string Parameter) AutoClear { get; }
         protected AIS.Request Request { get; set; }
-        protected override int OnExecute()
+        protected virtual int OnExecute()
         {
-            base.OnExecute();
             if (Request.query is null)
             {
                 if (MatchType.HasValue) Request.query = new AIS.Query();
