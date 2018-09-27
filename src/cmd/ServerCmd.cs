@@ -61,7 +61,7 @@ namespace Celin
             }
         }
         [Command(Description = "Define")]
-        public class DefCmd : OutCmd
+        public class DefCmd : BaseCmd
         {
             [Option("-b|--baseUrl", CommandOptionType.SingleValue, Description = "Base Url")]
             [PromptOption]
@@ -71,9 +71,8 @@ namespace Celin
             [Option("-rc|--requiredCapabilities", CommandOptionType.SingleValue, Description = "Required Capabilities")]
             protected (bool HasValue, string Parameter) RequiredCapabilities { get; private set; }
             ServerCmd ServerCmd { get; set; }
-            protected override int OnExecute()
+            protected int OnExecute()
             {
-                base.OnExecute();
                 if (ServerCmd.OnExecute() == 0 && ServerCmd.Id.HasValue)
                 {
                     if (Prompt.GetYesNo("New Server Definition?", false))

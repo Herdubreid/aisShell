@@ -48,7 +48,7 @@ namespace Celin
         class ExpCmd : JObjectCmd
         {
             [Command(Description = "Iterate")]
-            class IterCmd :JArrayCmd
+            class IterCmd : JArrayCmd
             {
                 protected override int OnExecute()
                 {
@@ -134,11 +134,7 @@ namespace Celin
                         Context = DataCtx.Current;
                     }
                 }
-                if (DataCtx.Current is null)
-                {
-                    Error("No Data Context!");
-                    return 1;
-                }
+                if (DataCmd.NullCtx) return 0;
                 Request = DataCtx.Current.Request;
                 var rq = DataCtx.Current.Request;
                 rq.targetName = TargetName.HasValue ? TargetName.Parameter.ToUpper() : rq.targetName;
@@ -156,15 +152,8 @@ namespace Celin
             DataCmd DataCmd { get; set; }
             int OnExecute()
             {
-                if (DataCmd.OnExecute() == 1)
-                {
-                    if (DataCtx.Current is null)
-                    {
-                        Error("No Data Context!");
-                        return 1;
-                    }
-                    DataCtx.Current.Submit();
-                }
+                if (DataCmd.OnExecute() == 0) return 0;
+                DataCtx.Current.Submit();
                 return 1;
             }
             public SubCmd(DataCmd dataCmd)
@@ -180,6 +169,18 @@ namespace Celin
                 Responses = DataCtx.Responses;
             }
         }
+        protected bool NullCtx
+        {
+            get
+            {
+                if (DataCtx.Current is null)
+                {
+                    Error("No Data Context!");
+                    return true;
+                }
+                return false;
+            }
+        }
         int OnExecute()
         {
             if (List) foreach (var c in DataCtx.List) Console.WriteLine(c.Id);
@@ -188,6 +189,7 @@ namespace Celin
                 Error("Data Context '{0}' not found!", Id.Parameter);
                 return 0;
             }
+            if (NullCtx) return 0;
             Context = DataCtx.Current;
             return 1;
         }

@@ -292,12 +292,7 @@ namespace Celin
                     }
                     else return 0;
                 }
-                if (StackFormCtx.Current is null)
-                {
-                    Error("No Stack Form Context!");
-                    return 1;
-                }
-
+                if (StackFormCmd.NullCtx) return 0;
                 var rq = StackFormCtx.Current.Request;
                 rq.stackId = StackId.HasValue ? StackId.Parameter : rq.stackId;
                 rq.stateId = StateId.HasValue ? StateId.Parameter : rq.stateId;
@@ -323,13 +318,6 @@ namespace Celin
             int OnExecute()
             {
                 if (StackFormCmd.OnExecute() == 0) return 0;
-
-                if (StackFormCtx.Current is null)
-                {
-                    Error("No Stack Form Context!");
-                    return 0;
-                }
-
                 StackFormCtx.Current.Request.action = "open";
                 StackFormCtx.Current.Submit();
 
@@ -366,11 +354,6 @@ namespace Celin
             int OnExecute()
             {
                 if (StackFormCmd.OnExecute() == 0) return 0;
-                if (StackFormCtx.Current is null)
-                {
-                    Error("No Stack Form Context!");
-                    return 0;
-                }
                 if (!StackFormCmd.SetStackParameters(ResponseIndex)) return 0;
                 StackFormCtx.Current.Request.action = "execute";
                 StackFormCtx.Current.Submit();
@@ -391,12 +374,6 @@ namespace Celin
             int OnExecute()
             {
                 if (StackFormCmd.OnExecute() == 0) return 0;
-
-                if (StackFormCtx.Current is null)
-                {
-                    Error("No Stack Form Context!");
-                    return 0;
-                }
                 if (!StackFormCmd.SetStackParameters(ResponseIndex)) return 0;
 
                 StackFormCtx.Current.Request.action = "close";
@@ -440,6 +417,18 @@ namespace Celin
                 Responses = StackFormCtx.Responses;
             }
         }
+        protected bool NullCtx
+        {
+            get
+            {
+                if (StackFormCtx.Current is null)
+                {
+                    Error("No Stack Form Context!");
+                    return true;
+                }
+                return false;
+            }
+        }
         int OnExecute()
         {
             if (List) foreach (var c in StackFormCtx.List) Console.WriteLine(c.Id);
@@ -448,6 +437,7 @@ namespace Celin
                 Error("Stack Form Context {0} not found!", Id.Parameter);
                 return 0;
             }
+            if (NullCtx) return 0;
             Context = StackFormCtx.Current;
             return 1;
         }

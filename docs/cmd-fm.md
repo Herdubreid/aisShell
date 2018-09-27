@@ -1,9 +1,6 @@
-﻿# Usage
-### Command `fm`.
+﻿# Form Context Usage
+### Command `fm`
 ```
-[:] $ fm -h
-Form Context
-
 Usage: fm [options] [command]
 
 Options:
@@ -27,51 +24,35 @@ Commands:
 Run 'fm [command] --help' for more information about a command.
 ```
 An AIS Form Request definition.
-## Usage
 ### Options
 - [`-c|--context and -|--listContexts`](./opt-context-and-list.md)
 ### Commands
-- [`d` - Form Definition](./opt-fr.md)
-- [`exp` - Export](./cmd-exp.md)
+- [`d` - Form Definition](./cmd-fm-d.md)
 - [`fa` - Form Action](./cmd-fa.md)
 - [`fi` - Form Input](./cmd-fi.md)
 - [`gi` - Grid Insert](./cmd-gi.md)
 - [`gu` - Grid Update](./cmd-gu.md)
 - [`save` and `load`](./cmd-save-and-load.md)
-- [`r` Response](./cmd-respones.md)
+- [`exp` - Export](./cmd-exp.md)
 - [`s` Submit](./cmd-submit.md)  
+- [`r` Response](./cmd-respones.md)
 
-Example:
-```csh
-[e1:] $ fm -c wwab d -fn p01012_w01012b -mp 30 -rc 54|1[19,20]       
-New Form Definition? [Y/n] y
-[e1:] fm:wwab $ 
+### Examples
+#### Create a new `Form Context` 'wwab': 
 ```
-Where:
-- `-c` and `-d` for context and definition as above.
-- `-fn` is form name.
-- `-mp` is max returned pages (rows).
-- `-rc` is a list of control Ids to return.
-
-Before a form can be submitted, the server context must be connected:
-```csh
-[e1:] fm:wwab $ sv c
-User name: demo
-Password: *******
-..
-Signon success!
+[e1:demo] $ fm -c wwab d -fn p01012_w01012b -mp 30 -rc 54|1[19,20]
+New Form Definition? [Y/n] y
 [e1:demo] fm:wwab $ 
 ```
-
-A connected (or authenticated) server context displayes the user name in the prompt `[e1:demo]`.  The current context `fm:wwab` is the form context that was just created.
-
-The form is submitted with the `fm s` command (the `fm` is redundant for the current context).
+This is now the the default context, showing in the prompt with 'fm:wwab'.
+#### Submit Form Request
 ```csh
 [e1:demo] fm:wwab $ s
 .Responses 1.
 [e1:demo] fm:wwab $ 
 ```
-The response can be explored with the `r` command.
+Because the `Form Context` is default the `fm` command can be omitted.
+#### Explore the Response
 ```csh
 [e1:demo] fm:wwab $ r -d 0
 {

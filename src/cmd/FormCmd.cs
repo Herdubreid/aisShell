@@ -230,12 +230,7 @@ namespace Celin
                     }
                     else return 0;
                 }
-                if (FormCtx.Current is null)
-                {
-                    Error("No Form Context!");
-                    return 0;
-                }
-
+                if (FormCmd.NullCtx) return 0;
                 Request = FormCtx.Current.Request;
 
                 return base.OnExecute();
@@ -251,21 +246,25 @@ namespace Celin
             FormCmd FormCmd { get; set; }
             int OnExecute()
             {
-                if (FormCmd.OnExecute() == 1)
-                {
-                    if (FormCtx.Current is null)
-                    {
-                        Error("No Form Context!");
-                        return 1;
-                    }
-                    FormCtx.Current.Submit();
-
-                };
+                if (FormCmd.OnExecute() == 0) return 0;
+                FormCtx.Current.Submit();
                 return 1;
             }
             public SubCmd(FormCmd formCmd)
             {
                 FormCmd = formCmd;
+            }
+        }
+        protected bool NullCtx
+        {
+            get
+            {
+                if (FormCtx.Current is null)
+                {
+                    Error("No Form Context!");
+                    return true;
+                }
+                return false;
             }
         }
         protected int OnExecute()
@@ -276,6 +275,7 @@ namespace Celin
                 Error("Form Context {0} not found!", Id.Parameter);
                 return 0;
             }
+            if (NullCtx) return 0;
             Context = FormCtx.Current;
 
             return 1;
