@@ -283,7 +283,7 @@ namespace Celin
                 base.OnExecute();
                 if (StackFormCmd.Id.HasValue && !StackFormCtx.Select(StackFormCmd.Id.Parameter))
                 {
-                    if (Prompt.GetYesNo("New Stack Form Definition?", true))
+                    if (Prompt.GetYesNo("New Stack Form Definition?", false))
                     {
                         PromptOptions();
                         StackFormCtx.Current = new StackFormCtx(StackFormCmd.Id.Parameter);

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using Cintio;
+using McMaster.Extensions.CommandLineUtils;
 namespace Celin
 {
     class MainClass

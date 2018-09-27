@@ -1,6 +1,7 @@
-﻿## Commands
-```bash
-$ help
+﻿# Usage
+The `help` command lists available commands.
+```
+[:] $ help
 Usage: [command] [options]
 
 Commands:
@@ -12,4 +13,10 @@ Commands:
   help                 Show Available Commands
   clear                Clear Screen
   quit                 Quit Shell
+
+Use [command] [-?|-h|--help] to get command help
 ```
+Each command can have one or more subcommands and options, followed again with subcommands and options and so forth.
+
+- [`sv` Server Context](./cmd_server.md)
+- [`sv` Form Context](./cmd_form.md)

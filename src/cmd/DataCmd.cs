@@ -126,7 +126,7 @@ namespace Celin
                 base.OnExecute();
                 if (DataCmd.Id.HasValue && !DataCtx.Select(DataCmd.Id.Parameter))
                 {
-                    if (Prompt.GetYesNo("New Data Definition?", true))
+                    if (Prompt.GetYesNo("New Data Definition?", false))
                     {
                         PromptOptions();
                         DataCtx.Current = new DataCtx(DataCmd.Id.Parameter);

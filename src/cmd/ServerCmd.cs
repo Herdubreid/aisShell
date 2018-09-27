@@ -76,7 +76,7 @@ namespace Celin
                 base.OnExecute();
                 if (ServerCmd.OnExecute() == 0 && ServerCmd.Id.HasValue)
                 {
-                    if (Prompt.GetYesNo("New Server Definition?", true))
+                    if (Prompt.GetYesNo("New Server Definition?", false))
                     {
                         PromptOptions();
                         ServerCtx.Current = new ServerCtx(ServerCmd.Id.Parameter, BaseUrl.Parameter);

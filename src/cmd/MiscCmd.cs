@@ -6,7 +6,7 @@ namespace Celin
     [Command("clear", Description = "Clear Screen")]
     public class ClearCmd : BaseCmd
     {
-        private int OnExecute()
+        int OnExecute()
         {
             Console.Clear();
             return 1;
@@ -27,7 +27,7 @@ namespace Celin
     [Command("quit", Description = "Quit Shell")]
     public class QuitCmd : BaseCmd
     {
-        private int OnExecute()
+        int OnExecute()
         {
             if (Prompt.GetYesNo("Quit Shell?", false))
             {
@@ -51,13 +51,18 @@ namespace Celin
     [Command("help", Description = "Show Available Commands")]
     public class HelpCmd : BaseCmd
     {
-        private int OnExecute()
+        void DisplayCmd(BaseCmd cmd, ref int spaces)
+        {
+        }
+        int OnExecute()
         {
             Console.WriteLine("Usage: [command] [options]\n");
             Console.WriteLine("Commands:");
-            Commands.ForEach(c => {
+            Commands.ForEach(c =>
+            {
                 var attribute = (CommandAttribute)Attribute.GetCustomAttribute(c.Type, typeof(CommandAttribute));
                 Console.WriteLine("  {0, -20} {1}", attribute.Name, attribute.Description);
+
             });
             Console.WriteLine("\nUse [command] [-?|-h|--help] to get command help\n");
             return 1;

@@ -221,7 +221,7 @@ namespace Celin
             {
                 if (FormCmd.Id.HasValue && !FormCtx.Select(FormCmd.Id.Parameter))
                 {
-                    if (Prompt.GetYesNo("New Form Definition?", true))
+                    if (Prompt.GetYesNo("New Form Definition?", false))
                     {
                         PromptOptions();
                         FormCtx.Current = new FormCtx(FormCmd.Id.Parameter);
