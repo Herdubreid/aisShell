@@ -1,5 +1,46 @@
-﻿### Form Context `fm`.
+﻿# Usage
+### Command `fm`.
+```
+[:] $ fm -h
+Form Context
+
+Usage: fm [options] [command]
+
+Options:
+  -c|--context       Context Id
+  -l|--listContexts  List Contexts
+  -?|-h|--help       Show help information
+
+Commands:
+  d                  Form Definition
+  exp                Export Request
+  fa                 Form Action
+  fi                 Form Input
+  gi                 Grid Insert
+  gu                 Grid Update
+  load               Load Definitions
+  qry                Query
+  r                  Response
+  s                  Submit Request
+  save               Save Definitions
+
+Run 'fm [command] --help' for more information about a command.
+```
 An AIS Form Request definition.
+## Usage
+### Options
+- [`-c|--context and -|--listContexts`](./opt-context-and-list.md)
+### Commands
+- [`d` - Form Definition](./opt-fr.md)
+- [`exp` - Export](./cmd-exp.md)
+- [`fa` - Form Action](./cmd-fa.md)
+- [`fi` - Form Input](./cmd-fi.md)
+- [`gi` - Grid Insert](./cmd-gi.md)
+- [`gu` - Grid Update](./cmd-gu.md)
+- [`save` and `load`](./cmd-save-and-load.md)
+- [`r` Response](./cmd-respones.md)
+- [`s` Submit](./cmd-submit.md)  
+
 Example:
 ```csh
 [e1:] $ fm -c wwab d -fn p01012_w01012b -mp 30 -rc 54|1[19,20]       

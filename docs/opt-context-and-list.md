@@ -1,4 +1,5 @@
 ﻿# Usage
+### Options `-c|--context <id>` and `-l|--contextList`
 The shell keeps a repository of defined contexts with a unique alpha-numeric context id.  
 Request commands are executed in the selected or default context against the default `Server Context`.
 ## Create a new Context

@@ -2,4 +2,4 @@
 A command line Utility for AIS
 
 
-## [Usage](/docs/COMMANDS.md)
+## [Usage](/docs/cmds.md)

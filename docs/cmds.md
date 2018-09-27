@@ -18,5 +18,5 @@ Use [command] [-?|-h|--help] to get command help
 ```
 Each command can have one or more subcommands and options, followed again with subcommands and options and so forth.
 
-- [`sv` Server Context](./cmd_server.md)
-- [`sv` Form Context](./cmd_form.md)
+- [`sv` Server Context](./cmd-server.md)
+- [`sv` Form Context](./cmd-form.md)

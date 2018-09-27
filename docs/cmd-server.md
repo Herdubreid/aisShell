@@ -1,4 +1,5 @@
-﻿# Server Context Usage
+﻿# Usage
+### Command `sv`
 ```
 [:] $ sv -h
 Server Context
@@ -23,8 +24,9 @@ Run 'sv [command] --help' for more information about a command.
 Before any AIS requests can be made, a server context must be defined and connected.
 
 ## Options
-See [`-c|--context and -|--listContexts`](./opt_context_and_list.md) usage.
+- [`-c|--context and -|--listContexts`](./opt-context-and-list.md) usage.
 
+## Commands
 Example:
 ```csh
 [:] $ sv -c e1 d -b http://e1.celin.io:9300/jderest/
