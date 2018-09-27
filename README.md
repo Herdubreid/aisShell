@@ -28,7 +28,7 @@ New Server Definition? [Y/n] y
 Where:
 - `-c` is Context Id `e1`.  If it doesn't exist then the user is prompted for a new definition.
 - `d` Context definition.
-- `-b` is the the AIS Url (note trailing '/').
+- `-b` is the the AIS Url (note the trailing '/').
 
 Command usage help is displayed with trailing `-?` or `-h`.  For example `sv -h` and `sv d -?`.
 
@@ -111,13 +111,13 @@ The `fa` command accepts `ControlID`, `Command` and optionally `Value`.  The res
 }
 [e1:demo] fm:wwab $
 ```
-The two grid requested grid controls `1[19,20]` are `mnAddressNumber_19` and `sAlphaName_20`.  We can explore their value with the `it` command.
+The two requested grid controls `1[19,20]` are `mnAddressNumber_19` and `sAlphaName_20`.  We can explore their value with the `it` command.
 ```csh
 [e1:demo] fm:wwab $ r -k rowset it mnAddressNumber_19.value;sAlphaName_20.value
-1001	AB Common	
-1234	Long, Ben	
+1001    AB Common	
+1234    Long, Ben	
 2006...
-...	    Abbott, Dominique	
-6016	Hunter, Monica	
+...     Abbott, Dominique	
+6016    Hunter, Monica	
 [e1:demo] fm:wwab $ 
-```csh
+```
