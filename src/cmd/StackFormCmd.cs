@@ -6,7 +6,7 @@ using McMaster.Extensions.CommandLineUtils;
 namespace Celin
 {
     [Command("sfm", Description = "Stack Form Context")]
-    [Subcommand("fm", typeof(FormReqCmd))]
+    [Subcommand("fr", typeof(FormReqCmd))]
     [Subcommand("sa", typeof(StackActCmd))]
     [Subcommand("o", typeof(OpenCmd))]
     [Subcommand("e", typeof(ExecuteCmd))]
