@@ -167,8 +167,25 @@ namespace Celin
             }
         }
         [Command(Description = "Response")]
+        [Subcommand("it", typeof(IterCmd))]
         class ResCmd : ResponseCmd<AIS.DatabrowserRequest>
         {
+            [Command(Description = "Iterate")]
+            class IterCmd : JArrayCmd
+            {
+                protected override int OnExecute()
+                {
+                    ResCmd.Iter = true;
+                    if (ResCmd.OnExecute() == 0 || ResCmd.NullJToken) return 0;
+                    JToken = ResCmd.JToken;
+                    return base.OnExecute();
+                }
+                ResCmd ResCmd { get; set; }
+                public IterCmd(ResCmd resCmd)
+                {
+                    ResCmd = resCmd;
+                }
+            }
             public ResCmd()
             {
                 Responses = DataCtx.Responses;
