@@ -113,11 +113,13 @@ namespace Celin
         [Command(Description = "Define")]
         class DefCmd : RequestCmd<AIS.DatabrowserRequest>
         {
-            const string TABLE = "TARGET_TABLE";
-            const string VIEW = "TARGET_VIEW";
+
             [Argument(0, Description = "Table or View Name")]
             [PromptOption]
             public (bool HasValue, string Parameter) TargetName { get; }
+            [Argument(0, Description = "Target Type")]
+            [AllowedValues(new string[] { "table", "view" }, IgnoreCase = true)]
+            protected (bool HasValue, string Parameter) TargetType { get; }
             [Argument(1, Description = "Service Type")]
             [AllowedValues(new string[] { "BROWSE", "COUNT", "AGGREGATION" }, IgnoreCase = true)]
             protected (bool HasValue, string Parameter) ServiceType { get; }
@@ -141,7 +143,7 @@ namespace Celin
                 var rq = DataCtx.Current.Request;
                 if (TargetName.HasValue) rq.targetName =  TargetName.Parameter.ToUpper();
                 if (ServiceType.HasValue) rq.dataServiceType = ServiceType.Parameter.ToUpper();
-                rq.targetType = ViewTarget ? VIEW : TABLE;
+                if (TargetType.HasValue) rq.targetType = TargetType.Parameter.ToLower();
                 return 1;
             }
             public DefCmd(DataCmd dataCmd)
