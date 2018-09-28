@@ -117,7 +117,10 @@ namespace Celin
             const string VIEW = "TARGET_VIEW";
             [Argument(0, Description = "Table or View Name")]
             [PromptOption]
-            public (bool HasValue, string Parameter) TargetName { get; set; }
+            public (bool HasValue, string Parameter) TargetName { get; }
+            [Argument(1, Description = "Service Type")]
+            [AllowedValues(new string[] { "BROWSE", "COUNT", "AGGREGATION" }, IgnoreCase = true)]
+            protected (bool HasValue, string Parameter) ServiceType { get; }
             [Option("-v|--view", Description = "View Target Type")]
             public bool ViewTarget { get; }
             DataCmd DataCmd { get; set; }
@@ -136,7 +139,8 @@ namespace Celin
                 if (DataCmd.NullCtx) return 0;
                 Request = DataCtx.Current.Request;
                 var rq = DataCtx.Current.Request;
-                rq.targetName = TargetName.HasValue ? TargetName.Parameter.ToUpper() : rq.targetName;
+                if (TargetName.HasValue) rq.targetName =  TargetName.Parameter.ToUpper();
+                if (ServiceType.HasValue) rq.dataServiceType = ServiceType.Parameter.ToUpper();
                 rq.targetType = ViewTarget ? VIEW : TABLE;
                 return 1;
             }
