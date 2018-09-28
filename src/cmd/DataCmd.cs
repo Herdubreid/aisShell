@@ -117,10 +117,10 @@ namespace Celin
             [Argument(0, Description = "Table or View Name")]
             [PromptOption]
             public (bool HasValue, string Parameter) TargetName { get; }
-            [Argument(0, Description = "Target Type")]
+            [Argument(1, Description = "Target Type")]
             [AllowedValues(new string[] { "table", "view" }, IgnoreCase = true)]
             protected (bool HasValue, string Parameter) TargetType { get; }
-            [Argument(1, Description = "Service Type")]
+            [Argument(2, Description = "Service Type")]
             [AllowedValues(new string[] { "BROWSE", "COUNT", "AGGREGATION" }, IgnoreCase = true)]
             protected (bool HasValue, string Parameter) ServiceType { get; }
             [Option("-v|--view", Description = "View Target Type")]
