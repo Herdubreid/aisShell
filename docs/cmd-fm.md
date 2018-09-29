@@ -36,7 +36,7 @@ An AIS Form Request definition.
 - [`gu` - Grid Update](./cmd-g.md)
 - [`save` and `load`](./cmd-save-and-load.md)
 - [`exp` - Export Request](./cmd-exp.md)
-- [`r` Response](./cmd-respones.md)
+- [`r` Response](./cmd-r.md)
 - `s` Submit  
   Submits the Form Request.  If successful, the response can be explored with the `r` command.
 
@@ -50,66 +50,18 @@ New Form Definition? [Y/n] y
 ```
 This is now the the default context, showing in the prompt with _fm:wwab_.
 
+### Add Form Actions
+```
+[e1:demo] fm:wwab $ fa 54 SetControlValue E
+[e1:demo] fm:wwab $ fa 15 DoAction
+[e1:demo] fm:wwab $ 
+```
+The `Search Type` is set to 'E' and press the find button pressed.
+
 ### Submit Form Request
-```csh
+```
 [e1:demo] fm:wwab $ s
 .Responses 1.
 [e1:demo] fm:wwab $ 
 ```
-Because the `Form Context` is default the `fm` command can be omitted.
-
-### Explore the Response
-```csh
-[e1:demo] fm:wwab $ r -d 0
-{
-  "fs_P01012_W01012B": {},
-  "stackId": 1,
-  "stateId": 1,
-  "rid": "fdcff8fa532d1fd6",
-  "currentApp": "P01012_W01012B",
-  "timeStamp": "2018-09-26:17.31.06",
-  "sysErrors": []
-}
-[e1:demo] fm:wwab $ r -k summary
-{
-  "records": 0,
-  "moreRecords": false
-}
-[e1:demo] fm:wwab $ 
-```
-the `r -d 0` command displays only the first response level (0 depth).  The `r -k summary` command displays the `summary` of the response, which has 0 grid rows.
-
-To return some records we need set the `Search Type` to 'E' and press the find button.
-```csh
-[e1:demo] fm:wwab $ fa 54 SetControlValue E
-[e1:demo] fm:wwab $ fa 15 DoAction
-[e1:demo] fm:wwab $ s
-.....Responses 2.
-[e1:demo] fm:wwab $ r -k summary
-{
-  "records": 30,
-  "moreRecords": true
-}
-[e1:demo] fm:wwab $ 
-```
-The `fa` command accepts `ControlID`, `Command` and optionally `Value`.  The response now has 30 records.
-```csh
-[e1:demo] fm:wwab $ r -k rowset[0] -d 0                  
-{
-  "rowIndex": 0,
-  "MOExist": false,
-  "mnAddressNumber_19": {},
-  "sAlphaName_20": {}
-}
-[e1:demo] fm:wwab $
-```
-The two requested grid controls `1[19,20]` are `mnAddressNumber_19` and `sAlphaName_20`.  We can explore their value with the `it` command.
-```csh
-[e1:demo] fm:wwab $ r -k rowset it mnAddressNumber_19.value;sAlphaName_20.value
-1001    AB Common   
-1234    Long, Ben   
-2006...
-...     Abbott, Dominique   
-6016    Hunter, Monica  
-[e1:demo] fm:wwab $ 
-```
+Because the `Form Context` is default the `fm` command can be omitted.  The response can be explored with the [`r` command](./cmd_r.md).

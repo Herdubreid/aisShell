@@ -1,5 +1,5 @@
 # Stack Form Context Usage
-### Command `sfm`
+### [Command](./cmds.md) `sfm`
 ```
 Usage: sfm [options] [command]
 
@@ -26,7 +26,7 @@ An AIS Stack Application Request.
 - `o` - Opens the form request.
 - `e` - Executes the stack action.
 - `c` - Closes an active stack request.
-- [`fr` - Form Request](./cmd-sfm-fr.md)
-- [`sa` - Stack Action](./cmd-sfm-sa.md)
+- [`fr` - Form Request](./cmd-fm-d.md)
+- [`sa` - Stack Action](./cmd-sa.md)
 - [`exp` - Export](./cmd-exp.md)
 - [`save` and `load`](./cmd-save-and-load.md)
