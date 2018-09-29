@@ -1,7 +1,7 @@
 # Grid Insert/Update Usage
 ### [Command](./cmd-fm.md) `gi` and `gu`
 ```
-Usage: fm [gi|gu] [arguments] [options]
+Usage: [fm|sfm fr] [gi|gu] [arguments] [options]
 
 Arguments:
   ColumnID        Control Id
@@ -40,7 +40,7 @@ $ gi 27 SetGridCellValue HOM
 $ gi 28 SetGridCellValue 303               
 $ gi 29 SetGridCellValue 123-456
 ```
-The first line adds `gridRowInsertEvents` to Grid Id _1_ with `gridColumnEvents` of Row _1_,  which the next 3 lines are the then subsequently added to (the _-g 1 -r 1_ options are reduntant).
+The first line adds `gridRowInsertEvents` to Grid Id _1_ with `gridColumnEvents` of Row _1_, to which the next 3 lines are subsequently added (the _-g 1 -r 1_ options are reduntant).
 
 ### Update an Existing Grid Row
 ```

@@ -1,7 +1,7 @@
 # Form Definition Usage
-### [Command](./cmd-fm.md) `fm d`
+### [Command](./cmd-fm.md) `fm d` and `sfm fr`
 ```
-Usage: fm d [options]
+Usage: [fm d|sfm fr] [options]
 
 Options:
   -fn|--formName          Form Name

@@ -25,7 +25,7 @@ namespace Celin
             try
             {
                 var keys = Key.HasValue ? Key.Parameter.Split(';') : new string[] { "" };
-                for (var i = From ?? 0; i < (To ?? ja.Count); i++)
+                for (var i = From ?? 0; i <= (To ?? ja.Count - 1); i++)
                 {
                     var e = ja[i];
                     if (e.Type == JTokenType.Object) foreach (var k in keys)
