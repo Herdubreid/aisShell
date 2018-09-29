@@ -23,12 +23,9 @@ An AIS Stack Application Request.
 ### Options
 - [`-c|--context and -|--listContexts`](./opt-context-and-list.md)
 ### Commands
-- `o` - Open
-Opens the form request.
-- `e` - Execute Stack Action
-Executes the stack action.
-- `c` - Close
-Closes an active stack request.
+- `o` - Opens the form request.
+- `e` - Executes the stack action.
+- `c` - Closes an active stack request.
 - [`fr` - Form Request](./cmd-sfm-fr.md)
 - [`sa` - Stack Action](./cmd-sfm-sa.md)
 - [`exp` - Export](./cmd-exp.md)

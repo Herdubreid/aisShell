@@ -1,4 +1,4 @@
-﻿# Usage
+﻿# Server Context Usage
 ### Command `sv`
 ```
 Usage: sv [options] [command]
@@ -19,7 +19,7 @@ Commands:
 Before any AIS requests can be made, a server context must be defined and connected.
 
 ### Options
-- [`-c|--context and -|--listContexts`](./opt-context-and-list.md) usage.
+- [`-c|--context and -|--listContexts`](./opt-context-and-list.md)
 
 ### Commands
 #### `d` - Define

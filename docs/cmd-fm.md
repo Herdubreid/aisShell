@@ -1,5 +1,5 @@
 ﻿# Form Context Usage
-### Command `fm`
+### [Command](./cmds.md) `fm`
 ```
 Usage: fm [options] [command]
 
