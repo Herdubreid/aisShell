@@ -119,7 +119,6 @@ namespace Celin
             [Option("-p|--password", CommandOptionType.SingleValue, Description = "Password")]
             [PromptOption(false, PromptType.Password)]
             public (bool HasValue, string Parameter) Password { get; set; }
-            //public delegate bool Authenticate();
             int OnExecute()
             {
                 if (ServerCmd.OnExecute() == 0) return 0;
@@ -128,6 +127,7 @@ namespace Celin
                 rq.username = User.Parameter;
                 rq.password = Password.Parameter;
                 Task<bool> t = new Task<bool>(ServerCtx.Current.Server.Authenticate);
+                rq.password = "";
                 t.Start();
                 while (!t.IsCompleted)
                 {

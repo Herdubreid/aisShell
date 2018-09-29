@@ -26,10 +26,10 @@ Remove a Form Input Id.
 
 ### Set Form Input Id's Value
 ```
-$ fi 1 7500
+$ fi 4 7500
 ```
 
 ### Remove Form Input Id
 ```
-$ fi 1 -rm
+$ fi 4 -rm
 ```

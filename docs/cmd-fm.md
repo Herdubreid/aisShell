@@ -32,12 +32,13 @@ An AIS Form Request definition.
 - [`d` - Form Definition](./cmd-fm-d.md)
 - [`fa` - Form Action](./cmd-fa.md)
 - [`fi` - Form Input](./cmd-fi.md)
-- [`gi` - Grid Insert](./cmd-gi.md)
-- [`gu` - Grid Update](./cmd-gu.md)
+- [`gi` - Grid Insert](./cmd-g.md)
+- [`gu` - Grid Update](./cmd-g.md)
 - [`save` and `load`](./cmd-save-and-load.md)
 - [`exp` - Export Request](./cmd-exp.md)
-- [`s` Submit](./cmd-submit.md)  
 - [`r` Response](./cmd-respones.md)
+- `s` Submit  
+  Submits the Form Request.  If successful, the response can be explored with the `r` command.
 
 ## Examples
 

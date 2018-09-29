@@ -24,4 +24,4 @@ Any command or subcommand can be entered with a  `-?`, `-h` or `--help` option f
 - [`fm` - Form Context](./cmd-fm.md)
 - [`sfm` - Stack Form Context](./cmd-sfm.md)
 - [`dt` - Data Context](./cmd-dt.md)
-- `out` - Directs the output of `exp` and `r` subcommands to file (defaults the `-of` option).
+- `out` - Redirects the output of `exp` and `r` subcommands to file (defaults the `-of` option).
