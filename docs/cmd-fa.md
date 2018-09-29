@@ -1,5 +1,5 @@
 # Form Action Usage
-### [Command(./cmd-fm.md)] `fa`
+### [Command](./cmd-fm.md) `fa`
 ```
 Usage: fm fa [arguments] [options]
 
@@ -42,7 +42,7 @@ Options:
 
 ## Examples
 
-### Add a Find Press Action
+### Add a Press Find Action
 ```
 fa 15 DoAction
 ```
@@ -50,12 +50,12 @@ Assuming `ControlId` _15_ represents the find button.
 
 ### Remove the First Action
 ```
-fa -i 0 -rm
+$ fa -i 0 -rm
 ```
 
 ### Insert Setting a Form Value as the First Action
 ```
-fa -i 0 54 SetControlValue E
+$ fa -i 0 54 SetControlValue E
 ```
 
 #### See [Oracle's Reference](https://docs.oracle.com/cd/E53430_01/EOTJC/perform_ais_formsvc_calls.htm#EOTJC128) for more.

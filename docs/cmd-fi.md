@@ -1,2 +1,35 @@
 # Form Input Usage
-## Command `fm fi`
+## Command `fi`
+```
+Usage: fm fi [arguments] [options]
+
+Arguments:
+  Id            Id
+  Value         Value
+
+Options:
+  -rm|--remove  Remove Form Input
+  -?|-h|--help  Show help information
+```
+
+## Arguments
+- `Id`  
+  The Form Input Id.
+- `Value`  
+  The Form Input Value.
+
+## Options
+- `-rm|--remove`  
+Remove a Form Input Id.
+
+## Examples
+
+### Set Form Input Id's Value
+```
+$ fi 1 7500
+```
+
+### Remove Form Input Id
+```
+$ fi 1 -rm
+```
