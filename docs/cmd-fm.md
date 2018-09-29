@@ -22,9 +22,13 @@ Commands:
   save               Save Definitions
 ```
 An AIS Form Request definition.
-### Options
+
+## Options
+
 - [`-c|--context and -|--listContexts`](./opt-context-and-list.md)
-### Commands
+
+## Commands
+
 - [`d` - Form Definition](./cmd-fm-d.md)
 - [`fa` - Form Action](./cmd-fa.md)
 - [`fi` - Form Input](./cmd-fi.md)
@@ -35,22 +39,25 @@ An AIS Form Request definition.
 - [`s` Submit](./cmd-submit.md)  
 - [`r` Response](./cmd-respones.md)
 
-### Examples
-#### Create a new `Form Context` _wwab_: 
+## Examples
+
+### Create a new `Form Context` _wwab_: 
 ```
 [e1:demo] $ fm -c wwab d -fn p01012_w01012b -mp 30 -rc 54|1[19,20]
 New Form Definition? [Y/n] y
 [e1:demo] fm:wwab $ 
 ```
 This is now the the default context, showing in the prompt with _fm:wwab_.
-#### Submit Form Request
+
+### Submit Form Request
 ```csh
 [e1:demo] fm:wwab $ s
 .Responses 1.
 [e1:demo] fm:wwab $ 
 ```
 Because the `Form Context` is default the `fm` command can be omitted.
-#### Explore the Response
+
+### Explore the Response
 ```csh
 [e1:demo] fm:wwab $ r -d 0
 {

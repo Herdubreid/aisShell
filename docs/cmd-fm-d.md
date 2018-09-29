@@ -1,5 +1,5 @@
 # Form Definition Usage
-### Command `fm d`
+### [Command](./cmd-fm.md) `fm d`
 ```
 Usage: fm d [options]
 

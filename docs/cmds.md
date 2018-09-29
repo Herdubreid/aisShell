@@ -21,7 +21,7 @@ Each command can have one or more subcommands and options, followed again with s
 Any command or subcommand can be entered with a  `-?`, `-h` or `--help` option for help.
 
 - [`sv` - Server Context](./cmd-sv.md)
-- [`sv` - Form Context](./cmd-fm.md)
+- [`fm` - Form Context](./cmd-fm.md)
 - [`sfm` - Stack Form Context](./cmd-sfm.md)
 - [`dt` - Data Context](./cmd-dt.md)
 - `out` - Directs the output of `exp` and `r` subcommands to file (defaults the `-of` option).
