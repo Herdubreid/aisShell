@@ -16,5 +16,5 @@ Options:
   -ot|--outputType        Output Type
   -?|-h|--help            Show help information
 ```
-### Options
+## Options
 See [Oracle's documentation for reference.](https://docs.oracle.com/cd/E53430_01/EOTRS/op-formservice-post.html)
