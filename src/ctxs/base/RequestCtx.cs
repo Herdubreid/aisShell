@@ -23,21 +23,20 @@ namespace Celin
             }
             else
             {
-                var t = new Task<Tuple<bool, JObject>>(() => ServerCtx.Current.Server.Request<JObject>(Request));
-                t.Start();
-                while (!t.IsCompleted)
+                var cancel = new CancellationTokenSource();
+                var t = new Task<Tuple<bool, JObject>>(() => ServerCtx.Current.Server.Request<JObject>(Request, cancel));
+                if (Wait(t, cancel))
                 {
-                    Thread.Sleep(500);
-                    Console.Write('.');
-                }
-                if (t.Result.Item1)
-                {
-                    Responses.Add(new Response<T1>() { Request = Request, Result = t.Result.Item2 });
-                    BaseCmd.Success("Responses {0}.", Responses.Count);
-                }
-                else
-                {
-                    BaseCmd.Error("Request failed!");
+
+                    if (t.Result.Item1)
+                    {
+                        Responses.Add(new Response<T1>() { Request = Request, Result = t.Result.Item2 });
+                        BaseCmd.Success("Responses {0}.", Responses.Count);
+                    }
+                    else
+                    {
+                        BaseCmd.Error("Request failed!");
+                    }
                 }
             }
         }

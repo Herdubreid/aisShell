@@ -15,7 +15,7 @@
     <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="2.2.5" />
     <PackageReference Include="NuGet.Build.Packaging" Version="0.2.2" />
     <PackageReference Include="Colorful.Console" Version="1.2.9" />
-    <PackageReference Include="Celin.AIS" Version="0.7.0" />
+    <PackageReference Include="Celin.AIS" Version="0.8.0" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="NLog.config" />

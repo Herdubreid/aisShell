@@ -12,9 +12,6 @@ Options:
 Commands:
   it             Iterate
 ```
-## Commands
-- [`it` - Iterates](./cmd-it.md)
-
 ## Options
 - `-k|--key`  
   Export a Json key value.
@@ -22,6 +19,9 @@ Commands:
   Limit export to to _depth_ levels.
 - `-of|--outFile`  
   Redirect eport to _file_.  This overrides the `out` command's default file.
+
+## Commands
+- [`it` - Iterates](./cmd-it.md)
 
 ## Examples
 

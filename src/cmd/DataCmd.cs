@@ -21,7 +21,7 @@ namespace Celin
         {
             [Argument(0, Description = "File Name")]
             [PromptOption]
-            public (bool HasValue, string Parameter) FileName { get; private set; }
+            public (bool HasValue, string Parameter) FileName { get; set; }
             int OnExecute()
             {
                 PromptOptions();
@@ -34,7 +34,7 @@ namespace Celin
         {
             [Argument(0, Description = "File Name")]
             [PromptOption]
-            public (bool HasValue, string Parameter) FileName { get; private set; }
+            public (bool HasValue, string Parameter) FileName { get; set; }
             int OnExecute()
             {
                 PromptOptions();
@@ -116,15 +116,13 @@ namespace Celin
 
             [Argument(0, Description = "Table or View Name")]
             [PromptOption]
-            public (bool HasValue, string Parameter) TargetName { get; }
+            public (bool HasValue, string Parameter) TargetName { get; set; }
             [Argument(1, Description = "Target Type")]
             [AllowedValues(new string[] { "table", "view" }, IgnoreCase = true)]
             protected (bool HasValue, string Parameter) TargetType { get; }
             [Argument(2, Description = "Service Type")]
             [AllowedValues(new string[] { "BROWSE", "COUNT", "AGGREGATION" }, IgnoreCase = true)]
             protected (bool HasValue, string Parameter) ServiceType { get; }
-            [Option("-v|--view", Description = "View Target Type")]
-            public bool ViewTarget { get; }
             DataCmd DataCmd { get; set; }
             protected virtual int OnExecute()
             {
@@ -142,8 +140,8 @@ namespace Celin
                 Request = DataCtx.Current.Request;
                 var rq = DataCtx.Current.Request;
                 if (TargetName.HasValue) rq.targetName =  TargetName.Parameter.ToUpper();
-                if (ServiceType.HasValue) rq.dataServiceType = ServiceType.Parameter.ToUpper();
-                if (TargetType.HasValue) rq.targetType = TargetType.Parameter.ToLower();
+                rq.dataServiceType = ServiceType.HasValue ? ServiceType.Parameter.ToUpper() : rq.dataServiceType ?? "BROWSE";
+                rq.targetType = TargetType.HasValue ? TargetType.Parameter.ToLower() : rq.targetType ?? "table";
                 return 1;
             }
             public DefCmd(DataCmd dataCmd)

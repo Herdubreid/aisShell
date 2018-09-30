@@ -1,0 +1,29 @@
+# Query Usage
+### [Command](./cmds.md)
+```
+Usage: [fm|sfm|dt] qry [options] [command]
+
+Options:
+  -mt|--matchType  Match Type
+  -af|--autoFind   Automatically Find
+  -ac|--autoClear  Clear Other Fields
+  -?|-h|--help     Show help information
+
+Commands:
+  cn               Condition
+```
+
+**Note:** The `Server Context` requires the `query` capability.
+
+## Options
+- `-mt|--matchType`  
+Either `MATCH_ALL` or `MATCH_ANY`.
+- `-af|--autoFine`  
+Automatically find on Entry.
+- `-ac|--autoClear`  
+Automatically clear other Form filter fields.
+
+## Commands
+- [`cn` - Condition](./cmd-cn.md)
+
+#### See [Oracle's Reference](https://docs.oracle.com/cd/E53430_01/EOTJC/perform_ais_formsvc_calls.htm#EOTJC144) for more.

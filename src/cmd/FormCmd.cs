@@ -61,7 +61,7 @@ namespace Celin
         {
             [Argument(0, Description = "File Name")]
             [PromptOption]
-            public (bool HasValue, string Parameter) FileName { get; private set; }
+            public (bool HasValue, string Parameter) FileName { get; set; }
             int OnExecute()
             {
                 PromptOptions();
@@ -74,7 +74,7 @@ namespace Celin
         {
             [Argument(0, Description = "File Name")]
             [PromptOption]
-            public (bool HasValue, string Parameter) FileName { get; private set; }
+            public (bool HasValue, string Parameter) FileName { get; set; }
             int OnExecute()
             {
                 PromptOptions();

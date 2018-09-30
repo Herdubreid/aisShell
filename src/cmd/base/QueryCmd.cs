@@ -67,7 +67,7 @@ namespace Celin
             }
             else if (ControlId.HasValue)
             {
-                var cnd = Request.query.condition.Find(e => e.controlId.Equals(ControlId.Parameter));
+                var cnd = Request.query.condition.Find(e => e.controlId.Equals(ControlId.Parameter, StringComparison.OrdinalIgnoreCase));
                 if (cnd is null) Error("ControlId {0} not found!", ControlId.Parameter);
                 else if (Remove) Request.query.condition.Remove(cnd);
                 return 0;

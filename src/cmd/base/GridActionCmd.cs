@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using McMaster.Extensions.CommandLineUtils;
 namespace Celin
@@ -38,7 +39,7 @@ namespace Celin
                     var ga = a as AIS.GridAction;
                     if (ga.gridAction.GetType() == typeof(T))
                     {
-                        return !Id.HasValue || ga.gridAction.gridID.Equals(Id.Parameter);
+                        return !Id.HasValue || ga.gridAction.gridID.Equals(Id.Parameter, StringComparison.OrdinalIgnoreCase);
                     }
                 }
                 return false;
@@ -77,7 +78,7 @@ namespace Celin
                 rowEvent = new AIS.RowEvent() { rowNumber = RowNumber.Parameter };
                 rowEvents.Add(rowEvent);
             }
-            var ce = ColumnID.HasValue ? rowEvent.gridColumnEvents.Find(e => e.columnID.Equals(ColumnID.Parameter)) : null;
+            var ce = ColumnID.HasValue ? rowEvent.gridColumnEvents.Find(e => e.columnID.Equals(ColumnID.Parameter, StringComparison.OrdinalIgnoreCase)) : null;
             if (ColumnID.HasValue && Command.HasValue)
             {
                 var value = Value.HasValue ? RemainingArguments.Count > 0

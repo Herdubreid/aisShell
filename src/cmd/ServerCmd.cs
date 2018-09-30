@@ -39,7 +39,7 @@ namespace Celin
         {
             [Argument(0, Description = "File Name")]
             [PromptOption]
-            public (bool HasValue, string Parameter) FileName { get; private set; }
+            public (bool HasValue, string Parameter) FileName { get; set; }
             int OnExecute()
             {
                 PromptOptions();
@@ -52,7 +52,7 @@ namespace Celin
         {
             [Argument(0, Description = "File Name")]
             [PromptOption]
-            public (bool HasValue, string Parameter) FileName { get; private set; }
+            public (bool HasValue, string Parameter) FileName { get; set; }
             int OnExecute()
             {
                 PromptOptions();
@@ -65,7 +65,7 @@ namespace Celin
         {
             [Option("-b|--baseUrl", CommandOptionType.SingleValue, Description = "Base Url")]
             [PromptOption]
-            public (bool HasValue, string Parameter) BaseUrl { get; private set; }
+            public (bool HasValue, string Parameter) BaseUrl { get; set; }
             [Option("-d|--device", CommandOptionType.SingleValue, Description = "Device")]
             protected (bool HasValue, string Parameter) Device { get; private set; }
             [Option("-rc|--requiredCapabilities", CommandOptionType.SingleValue, Description = "Required Capabilities")]
@@ -115,7 +115,7 @@ namespace Celin
         {
             [Option("-u|--user", CommandOptionType.SingleValue, Description = "User name")]
             [PromptOption]
-            public (bool HasValue, string Parameter) User { get; private set; }
+            public (bool HasValue, string Parameter) User { get; set; }
             [Option("-p|--password", CommandOptionType.SingleValue, Description = "Password")]
             [PromptOption(false, PromptType.Password)]
             public (bool HasValue, string Parameter) Password { get; set; }
@@ -126,21 +126,19 @@ namespace Celin
                 var rq = ServerCtx.Current.Server.AuthRequest;
                 rq.username = User.Parameter;
                 rq.password = Password.Parameter;
-                Task<bool> t = new Task<bool>(ServerCtx.Current.Server.Authenticate);
-                rq.password = "";
-                t.Start();
-                while (!t.IsCompleted)
+                CancellationTokenSource cancel = new CancellationTokenSource();
+                Task<bool> t = new Task<bool>(() => ServerCtx.Current.Server.Authenticate(cancel));
+                if (ServerCtx.Wait(t, cancel))
                 {
-                    Thread.Sleep(500);
-                    Console.Write('.');
-                }
-                if (t.Result)
-                {
-                    Success("\nSignon success!");
-                }
-                else
-                {
-                    Error("\nSignon failed!");
+                    rq.password = "";
+                    if (t.Result)
+                    {
+                        Success("\nSignon success!");
+                    }
+                    else
+                    {
+                        Error("\nSignon failed!");
+                    }
                 }
                 return 1;
             }
@@ -164,21 +162,18 @@ namespace Celin
                 if (!Prompt.GetYesNo("Do you want to log out?", false)) return 0;
                 var rq = new AIS.LogoutRequest();
                 Task<bool> t = new Task<bool>(ServerCtx.Current.Server.Logout);
-                t.Start();
-                while (!t.IsCompleted)
+                if (ServerCtx.Wait(t, new CancellationTokenSource()))
                 {
-                    Thread.Sleep(500);
-                    Console.Write('.');
-                }
-                if (t.Result)
-                {
-                    Success("\nLogged out successfully!");
-                }
-                else
-                {
-                    Error("\nLogout failed!");
-                }
 
+                    if (t.Result)
+                    {
+                        Success("\nLogged out successfully!");
+                    }
+                    else
+                    {
+                        Error("\nLogout failed!");
+                    }
+                }
                 return 1;
             }
             ServerCmd ServerCmd { get; set; }

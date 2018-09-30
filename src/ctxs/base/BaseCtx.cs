@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 using McMaster.Extensions.CommandLineUtils;
 using Newtonsoft.Json;
@@ -50,6 +52,8 @@ namespace Celin
     public abstract class BaseCtx<T> : IBaseCtx
         where T : IBaseCtx
     {
+        public string Id { get; set; }
+        public string Cmd { get; set; }
         public static List<T> List { get; set; } = new List<T>();
         public static T Current { get; set; }
         public static bool Select(string id)
@@ -98,8 +102,34 @@ namespace Celin
                 }
             }
         }
-        public string Id { get; set; }
-        public string Cmd { get; set; }
+        public static bool Wait<T1>(T1 task, CancellationTokenSource cancel = null)
+            where T1 : Task
+        {
+            task.Start();
+            var wm = @"|/-\";
+            var i = 0;
+            Console.CursorVisible = false;
+            while (!task.IsCompleted)
+            {
+                Thread.Sleep(400);
+                if (Console.KeyAvailable)
+                {
+                    Console.ReadKey(true);
+                    Console.CursorVisible = true;
+                    if (Prompt.GetYesNo("\rCancel Request?", false))
+                    {
+                        cancel.Cancel();
+                        BaseCmd.Error("Request Cancelled!");
+                        break;
+                    }
+                    Console.CursorVisible = false;
+                }
+                Console.Write('\r' + wm[i].ToString());
+                i = (i + 1) % 4;
+            }
+            Console.CursorVisible = true;
+            return task.IsCompleted;
+        }
         protected BaseCtx(string cmd, string id)
         {
             Cmd = cmd;

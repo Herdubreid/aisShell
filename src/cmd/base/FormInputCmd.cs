@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using McMaster.Extensions.CommandLineUtils;
 namespace Celin
@@ -15,7 +16,7 @@ namespace Celin
         protected List<string> RemainingArguments { get; }
         protected virtual int OnExecute()
         {
-            var ia = Id.HasValue ? FormInputs.Find(e => e.id.Equals(Id.Parameter)) : null;
+            var ia = Id.HasValue ? FormInputs.Find(e => e.id.Equals(Id.Parameter, StringComparison.OrdinalIgnoreCase)) : null;
             if (Id.HasValue && Value.HasValue)
             {
                 var value = Value.HasValue ? RemainingArguments.Count > 0

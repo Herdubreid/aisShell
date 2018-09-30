@@ -20,6 +20,9 @@ Commands:
   save               Save Definition
 ```
 An AIS Stack Application Request.
+
+**Note:** The `Server Context` requires the `stackApplication` capability.
+
 ### Options
 - [`-c|--context and -|--listContexts`](./opt-context-and-list.md)
 ### Commands
@@ -30,3 +33,4 @@ An AIS Stack Application Request.
 - [`sa` - Stack Action](./cmd-sa.md)
 - [`exp` - Export](./cmd-exp.md)
 - [`save` and `load`](./cmd-save-and-load.md)
+

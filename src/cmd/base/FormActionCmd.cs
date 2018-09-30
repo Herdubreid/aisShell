@@ -61,7 +61,10 @@ namespace Celin
                                   ? FormActions[Index.Parameter]
                                   : FormActions.Find(e =>
                                   {
-                                      return e.GetType() == typeof(AIS.FormAction) && (e as AIS.FormAction).controlID.Equals(ControlID.Parameter);
+                                      return e.GetType() == typeof(AIS.FormAction)
+                                              && (e as AIS.FormAction).controlID.Equals(
+                                                  ControlID.Parameter,
+                                                  StringComparison.OrdinalIgnoreCase);
                                   });
                     if (fa is null) Error("ControlID {0} not found!", ControlID.Parameter);
                     else if (Remove) FormActions.Remove(fa);

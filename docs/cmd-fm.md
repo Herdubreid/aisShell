@@ -34,9 +34,10 @@ An AIS Form Request definition.
 - [`fi` - Form Input](./cmd-fi.md)
 - [`gi` - Grid Insert](./cmd-g.md)
 - [`gu` - Grid Update](./cmd-g.md)
-- [`save` and `load`](./cmd-save-and-load.md)
+- [`qry` - Query](./cmd-qry.md)
 - [`exp` - Export Request](./cmd-exp.md)
 - [`r` Response](./cmd-r.md)
+- [`save` and `load`](./cmd-save-and-load.md)
 - `s` Submit  
   Submits the Form Request.  If successful, the response can be explored with the `r` command.
 

@@ -74,7 +74,6 @@ namespace Celin
                 var promptOption = (PromptOptionAttribute)Attribute.GetCustomAttribute(e, typeof(PromptOptionAttribute));
                 if (promptOption != null)
                 {
-                    var allowedValues = (AllowedValuesAttribute)Attribute.GetCustomAttribute(e, typeof(AllowedValuesAttribute));
                     var optionAttribute = (OptionAttribute)Attribute.GetCustomAttribute(e, typeof(OptionAttribute));
                     var argumentAttribute = (ArgumentAttribute)Attribute.GetCustomAttribute(e, typeof(ArgumentAttribute));
                     var description = optionAttribute is null ? argumentAttribute?.Description : optionAttribute.Description;

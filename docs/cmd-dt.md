@@ -1,5 +1,5 @@
 # Data Context Usage
-### Command `dt`
+### [Command](./cmds.md) `dt`
 ```
 Usage: dt [options] [command]
 
@@ -18,6 +18,20 @@ Commands:
   save               Save Definition
 ```
 An AIS Data Request definition.
-### Options
+
+**Note:** The `Server Context` requires the `dataservice` capability.
+
+## Options
 - [`-c|--context and -|--listContexts`](./opt-context-and-list.md)
-### Commands
+
+## Commands
+- [`dt` Define](./cmd-dt-d.md)
+- [`qry` Query](./cmd-qry.md)
+- [`exp` Export Request](./cmd-exp.md)
+- [`r` Response](./cmd-r.md)
+- [`save` and `load`](./cmd-save-and-load.md)
+- `s` Submit  
+Submits the Data Request. If successful, the response can be explored with the `r` command.
+
+## Examples
+
