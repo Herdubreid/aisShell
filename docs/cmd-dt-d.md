@@ -27,4 +27,20 @@ Either `BROWSE` (default), `COUNT` or `AGGREGATE`
 - `-rc|--returnControlIds`  
 Fields to return in the format of _table.alias_.
 - `-mp|--maxPage`  
-Maximum number of rows to return (default to 100).
+Maximum number of rows to return (defaults to 100).
+
+## Examples
+
+### Create F0101 Request
+```
+[:] $ dt -c ab d f0101
+New Data Definition? [y/N] y
+[:] dt:ab $ 
+```
+
+### Create V0101 Request
+```
+[:] $ dt -c abvw d v01010 view           
+New Data Definition? [y/N] y
+[:] dt:abvw $ 
+```
