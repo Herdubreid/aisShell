@@ -25,6 +25,7 @@ An AIS Stack Application Request.
 
 ### Options
 - [`-c|--context and -|--listContexts`](./opt-context-and-list.md)
+
 ### Commands
 - [`fr` - Form Request](./cmd-fm-d.md)
 - [`sa` - Stack Action](./cmd-sa.md)

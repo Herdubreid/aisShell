@@ -69,7 +69,7 @@ New Stack Form Definition? [y/N] y
 }
 [e1:demo] sfm:step2 $ 
 ```
-Only control  _28_ is returned as request with  the `-rc` option.
+Only control  _28_ is returned as requested with  the `-rc` option.
 
 ### Create a Stack Action Request to Update Name
 ```

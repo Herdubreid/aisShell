@@ -15,7 +15,7 @@ Options:
 
 ## Options
 - `-n|--name`   
-The table of business view name.
+The table or business view name.
 - `-t|--type`  
 Either `table` (default) or `view`.
 - `-st|--serviceType`  

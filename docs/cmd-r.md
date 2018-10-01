@@ -43,7 +43,7 @@ The context keeps a indexed repository of responses, so earlier responses can be
 ```
 the `-d 0` option displays only the first response level (0 depth).
 
-### Explore last Response Json Key
+### Explore last Response's Json Key
 ```
 [e1:demo] fm:wwab $ r -k summary
 {
