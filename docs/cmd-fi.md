@@ -1,7 +1,7 @@
-# Form Input Usage
-## Command `fi`
+# Form Input [Usage](../README.md)
+## Subcommand `fi`
 ```
-Usage: fm fi [arguments] [options]
+Usage: [fm|fr] fi [arguments] [options]
 
 Arguments:
   Id            Id

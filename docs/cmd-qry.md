@@ -1,5 +1,5 @@
-# Query Usage
-### [Command](./cmds.md)
+# Query [Usage](../README.md)
+### Subcommand `qry`
 ```
 Usage: [fm|sfm|dt] qry [options] [command]
 

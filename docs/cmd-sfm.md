@@ -1,5 +1,5 @@
-# Stack Form Context Usage
-### [Command](./cmds.md) `sfm`
+# Stack Form Context [Usage](../README.md)
+### Command `sfm`
 ```
 Usage: sfm [options] [command]
 

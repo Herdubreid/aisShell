@@ -1,7 +1,7 @@
-# Form Action Usage
-### [Command](./cmd-fm.md) `fa`
+# Form Action [Usage](../README.md)
+### Subcommand `fa`
 ```
-Usage: fm fa [arguments] [options]
+Usage: [fm|fr] fa [arguments] [options]
 
 Arguments:
   ControlID      Control Id

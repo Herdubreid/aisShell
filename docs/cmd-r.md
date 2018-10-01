@@ -1,5 +1,5 @@
-# Response Usage
-### [Command](./cmds.md) `r`
+# Response [Usage](../README.md)
+### Subcommand `r`
 ```
 Usage: [fm|d|sfm] r [options] [command]
 

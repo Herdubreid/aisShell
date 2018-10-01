@@ -1,5 +1,5 @@
-# Export Request Usage
-# [Command](./cmds.md) `exp`
+# Export Request [Usage](../README.md)
+# Subcommand `exp`
 ```
 Usage: [sv|fm|sfm|dt] exp [options] [command]
 

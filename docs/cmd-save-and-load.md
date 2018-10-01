@@ -1,5 +1,5 @@
-# Save and Load Usages
-# [Commands](./cmds.md) `save` and `load`
+# Save and Load [Usages](../README.md)
+# Subommands `save` and `load`
 ```
 Usage: sv save [arguments] [options]
 

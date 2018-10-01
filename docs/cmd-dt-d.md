@@ -1,4 +1,4 @@
-# Data Definition Usage
+# Data Definition [Usage](../README.md)
 ### [Command](./cmd-dt.md) `dt d`
 ```
 Usage: dt d [arguments] [options]

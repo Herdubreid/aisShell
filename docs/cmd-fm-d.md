@@ -1,5 +1,5 @@
-# Form Definition Usage
-### [Command](./cmd-fm.md) `fm d` and `sfm fr`
+# Form Definition [Usage](../README.md)
+### Commands [`fm`](./cmd-fm.md) `d` and [`sfm`](./cmd-sfm.md) `fr`
 ```
 Usage: [fm d|sfm fr] [options]
 

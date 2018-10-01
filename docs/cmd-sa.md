@@ -1,5 +1,5 @@
-# Stack Action Usage
-### [Command](./cmd-sfm.md) `sa`
+# Stack Action [Usage]
+### Command `sa`
 ```
 Usage: sfm sa [options] [command]
 

@@ -1,5 +1,5 @@
 # Condition [Usage](../README.md)
-### [Command](./cmd-qry.md) `qry cn`
+### [Subcommand](./cmd-qry.md) `cn`
 ```
 Usage: [fm|sfm|dt] qry cn [arguments] [options]
 

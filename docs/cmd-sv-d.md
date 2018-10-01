@@ -1,5 +1,5 @@
-# Server Definition Usage
-### `d` - Define
+# Server Definition [Usage](../README.md)
+### [Command](./cmd-sv.md) `sv d`
 ```
 Usage: sv d [options]
 

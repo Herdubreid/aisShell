@@ -1,5 +1,5 @@
-﻿# Form Context Usage
-### [Command](./cmds.md) `fm`
+﻿# Form Context [Usage](../README.md)
+### Command `fm`
 ```
 Usage: fm [options] [command]
 
