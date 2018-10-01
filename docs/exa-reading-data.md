@@ -1,7 +1,6 @@
 # Reading Data [Example](../README.md#examples)
 
-### See [`Server Context`](./cmd-sv.md#examples) for _e1_ connection example.
-
+#### See [`Server Context`](./cmd-sv.md#examples) for _e1_ connection example.
 
 #### See [Oracle Doc's](https://docs.oracle.com/cd/E53430_01/EOTJC/perform_ais_formsvc_calls.htm#EOTJC178) for Java example.
 
