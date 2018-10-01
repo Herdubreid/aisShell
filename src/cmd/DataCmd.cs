@@ -114,13 +114,13 @@ namespace Celin
         class DefCmd : RequestCmd<AIS.DatabrowserRequest>
         {
 
-            [Argument(0, Description = "Table or View Name")]
+            [Option("-n|--name", CommandOptionType.SingleValue, Description = "Table or View Name")]
             [PromptOption]
             public (bool HasValue, string Parameter) TargetName { get; set; }
-            [Argument(1, Description = "Target Type")]
+            [Option("-t|--type", CommandOptionType.SingleValue, Description = "Target Type")]
             [AllowedValues(new string[] { "table", "view" }, IgnoreCase = true)]
             protected (bool HasValue, string Parameter) TargetType { get; }
-            [Argument(2, Description = "Service Type")]
+            [Option("-st|--serviceType", CommandOptionType.SingleValue, Description = "Service Type")]
             [AllowedValues(new string[] { "BROWSE", "COUNT", "AGGREGATION" }, IgnoreCase = true)]
             protected (bool HasValue, string Parameter) ServiceType { get; }
             DataCmd DataCmd { get; set; }
