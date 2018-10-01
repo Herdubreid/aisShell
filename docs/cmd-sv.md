@@ -1,4 +1,4 @@
-﻿# Server Context [Usage]((../README.md))
+﻿# Server Context [Usage](../README.md)
 ### Command `sv`
 ```
 Usage: sv [options] [command]
