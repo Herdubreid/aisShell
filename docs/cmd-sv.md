@@ -23,23 +23,13 @@ Before any AIS requests can be made, a server context must be defined and connec
 - [`-c|--context and -|--listContexts`](./opt-context-and-list.md)
 
 ## Commands
-
-### `d` - Define
-```
-Usage: sv d [options]
-
-Options:
-  -b|--baseUrl                Base Url
-  -d|--device                 Device
-  -rc|--requiredCapabilities  Required Capabilities
-  -?|-h|--help                Show help information
-``` 
-- `-b|--baseUrl`  
-The AIS Url with a trailing '/'.
-- `-d|--device`  
-The device name making the request.  Defaults to _celin_.
-- `-rc|--requiredCapabilities`  
-Required capabilities in subsequent requests.  See your `<AIS Url>/defaultconfig` for available capabilities.  Defaults to 'grid,processingOption'.
+- [`d` - Define](./cmd-sv-d.md)
+- [`exp` - Export Servers](./cmd-exp.md)
+- [`save` and `load`](cmd-save-and-load.md)
+- `c` - Connect  
+Prompts for user id and password and authenticates the server.
+- `lo` - Logout
+Logs out of authenticated connection.
 
 ## Examples
 

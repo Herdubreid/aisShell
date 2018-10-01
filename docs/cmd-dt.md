@@ -30,8 +30,14 @@ An AIS Data Request definition.
 - [`exp` Export Request](./cmd-exp.md)
 - [`r` Response](./cmd-r.md)
 - [`save` and `load`](./cmd-save-and-load.md)
-- `s` Submit  
+- `s` - Submit  
 Submits the Data Request. If successful, the response can be explored with the `r` command.
 
 ## Examples
 
+### Create view request for V0101
+```
+[:] dt:ab $ dt -c abvw d v01010 view           
+New Data Definition? [y/N] y
+[:] dt:abvw $
+```
