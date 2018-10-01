@@ -54,5 +54,6 @@ Any command or subcommand can be entered with a  `-?`, `-h` or `--help` option f
 
 ## Examples
 
-### [Reading Data](/docs/exa-reading-data.md)
-### [Addint Data](/docs/exa-adding-data.md)
+#### [Reading Data](/docs/exa-reading-data.md)
+#### [Adding Data](/docs/exa-adding-data.md)
+#### [Deleting Data](/docs/exa-deleting-data.md)
