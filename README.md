@@ -20,7 +20,7 @@ The associated source code can also be downloaded from the [Release Tab](https:/
 
 ## Run
 Run `aisShell.exe` in the fully contained package and with `dotnet aisShell.dll` in the framework depended package.  
-The framework dependent package requires installation of [Net Core 2](https://github.com/Herdubreid/aisShell/releases) runtime.
+The framework dependent package requires installation of [Net Core 2](https://www.microsoft.com/net/download) runtime.
 
 
 ## Usage
@@ -45,6 +45,7 @@ Each command can have one or more subcommands and options, followed again with s
 
 Any command or subcommand can be entered with a  `-?`, `-h` or `--help` option for help.
 
+## Commands
 - [`sv` - Server Context](/docs/cmd-sv.md)
 - [`fm` - Form Context](/docs/cmd-fm.md)
 - [`sfm` - Stack Form Context](/docs/cmd-sfm.md)
