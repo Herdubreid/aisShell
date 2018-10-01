@@ -1,4 +1,4 @@
-# Form Action [Usage](../README.md)
+# Form Action [Usage](../README.md#commands)
 ### Subcommand `fa`
 ```
 Usage: [fm|fr] fa [arguments] [options]

@@ -1,4 +1,4 @@
-# Grid Insert/Update [Usage](../README.md)
+# Grid Insert/Update [Usage](../README.md#commands)
 ### Subcommands `gi` and `gu`
 ```
 Usage: [fm|sfm fr] [gi|gu] [arguments] [options]

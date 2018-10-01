@@ -1,4 +1,4 @@
-# Form Input [Usage](../README.md)
+# Form Input [Usage](../README.md#commands)
 ## Subcommand `fi`
 ```
 Usage: [fm|fr] fi [arguments] [options]

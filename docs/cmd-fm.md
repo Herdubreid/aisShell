@@ -1,4 +1,4 @@
-﻿# Form Context [Usage](../README.md)
+﻿# Form Context [Usage](../README.md#commands)
 ### Command `fm`
 ```
 Usage: fm [options] [command]

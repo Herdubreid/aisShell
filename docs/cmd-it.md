@@ -1,4 +1,4 @@
-# Iterate [Usage](../README.md)
+# Iterate [Usage](../README.md#commands)
 ### [Command](./cmd-exp.md) `it`
 ```
 Usage: [exp|r] it [arguments] [options]

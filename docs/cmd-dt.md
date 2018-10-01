@@ -1,4 +1,4 @@
-# Data Context [Usage](../README.md)
+# Data Context [Usage](../README.md#commands)
 ### Command `dt`
 ```
 Usage: dt [options] [command]

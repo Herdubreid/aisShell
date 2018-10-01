@@ -1,4 +1,4 @@
-# Save and Load [Usages](../README.md)
+# Save and Load [Usage](../README.md#commands)
 # Subommands `save` and `load`
 ```
 Usage: sv save [arguments] [options]

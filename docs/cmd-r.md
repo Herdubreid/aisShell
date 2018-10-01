@@ -1,4 +1,4 @@
-# Response [Usage](../README.md)
+# Response [Usage](../README.md#commands)
 ### Subcommand `r`
 ```
 Usage: [fm|d|sfm] r [options] [command]

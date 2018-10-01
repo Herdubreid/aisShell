@@ -1,4 +1,4 @@
-# Query [Usage](../README.md)
+# Query [Usage](../README.md#commands)
 ### Subcommand `qry`
 ```
 Usage: [fm|sfm|dt] qry [options] [command]
@@ -18,10 +18,10 @@ Commands:
 ## Options
 - `-mt|--matchType`  
 Either `MATCH_ALL` or `MATCH_ANY`.
-- `-af|--autoFine`  
-Automatically find on Entry.
+- `-af|--autoFinde`  
+Automatically find on Entry, `true` or `false`.
 - `-ac|--autoClear`  
-Automatically clear other Form filter fields.
+Automatically clear other Form filter fields, `true` or `false`.
 
 ## Commands
 - [`cn` - Condition](./cmd-cn.md)

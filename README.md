@@ -3,7 +3,7 @@
 ## Install
 
 ### Build Latest
-Download zip's with buttons above or clone with git:
+Download zip with button above or clone with git:
 ```
 $ git clone https://github.com/Herdubreid/aisShell.git
 ```
@@ -19,7 +19,7 @@ Two packages are available for download.
 The associated source code can also be downloaded from the [Release Tab](https://github.com/Herdubreid/aisShell/releases).
 
 ## Run
-Run `aisShell.exe` in the fully contained package and with `dotnet aisShell.dll` in the framework depended package.  
+Run `aisShell.exe` in the fully contained package and use `dotnet aisShell.dll` in the framework depended package.  
 The framework dependent package requires installation of [Net Core 2](https://www.microsoft.com/net/download) runtime.
 
 
@@ -51,3 +51,7 @@ Any command or subcommand can be entered with a  `-?`, `-h` or `--help` option f
 - [`sfm` - Stack Form Context](/docs/cmd-sfm.md)
 - [`dt` - Data Context](/docs/cmd-dt.md)
 - `out` - Redirects the output of `exp` and `r` subcommands to file (defaults the `-of` option).
+
+## Examples
+
+### [Reading Data](/docs/exa-reading-data.md)

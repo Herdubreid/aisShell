@@ -1,4 +1,4 @@
-# Server Definition [Usage](../README.md)
+# Server Definition [Usage](../README.md#commands)
 ### [Command](./cmd-sv.md) `sv d`
 ```
 Usage: sv d [options]

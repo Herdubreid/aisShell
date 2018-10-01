@@ -1,4 +1,4 @@
-﻿# [Usage](../README.md)
+﻿# [Usage](../README.md#commands)
 ### Options `-c|--context <id>` and `-l|--contextList`
 The shell keeps a repository of defined contexts with a unique alpha-numeric context id.  
 Request commands (`fm`, `sfm` and `dt`) are executed in the selected or default context against the default `Server Context`.

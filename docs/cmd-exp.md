@@ -1,4 +1,4 @@
-# Export Request [Usage](../README.md)
+# Export Request [Usage](../README.md#commands)
 # Subcommand `exp`
 ```
 Usage: [sv|fm|sfm|dt] exp [options] [command]

@@ -1,4 +1,4 @@
-# Data Definition [Usage](../README.md)
+# Data Definition [Usage](../README.md#commands)
 ### [Command](./cmd-dt.md) `dt d`
 ```
 Usage: dt d [arguments] [options]
@@ -16,7 +16,7 @@ Options:
 ```
 
 ## Arguments
-- `TargetName`  
+- `TargetName`   
 The table of business view name.
 - `TargetType`  
 Either `table` (default) or `view`.
@@ -24,7 +24,7 @@ Either `table` (default) or `view`.
 Either `BROWSE` (default), `COUNT` or `AGGREGATE`
 
 ## Options
-- `-rc|--returnControlIds`  
+- `-rc|--returnControlIds`   
 Fields to return in the format of _table.alias_.
 - `-mp|--maxPage`  
 Maximum number of rows to return (defaults to 100).

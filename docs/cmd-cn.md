@@ -1,4 +1,4 @@
-# Condition [Usage](../README.md)
+# Condition [Usage](../README.md#commands)
 ### [Subcommand](./cmd-qry.md) `cn`
 ```
 Usage: [fm|sfm|dt] qry cn [arguments] [options]
@@ -42,12 +42,15 @@ The Control Id to apply the condition to.
   `TODAY_PLUS_YEAR`  
   `TODAY_MINUS_YEAR`
 
-  ## Options
-  - `-rm|--remove`  
-  Remove a `ControlId` condition.
+## Options
+- `-rm|--remove`  
+   Remove a `ControlId` condition.
 
-  ## Examples
+## Examples
 
-  ### Add Between Conditon
-  ```
-  ```
+### Add Query with Between Conditon
+```
+[:] dt:abw $ qry -mt match_all -af true
+[:] dt:abw $ qry cn F0101.AN8 between literal 6000;6500
+```
+The first line creates a `MATCH_ALL` query with `autoFind` _true_ and the second line add a condition where AN8 alias is between _6000_ and _6500_.

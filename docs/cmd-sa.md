@@ -1,4 +1,4 @@
-# Stack Action [Usage]
+# Stack Action [Usage](../README.md#commands)
 ### Command `sa`
 ```
 Usage: sfm sa [options] [command]
