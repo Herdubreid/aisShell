@@ -1,4 +1,4 @@
-# Condition Usage
+# Condition [Usage](../README.md)
 ### [Command](./cmd-qry.md) `qry cn`
 ```
 Usage: [fm|sfm|dt] qry cn [arguments] [options]
