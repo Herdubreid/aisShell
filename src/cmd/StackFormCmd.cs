@@ -362,27 +362,21 @@ namespace Celin
             }
         }
         [Command(Description = "Response")]
-        [Subcommand("l", typeof(ResCmd.ListCmd))]
+        [Subcommand("it", typeof(IterCmd))]
         class ResCmd : ResponseCmd<AIS.StackFormRequest>
         {
-            [Command(Description = "List Responses")]
-            public class ListCmd : OutCmd
+            [Command(Description = "Iterate")]
+            class IterCmd : JArrayCmd
             {
-                [Argument(0, Description = "Result Key")]
-                string Key { get; set; }
-                ResCmd ResCmd { get; set; }
                 protected override int OnExecute()
                 {
-                    base.OnExecute();
-                    var ndx = 0;
-                    foreach (var rs in ResCmd.Responses)
-                    {
-                        OutputLine(string.Format("{0, 3} {1}", ndx++, ResCmd.FindKey(rs.Result)));
-                    }
-
-                    return 1;
+                    ResCmd.Iter = true;
+                    if (ResCmd.OnExecute() == 0 || ResCmd.NullJToken) return 0;
+                    JToken = ResCmd.JToken;
+                    return base.OnExecute();
                 }
-                public ListCmd(ResCmd resCmd)
+                ResCmd ResCmd { get; set; }
+                public IterCmd(ResCmd resCmd)
                 {
                     ResCmd = resCmd;
                 }

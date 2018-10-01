@@ -57,3 +57,4 @@ Any command or subcommand can be entered with a  `-?`, `-h` or `--help` option f
 #### [Reading Data](/docs/exa-reading-data.md)
 #### [Adding Data](/docs/exa-adding-data.md)
 #### [Deleting Data](/docs/exa-deleting-data.md)
+#### [Stack Application Example](/docs/exa-application-stack.md)

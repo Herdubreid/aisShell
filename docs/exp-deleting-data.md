@@ -1,4 +1,4 @@
-# Reading Data [Example](../README.md#examples)
+# Deleting Data [Example](../README.md#examples)
 
 #### See [`Server Context`](./cmd-sv.md#examples) for _e1_ connection example.
 
