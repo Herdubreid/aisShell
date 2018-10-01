@@ -1,4 +1,29 @@
 # Celin's aisShell Usage
+
+## Install
+
+### Build Latest
+Download zip's with buttons above or clone with git:
+```
+$ git clone https://github.com/Herdubreid/aisShell.git
+```
+Build with [Visual Studio 2017](https://visualstudio.microsoft.com/downloads/).
+
+### Download Binaries
+Two packages are available for download.
+- Fully contained Windows8 x64  
+[v0.1 - Pre-release](https://github.com/Herdubreid/aisShell/releases/download/v0.1/win8-x64-full.zip)
+- Framework Dependent  
+[v0.1 - Pre-release](https://github.com/Herdubreid/aisShell/releases/download/v0.1/fw-dependent.zip)
+
+The associated source code can also be downloaded from the [Release Tab](https://github.com/Herdubreid/aisShell/releases).
+
+## Run
+Run `aisShell.exe` in the fully contained package and with `dotnet aisShell.dll` in the framework depended package.  
+The framework dependent package requires installation of [Net Core 2](https://github.com/Herdubreid/aisShell/releases) runtime.
+
+
+## Usage
 The `help` command lists available commands.
 ```
 [:] $ help
