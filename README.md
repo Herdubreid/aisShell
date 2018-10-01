@@ -12,9 +12,9 @@ Build with [Visual Studio 2017](https://visualstudio.microsoft.com/downloads/).
 ### Download Binaries
 Two packages are available for download.
 - Fully contained Windows8 x64  
-[v0.1 - Pre-release](https://github.com/Herdubreid/aisShell/releases/download/v0.1/win8-x64-full.zip)
+[v0.1 - Pre-release](https://github.com/Herdubreid/aisShell/releases/download/v0.1/win8-x64.zip)
 - Framework Dependent  
-[v0.1 - Pre-release](https://github.com/Herdubreid/aisShell/releases/download/v0.1/fw-dependent.zip)
+[v0.1 - Pre-release](https://github.com/Herdubreid/aisShell/releases/download/v0.1/dependent.zip)
 
 The associated source code can also be downloaded from the [Release Tab](https://github.com/Herdubreid/aisShell/releases).
 
