@@ -20,4 +20,11 @@ Global
 		{DED818B0-BAA9-4508-8FD7-9FC1DE714EDA}.Release|x86.ActiveCfg = Release|Any CPU
 		{DED818B0-BAA9-4508-8FD7-9FC1DE714EDA}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		Policies = $0
+		$0.DotNetNamingPolicy = $1
+		$0.StandardHeader = $2
+		$0.VersionControlPolicy = $3
+		description = A command line interface for Oracle E1/JDE AIS.
+	EndGlobalSection
 EndGlobal

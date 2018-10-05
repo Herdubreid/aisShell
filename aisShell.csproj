@@ -9,13 +9,16 @@
     <Owners>Bragason and Associates Pty Ltd</Owners>
     <Summary>A command line encapsulation of Celin.AIS</Summary>
     <Title>aisShell</Title>
+    <PackageId>aisShell</PackageId>
+    <PackageIconUrl>https://www.gravatar.com/avatar/82cf5b024555fa259f9dd9e448afe2ee</PackageIconUrl>
+    <PackageTags>Oracle E1 JDE AIS</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="2.2.5" />
     <PackageReference Include="NuGet.Build.Packaging" Version="0.2.2" />
     <PackageReference Include="Colorful.Console" Version="1.2.9" />
-    <PackageReference Include="Celin.AIS" Version="0.8.0" />
+    <PackageReference Include="Celin.AIS" Version="0.9.0" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="NLog.config" />

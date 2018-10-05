@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using Celin.AIS;
+using System.Collections.Generic;
 using McMaster.Extensions.CommandLineUtils;
 namespace Celin
 {
@@ -89,8 +88,42 @@ namespace Celin
         [Subcommand("gu", typeof(GridUpdCmd))]
         [Subcommand("gi", typeof(GridInsCmd))]
         [Subcommand("qry", typeof(QryCmd))]
-        public class FormReqCmd : FormRequestCmd
+        [Subcommand("cpq", typeof(CpqCmd))]
+        class FormReqCmd : FormRequestCmd
         {
+            [Command(Description = "Complex Query")]
+            [Subcommand("cn", typeof(ConCmd))]
+            class CpqCmd : ComplexQueryCmd
+            {
+                [Command(Description = "Condition", ThrowOnUnexpectedArgument = false)]
+                class ConCmd : ConditionCmd
+                {
+                    protected override int OnExecute()
+                    {
+                        if (CpqCmd.OnExecute() == 0) return 0;
+                        Query = CpqCmd.ComplexQuery;
+
+                        return base.OnExecute();
+                    }
+                    CpqCmd CpqCmd { get; set; }
+                    public ConCmd(CpqCmd cpqCmd)
+                    {
+                        CpqCmd = cpqCmd;
+                    }
+                }
+                protected override int OnExecute()
+                {
+                    if (FormReqCmd.OnExecute() == 0) return 0;
+                    Request = StackFormCtx.Current.Request.formRequest;
+
+                    return base.OnExecute();
+                }
+                FormReqCmd FormReqCmd { get; set; }
+                public CpqCmd(FormReqCmd formReqCmd)
+                {
+                    FormReqCmd = formReqCmd;
+                }
+            }
             [Command(Description = "Query")]
             [Subcommand("cn", typeof(CondCmd))]
             class QryCmd : QueryCmd
@@ -101,7 +134,19 @@ namespace Celin
                     protected override int OnExecute()
                     {
                         if (QryCmd.OnExecute() == 0) return 0;
-                        Request = StackFormCtx.Current.Request.formRequest;
+                        var qry = StackFormCtx.Current.Request.formRequest.query;
+                        if (qry != null && qry.complexQuery != null)
+                        {
+                            if (!Prompt.GetYesNo("Do you want to hange to normal Query", false)) return 0;
+                            StackFormCtx.Current.Request.query = null;
+                        }
+                        if (StackFormCtx.Current.Request.formRequest.query is null)
+                        {
+                            StackFormCtx.Current.Request.formRequest.query = new AIS.Query();
+                        }
+
+                        Query = StackFormCtx.Current.Request.formRequest.query;
+
                         return base.OnExecute();
                     }
                     QryCmd QryCmd { get; set; }
@@ -113,7 +158,12 @@ namespace Celin
                 protected override int OnExecute()
                 {
                     if (FormReqCmd.OnExecute() == 0) return 0;
-                    Request = StackFormCtx.Current.Request.formRequest;
+                    if (StackFormCtx.Current.Request.formRequest.query is null)
+                    {
+                        StackFormCtx.Current.Request.formRequest.query = new AIS.Query();
+                    }
+
+                    Query = StackFormCtx.Current.Request.formRequest.query;
 
                     return base.OnExecute();
                 }
@@ -126,7 +176,7 @@ namespace Celin
             [Command(Description = "Grid Insert")]
             public class GridInsCmd : GridActionCmd<AIS.GridInsert>
             {
-                public override List<RowEvent> RowEvents(GridInsert action)
+                public override List<AIS.RowEvent> RowEvents(AIS.GridInsert action)
                 {
                     return action.gridRowInsertEvents;
                 }
@@ -146,7 +196,7 @@ namespace Celin
             [Command(Description = "Grid Update")]
             public class GridUpdCmd : GridActionCmd<AIS.GridUpdate>
             {
-                public override List<RowEvent> RowEvents(GridUpdate action)
+                public override List<AIS.RowEvent> RowEvents(AIS.GridUpdate action)
                 {
                     return action.gridRowUpdateEvents;
                 }

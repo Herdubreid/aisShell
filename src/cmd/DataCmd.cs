@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using McMaster.Extensions.CommandLineUtils;
 namespace Celin
 {
     [Command("dt", Description = "Data Context")]
     [Subcommand("d", typeof(DefCmd))]
     [Subcommand("qry", typeof(QryCmd))]
+    [Subcommand("cpq", typeof(CpqCmd))]
+    [Subcommand("ag", typeof(AggCmd))]
+    [Subcommand("gr", typeof(GrpCmd))]
+    [Subcommand("or", typeof(OrdCmd))]
     [Subcommand("exp", typeof(ExpCmd))]
     [Subcommand("s", typeof(SubCmd))]
     [Subcommand("r", typeof(ResCmd))]
@@ -77,6 +82,39 @@ namespace Celin
                 DataCmd = dataCmd;
             }
         }
+        [Command(Description = "Complex Query")]
+        [Subcommand("cn", typeof(ConCmd))]
+        class CpqCmd : ComplexQueryCmd
+        {
+            [Command(Description = "Condition", ThrowOnUnexpectedArgument = false)]
+            class ConCmd : ConditionCmd
+            {
+                protected override int OnExecute()
+                {
+                    if (CpqCmd.OnExecute() == 0) return 0;
+                    Query = CpqCmd.ComplexQuery;
+
+                    return base.OnExecute();
+                }
+                CpqCmd CpqCmd { get; set; }
+                public ConCmd(CpqCmd cpqCmd)
+                {
+                    CpqCmd = cpqCmd;
+                }
+            }
+            protected override int OnExecute()
+            {
+                if (DataCmd.OnExecute() == 0) return 0;
+                Request = DataCtx.Current.Request;
+
+                return base.OnExecute();
+            }
+            DataCmd DataCmd { get; set; }
+            public CpqCmd(DataCmd dataCmd)
+            {
+                DataCmd = dataCmd;
+            }
+        }
         [Command(Description = "Query")]
         [Subcommand("cn", typeof(CondCmd))]
         class QryCmd : QueryCmd
@@ -87,7 +125,7 @@ namespace Celin
                 protected override int OnExecute()
                 {
                     if (QryCmd.OnExecute() == 0) return 0;
-                    Request = DataCtx.Current.Request;
+                    Query = DataCtx.Current.Request.query;
 
                     return base.OnExecute();
                 }
@@ -100,7 +138,18 @@ namespace Celin
             protected override int OnExecute()
             {
                 if (DataCmd.OnExecute() == 0) return 0;
-                Request = DataCtx.Current.Request;
+                var qry = DataCtx.Current.Request.query;
+                if (qry != null && qry.complexQuery != null)
+                {
+                    if (!Prompt.GetYesNo("Do you want to change to normal Query?", false)) return 0;
+                    DataCtx.Current.Request.query = null;
+                }
+                if (DataCtx.Current.Request.query is null)
+                {
+                    DataCtx.Current.Request.query = new AIS.Query();
+                }
+
+                Query = DataCtx.Current.Request.query;
 
                 return base.OnExecute();
             }
@@ -109,6 +158,73 @@ namespace Celin
             {
                 DataCmd = dataCmd;
             }
+        }
+        [Command(Description = "Aggregate")]
+        class AggCmd : AggregationCmd
+        {
+            protected override int OnExecute()
+            {
+                if (DataCmd.OnExecute() == 0) return 0;
+                var ag = DataCtx.Current.Request.aggregation;
+                if (ag is null)
+                {
+                    ag = new AIS.Aggregation();
+                    DataCtx.Current.Request.aggregation = ag;
+                }
+                Aggregations = ag.aggregations;
+
+                return base.OnExecute();
+            }
+            DataCmd DataCmd { get; set; }
+            public AggCmd(DataCmd dataCmd)
+            {
+                DataCmd = dataCmd;
+            }
+        }
+        [Command(Description = "Group By")]
+        class GrpCmd : AggregationCmd
+        {
+            protected override int OnExecute()
+            {
+                if (DataCmd.OnExecute() == 0) return 0;
+                var ag = DataCtx.Current.Request.aggregation;
+                if (ag is null)
+                {
+                    ag = new AIS.Aggregation();
+                    DataCtx.Current.Request.aggregation = ag;
+                }
+                Aggregations = ag.groupBy;
+
+                return base.OnExecute();
+            }
+            DataCmd DataCmd { get; set; }
+            public GrpCmd(DataCmd dataCmd)
+            {
+                DataCmd = dataCmd;
+            }
+        }
+        [Command(Description = "Order By")]
+        class OrdCmd : AggregationCmd
+        {
+            protected override int OnExecute()
+            {
+                if (DataCmd.OnExecute() == 0) return 0;
+                var ag = DataCtx.Current.Request.aggregation;
+                if (ag is null)
+                {
+                    ag = new AIS.Aggregation();
+                    DataCtx.Current.Request.aggregation = ag;
+                }
+                Aggregations = ag.orderBy;
+
+                return base.OnExecute();
+            }
+            DataCmd DataCmd { get; set; }
+            public OrdCmd(DataCmd dataCmd)
+            {
+                DataCmd = dataCmd;
+            }
+
         }
         [Command(Description = "Define")]
         class DefCmd : RequestCmd<AIS.DatabrowserRequest>
@@ -139,7 +255,7 @@ namespace Celin
                 if (DataCmd.NullCtx) return 0;
                 Request = DataCtx.Current.Request;
                 var rq = DataCtx.Current.Request;
-                if (TargetName.HasValue) rq.targetName =  TargetName.Parameter.ToUpper();
+                if (TargetName.HasValue) rq.targetName = TargetName.Parameter.ToUpper();
                 rq.dataServiceType = ServiceType.HasValue ? ServiceType.Parameter.ToUpper() : rq.dataServiceType ?? "BROWSE";
                 rq.targetType = TargetType.HasValue ? TargetType.Parameter.ToLower() : rq.targetType ?? "table";
                 return 1;

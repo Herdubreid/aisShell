@@ -10,6 +10,7 @@ namespace Celin
     [Subcommand("gi", typeof(GridInsCmd))]
     [Subcommand("gu", typeof(GridUpdCmd))]
     [Subcommand("qry", typeof(QryCmd))]
+    [Subcommand("cpq", typeof(CpqCmd))]
     [Subcommand("s", typeof(SubCmd))]
     [Subcommand("exp", typeof(ExpCmd))]
     [Subcommand("r", typeof(ResCmd))]
@@ -108,6 +109,39 @@ namespace Celin
                 Responses = FormCtx.Responses;
             }
         }
+        [Command(Description = "Complex Query")]
+        [Subcommand("cn", typeof(ConCmd))]
+        class CpqCmd : ComplexQueryCmd
+        {
+            [Command(Description = "Condition", ThrowOnUnexpectedArgument = false)]
+            class ConCmd : ConditionCmd
+            {
+                protected override int OnExecute()
+                {
+                    if (CpqCmd.OnExecute() == 0) return 0;
+                    Query = CpqCmd.ComplexQuery;
+
+                    return base.OnExecute();
+                }
+                CpqCmd CpqCmd { get; set; }
+                public ConCmd(CpqCmd cpqCmd)
+                {
+                    CpqCmd = cpqCmd;
+                }
+            }
+            protected override int OnExecute()
+            {
+                if (FormReqCmd.OnExecute() == 0) return 0;
+                Request = FormCtx.Current.Request;
+
+                return base.OnExecute();
+            }
+            FormCmd FormReqCmd { get; set; }
+            public CpqCmd(FormCmd formReqCmd)
+            {
+                FormReqCmd = formReqCmd;
+            }
+        }
         [Command(Description = "Query")]
         [Subcommand("cn", typeof(CondCmd))]
         class QryCmd : QueryCmd
@@ -118,7 +152,7 @@ namespace Celin
                 protected override int OnExecute()
                 {
                     if (QryCmd.OnExecute() == 0) return 0;
-                    Request = FormCtx.Current.Request;
+                    Query = FormCtx.Current.Request.query;
 
                     return base.OnExecute();
                 }
@@ -131,7 +165,18 @@ namespace Celin
             protected override int OnExecute()
             {
                 if (FormCmd.OnExecute() == 0) return 0;
-                Request = FormCtx.Current.Request;
+                var qry = FormCtx.Current.Request.query;
+                if (qry != null && qry.complexQuery != null)
+                {
+                    if (!Prompt.GetYesNo("Do you want to hange to normal Query", false)) return 0;
+                    FormCtx.Current.Request.query = null;
+                }
+                if (FormCtx.Current.Request.query is null)
+                {
+                    FormCtx.Current.Request.query = new AIS.Query();
+                }
+
+                Query = FormCtx.Current.Request.query;
 
                 return base.OnExecute();
             }
