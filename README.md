@@ -12,11 +12,11 @@ Build with [Visual Studio 2017](https://visualstudio.microsoft.com/downloads/).
 ### Download Binaries
 Two packages are available for download.
 - Fully contained Windows8/10 x64  
-[Latest](https://github.com/Herdubreid/aisShell/releases/download/latest/win8-x64.zip)
+[v0.2](https://github.com/Herdubreid/aisShell/releases/download/v0.2/win8-x64.zip)
 - Framework Dependent  
-[Latest](https://github.com/Herdubreid/aisShell/releases/download/latest/dependent.zip)
+[v0.2](https://github.com/Herdubreid/aisShell/releases/download/v0.2/dependent.zip)
 
-The associated source code can also be downloaded from the [Release Tab](https://github.com/Herdubreid/aisShell/releases).
+The associated source code can also be downloaded from the [Release Tab](https://github.com/Herdubreid/aisShell/releases/latest).
 
 ## Run
 Run `aisShell.exe` in the fully contained package or use `dotnet aisShell.dll` in the framework depended package.  
