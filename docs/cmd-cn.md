@@ -1,7 +1,7 @@
 # Condition [Usage](../README.md#commands)
 ### [Subcommand](./cmd-qry.md) `cn`
 ```
-Usage: [fm|sfm|dt] qry cn [arguments] [options]
+Usage: [fm|sfm|dt] [qry|cpq] cn [arguments] [options]
 
 Arguments:
   ControlId     Control Id
