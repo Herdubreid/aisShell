@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <RootNamespace>Celin</RootNamespace>
-    <PackageVersion>0.1</PackageVersion>
+    <PackageVersion>0.2</PackageVersion>
     <Authors>Finnur Bragason</Authors>
     <Owners>Bragason and Associates Pty Ltd</Owners>
     <Summary>A command line encapsulation of Celin.AIS</Summary>
