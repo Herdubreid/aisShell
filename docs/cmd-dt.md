@@ -9,8 +9,11 @@ Options:
   -?|-h|--help       Show help information
 
 Commands:
+  ag                 Aggregate
+  cpq                Complex Query
   d                  Define
   exp                Export Request
+  gr                 Group By
   load               Load Definition
   qry                Query
   r                  Response
@@ -25,8 +28,11 @@ An AIS Data Request definition.
 - [`-c|--context and -|--listContexts`](./opt-context-and-list.md)
 
 ## Commands
-- [`dt` Define](./cmd-dt-d.md)
+- [`d` Define](./cmd-dt-d.md)
 - [`qry` Query](./cmd-qry.md)
+- [`cpq` Complex Query](./cmd-cpq.md)
+- [`ag` Aggregate](./cmd-ag.md)
+- [`gr` Group](./cmd-gr.md)
 - [`exp` Export Request](./cmd-exp.md)
 - [`r` Response](./cmd-r.md)
 - [`save` and `load`](./cmd-save-and-load.md)

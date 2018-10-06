@@ -6,7 +6,7 @@ namespace Celin
 {
     public abstract class AggregationCmd : BaseCmd
     {
-        [Option("-rm|--remove", CommandOptionType.NoValue, Description = "Remove Aggregatin")]
+        [Option("-rm|--remove", CommandOptionType.NoValue, Description = "Remove Aggregation")]
         protected bool Remove { get; }
         [Option("-a|--aggregation", CommandOptionType.SingleValue, Description = "Aggregation")]
         [AllowedValues(new string []
