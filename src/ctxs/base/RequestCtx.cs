@@ -24,19 +24,18 @@ namespace Celin
             else
             {
                 var cancel = new CancellationTokenSource();
-                var t = new Task<Tuple<bool, JObject>>(() => ServerCtx.Current.Server.Request<JObject>(Request, cancel));
-                if (Wait(t, cancel))
+                try
                 {
-
-                    if (t.Result.Item1)
-                    {
-                        Responses.Add(new Response<T1>() { Request = Request, Result = t.Result.Item2 });
-                        BaseCmd.Success("Responses {0}.", Responses.Count);
+                    var t = ServerCtx.Current.Server.RequestAsync<JObject>(Request, cancel);
+                    if (Wait(t, cancel))
+                    {                        
+                            Responses.Add(new Response<T1>() { Request = Request, Result = t.Result });
+                            BaseCmd.Success("Responses {0}.", Responses.Count);
                     }
-                    else
-                    {
-                        BaseCmd.Error("Request failed!");
-                    }
+                }
+                catch (Exception ex)
+                {
+                    BaseCmd.Error("Request failed!\n{0}", ex.Message);
                 }
             }
         }

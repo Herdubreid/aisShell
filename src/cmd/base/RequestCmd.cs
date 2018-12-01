@@ -10,6 +10,9 @@ namespace Celin
         protected (bool HasValue, int Parameter) MaxPageSize { get; private set; }
         [Option("-ot|--outputType", CommandOptionType.SingleValue, Description = "Output Type")]
         protected (bool HasValue, string Parameter) OutputType { get; private set; }
+        [Option("-sd|--formServiceDemo", CommandOptionType.SingleValue, Description = "Request only a Demo with no data")]
+        [AllowedValues(new string[] { "true", "false" }, IgnoreCase = true)]
+        protected (bool HasValue, string Parameter) FormServiceDemo { get; private set; }
         protected T1 _rq;
         public T1 Request
         {
@@ -20,6 +23,7 @@ namespace Celin
                 if (ReturnControlIDs.HasValue) _rq.returnControlIDs = ReturnControlIDs.Parameter.ToUpper();
                 if (MaxPageSize.HasValue) _rq.maxPageSize = MaxPageSize.Parameter.ToString();
                 if (OutputType.HasValue) _rq.outputType = OutputType.Parameter;
+                if (FormServiceDemo.HasValue) _rq.formServiceDemo = FormServiceDemo.Parameter.ToUpper();
             }
         }
     }

@@ -5,7 +5,7 @@ namespace Celin
     public abstract class ComplexQueryCmd : QueryCmd
     {
         [Option("-o|--operation", CommandOptionType.SingleValue, Description = "And/Or Operation")]
-        [AllowedValues(new string [] {"AND","OR"}, IgnoreCase = true)]
+        [AllowedValues(new string[] { "AND", "OR" }, IgnoreCase = true)]
         protected (bool HasValue, string Parameter) Operation { get; }
         protected AIS.Request Request { get; set; }
         protected AIS.Query ComplexQuery { get; set; }
@@ -29,16 +29,24 @@ namespace Celin
                 {
                     andOr = Operation.Parameter.ToUpper(),
                     query = new AIS.Query()
+                    {
+                        matchType = MatchType.HasValue
+                            ? MatchType.Parameter.ToUpper()
+                            : null
+                    }
                 });
-            } else if (Request.query.complexQuery.Count == 0)
+            }
+            else if (Request.query.complexQuery.Count == 0)
             {
                 Error("And/Or Operator required");
                 return 0;
             }
+
             Query = Request.query;
+
             ComplexQuery = Request.query.complexQuery[Request.query.complexQuery.Count - 1].query;
 
-            return base.OnExecute();
+            return 1;
         }
     }
 }

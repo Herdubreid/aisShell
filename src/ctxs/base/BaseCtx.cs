@@ -105,7 +105,6 @@ namespace Celin
         public static bool Wait<T1>(T1 task, CancellationTokenSource cancel = null)
             where T1 : Task
         {
-            task.Start();
             var wm = @"|/-\";
             var i = 0;
             Console.CursorVisible = false;

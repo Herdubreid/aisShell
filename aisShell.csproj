@@ -18,7 +18,6 @@
     <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="2.2.5" />
     <PackageReference Include="NuGet.Build.Packaging" Version="0.2.2" />
     <PackageReference Include="Colorful.Console" Version="1.2.9" />
-    <PackageReference Include="Celin.AIS" Version="0.9.0" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="NLog.config" />
@@ -45,6 +44,9 @@
     <Folder Include="src\ctxs\base\" />
     <Folder Include="files\" />
     <Folder Include="docs\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Celin.AIS\Celin.AIS.csproj" />
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

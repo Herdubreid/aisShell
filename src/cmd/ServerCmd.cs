@@ -127,18 +127,18 @@ namespace Celin
                 rq.username = User.Parameter;
                 rq.password = Password.Parameter;
                 CancellationTokenSource cancel = new CancellationTokenSource();
-                Task<bool> t = new Task<bool>(() => ServerCtx.Current.Server.Authenticate(cancel));
-                if (ServerCtx.Wait(t, cancel))
+                try
                 {
-                    rq.password = "";
-                    if (t.Result)
+                    var t = ServerCtx.Current.Server.AuthenticateAsync(cancel);
+                    if (ServerCtx.Wait(t, cancel))
                     {
+                        rq.password = "";
                         Success("\nSignon success!");
                     }
-                    else
-                    {
-                        Error("\nSignon failed!");
-                    }
+                }
+                catch (Exception ex)
+                {
+                    Error("\nSignon failed!\n{0}", ex.Message);
                 }
                 return 1;
             }
@@ -161,18 +161,10 @@ namespace Celin
                 if (ServerCmd.OnExecute() == 0) return 0;
                 if (!Prompt.GetYesNo("Do you want to log out?", false)) return 0;
                 var rq = new AIS.LogoutRequest();
-                Task<bool> t = new Task<bool>(ServerCtx.Current.Server.Logout);
+                var t = ServerCtx.Current.Server.LogoutAsync();
                 if (ServerCtx.Wait(t, new CancellationTokenSource()))
                 {
-
-                    if (t.Result)
-                    {
-                        Success("\nLogged out successfully!");
-                    }
-                    else
-                    {
-                        Error("\nLogout failed!");
-                    }
+                    Success("\nLogged out successfully!");
                 }
                 return 1;
             }
