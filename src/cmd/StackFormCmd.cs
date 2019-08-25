@@ -5,26 +5,26 @@ using McMaster.Extensions.CommandLineUtils;
 namespace Celin
 {
     [Command("sfm", Description = "Stack Form Context")]
-    [Subcommand("fr", typeof(FormReqCmd))]
-    [Subcommand("sa", typeof(StackActCmd))]
-    [Subcommand("o", typeof(OpenCmd))]
-    [Subcommand("e", typeof(ExecuteCmd))]
-    [Subcommand("c", typeof(CloseCmd))]
-    [Subcommand("exp", typeof(ExpCmd))]
-    [Subcommand("r", typeof(ResCmd))]
-    [Subcommand("save", typeof(SaveCmd))]
-    [Subcommand("load", typeof(LoadCmd))]
+    [Subcommand(typeof(FormReqCmd))]
+    [Subcommand(typeof(StackActCmd))]
+    [Subcommand(typeof(OpenCmd))]
+    [Subcommand(typeof(ExecuteCmd))]
+    [Subcommand(typeof(CloseCmd))]
+    [Subcommand(typeof(ExpCmd))]
+    [Subcommand(typeof(ResCmd))]
+    [Subcommand(typeof(SaveCmd))]
+    [Subcommand(typeof(LoadCmd))]
     public class StackFormCmd : BaseCmd
     {
         [Option("-c|--context", CommandOptionType.SingleValue, Description = "Context Id")]
         protected (bool HasValue, string Parameter) Id { get; }
         [Option("-l|--listContexts", CommandOptionType.NoValue, Description = "List Contexts")]
         bool List { get; }
-        [Command(Description = "Export Request")]
-        [Subcommand("it", typeof(IterCmd))]
+        [Command("exp", Description = "Export Request")]
+        [Subcommand(typeof(IterCmd))]
         class ExpCmd : JObjectCmd
         {
-            [Command(Description = "Iterate")]
+            [Command("it", Description = "Iterate")]
             class IterCmd : JArrayCmd
             {
                 protected override int OnExecute()
@@ -55,7 +55,7 @@ namespace Celin
             }
 
         }
-        [Command(Description = "Save Definition")]
+        [Command("save", Description = "Save Definition")]
         class SaveCmd : BaseCmd
         {
             [Argument(0, Description = "File Name")]
@@ -68,7 +68,7 @@ namespace Celin
                 return 1;
             }
         }
-        [Command(Description = "Load Definition")]
+        [Command("load", Description = "Load Definition")]
         class LoadCmd : BaseCmd
         {
             [Argument(0, Description = "File Name")]
@@ -82,20 +82,20 @@ namespace Celin
                 return 1;
             }
         }
-        [Command(Description = "Form Request")]
-        [Subcommand("fa", typeof(FormActCmd))]
-        [Subcommand("fi", typeof(FormInpCmd))]
-        [Subcommand("gu", typeof(GridUpdCmd))]
-        [Subcommand("gi", typeof(GridInsCmd))]
-        [Subcommand("qry", typeof(QryCmd))]
-        [Subcommand("cpq", typeof(CpqCmd))]
+        [Command("fr", Description = "Form Request")]
+        [Subcommand(typeof(FormActCmd))]
+        [Subcommand(typeof(FormInpCmd))]
+        [Subcommand(typeof(GridUpdCmd))]
+        [Subcommand(typeof(GridInsCmd))]
+        [Subcommand(typeof(QryCmd))]
+        [Subcommand(typeof(CpqCmd))]
         class FormReqCmd : FormRequestCmd
         {
-            [Command(Description = "Complex Query")]
-            [Subcommand("cn", typeof(ConCmd))]
+            [Command("cpq", Description = "Complex Query")]
+            [Subcommand(typeof(ConCmd))]
             class CpqCmd : ComplexQueryCmd
             {
-                [Command(Description = "Condition", ThrowOnUnexpectedArgument = false)]
+                [Command("cn", Description = "Condition", ThrowOnUnexpectedArgument = false)]
                 class ConCmd : ConditionCmd
                 {
                     protected override int OnExecute()
@@ -124,11 +124,11 @@ namespace Celin
                     FormReqCmd = formReqCmd;
                 }
             }
-            [Command(Description = "Query")]
-            [Subcommand("cn", typeof(CondCmd))]
+            [Command("qry", Description = "Query")]
+            [Subcommand(typeof(CondCmd))]
             class QryCmd : QueryCmd
             {
-                [Command(Description = "Condition", ThrowOnUnexpectedArgument = false)]
+                [Command("cn", Description = "Condition", ThrowOnUnexpectedArgument = false)]
                 class CondCmd : ConditionCmd
                 {
                     protected override int OnExecute()
@@ -173,7 +173,7 @@ namespace Celin
                     FormReqCmd = formReqCmd;
                 }
             }
-            [Command(Description = "Grid Insert")]
+            [Command("gi", Description = "Grid Insert")]
             public class GridInsCmd : GridActionCmd<AIS.GridInsert>
             {
                 public override List<AIS.RowEvent> RowEvents(AIS.GridInsert action)
@@ -193,7 +193,7 @@ namespace Celin
                     FormReqCmd = formReqCmd;
                 }
             }
-            [Command(Description = "Grid Update")]
+            [Command("gu", Description = "Grid Update")]
             public class GridUpdCmd : GridActionCmd<AIS.GridUpdate>
             {
                 public override List<AIS.RowEvent> RowEvents(AIS.GridUpdate action)
@@ -213,7 +213,7 @@ namespace Celin
                     FormReqCmd = formReqCmd;
                 }
             }
-            [Command(Description = "Form Input", ThrowOnUnexpectedArgument = false)]
+            [Command("fi", Description = "Form Input", ThrowOnUnexpectedArgument = false)]
             public class FormInpCmd : FormInputCmd
             {
                 FormReqCmd FormReqCmd { get; set; }
@@ -229,7 +229,7 @@ namespace Celin
                     FormReqCmd = formReqCmd;
                 }
             }
-            [Command(Description = "Form Action", ThrowOnUnexpectedArgument = false)]
+            [Command("fa", Description = "Form Action", ThrowOnUnexpectedArgument = false)]
             public class FormActCmd : FormActionCmd
             {   
                 FormReqCmd FormReqCmd { get; set; }
@@ -276,11 +276,11 @@ namespace Celin
                 StackFormCmd = stackFormCmd;
             }
         }
-        [Command(Description = "Stack Action")]
-        [Subcommand("fa", typeof(ActCmd))]
+        [Command("sa", Description = "Stack Action")]
+        [Subcommand(typeof(ActCmd))]
         public class StackActCmd : BaseCmd
         {
-            [Command(Description = "Stack Form Action", ThrowOnUnexpectedArgument = false)]
+            [Command("fa", Description = "Stack Form Action", ThrowOnUnexpectedArgument = false)]
             class ActCmd : FormActionCmd
             {
                 StackActCmd StackActCmd { get; set; }
@@ -336,7 +336,7 @@ namespace Celin
                 StackFormCmd = stackFormCmd;
             }
         }
-        [Command(Description = "Open Form")]
+        [Command("o", Description = "Open Form")]
         class OpenCmd : BaseCmd
         {
             StackFormCmd StackFormCmd { get; set; }
@@ -370,7 +370,7 @@ namespace Celin
             }
             return true;
         }
-        [Command(Description = "Execute Stack Action")]
+        [Command("e", Description = "Execute Stack Action")]
         class ExecuteCmd : BaseCmd
         {
             [Option("-ri|--responseIndex", CommandOptionType.SingleValue, Description = "Stack Parameters Response Index")]
@@ -390,7 +390,7 @@ namespace Celin
                 StackFormCmd = stackFormCmd;
             }
         }
-        [Command(Description = "Close Form")]
+        [Command("c", Description = "Close Form")]
         class CloseCmd : BaseCmd
         {
             [Option("-ri|--responseIndex", CommandOptionType.SingleValue, Description = "Stack Parameters Response Index")]
@@ -411,11 +411,11 @@ namespace Celin
                 StackFormCmd = stackFormCmd;
             }
         }
-        [Command(Description = "Response")]
-        [Subcommand("it", typeof(IterCmd))]
+        [Command("r", Description = "Response")]
+        [Subcommand(typeof(IterCmd))]
         class ResCmd : ResponseCmd<AIS.StackFormRequest>
         {
-            [Command(Description = "Iterate")]
+            [Command("it", Description = "Iterate")]
             class IterCmd : JArrayCmd
             {
                 protected override int OnExecute()

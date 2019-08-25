@@ -4,24 +4,24 @@ using McMaster.Extensions.CommandLineUtils;
 namespace Celin
 {
     [Command("dt", Description = "Data Context")]
-    [Subcommand("d", typeof(DefCmd))]
-    [Subcommand("qry", typeof(QryCmd))]
-    [Subcommand("cpq", typeof(CpqCmd))]
-    [Subcommand("ag", typeof(AggCmd))]
-    [Subcommand("gr", typeof(GrpCmd))]
-    [Subcommand("or", typeof(OrdCmd))]
-    [Subcommand("exp", typeof(ExpCmd))]
-    [Subcommand("s", typeof(SubCmd))]
-    [Subcommand("r", typeof(ResCmd))]
-    [Subcommand("save", typeof(SaveCmd))]
-    [Subcommand("load", typeof(LoadCmd))]
+    [Subcommand(typeof(DefCmd))]
+    [Subcommand(typeof(QryCmd))]
+    [Subcommand(typeof(CpqCmd))]
+    [Subcommand(typeof(AggCmd))]
+    [Subcommand(typeof(GrpCmd))]
+    [Subcommand(typeof(OrdCmd))]
+    [Subcommand(typeof(ExpCmd))]
+    [Subcommand(typeof(SubCmd))]
+    [Subcommand(typeof(ResCmd))]
+    [Subcommand(typeof(SaveCmd))]
+    [Subcommand(typeof(LoadCmd))]
     public class DataCmd : BaseCmd
     {
         [Option("-c|--context", CommandOptionType.SingleValue, Description = "Context Id")]
         protected (bool HasValue, string Parameter) Id { get; }
         [Option("-l|--listContexts", CommandOptionType.NoValue, Description = "List Contexts")]
         protected bool List { get; }
-        [Command(Description = "Save Definition")]
+        [Command("save", Description = "Save Definition")]
         class SaveCmd : BaseCmd
         {
             [Argument(0, Description = "File Name")]
@@ -34,7 +34,7 @@ namespace Celin
                 return 1;
             }
         }
-        [Command(Description = "Load Definition")]
+        [Command("load", Description = "Load Definition")]
         class LoadCmd : BaseCmd
         {
             [Argument(0, Description = "File Name")]
@@ -48,11 +48,11 @@ namespace Celin
                 return 1;
             }
         }
-        [Command(Description = "Export Request")]
-        [Subcommand("it", typeof(IterCmd))]
+        [Command("exp", Description = "Export Request")]
+        [Subcommand(typeof(IterCmd))]
         class ExpCmd : JObjectCmd
         {
-            [Command(Description = "Iterate")]
+            [Command("it", Description = "Iterate")]
             class IterCmd : JArrayCmd
             {
                 protected override int OnExecute()
@@ -82,11 +82,11 @@ namespace Celin
                 DataCmd = dataCmd;
             }
         }
-        [Command(Description = "Complex Query")]
-        [Subcommand("cn", typeof(ConCmd))]
+        [Command("cpq", Description = "Complex Query")]
+        [Subcommand(typeof(ConCmd))]
         class CpqCmd : ComplexQueryCmd
         {
-            [Command(Description = "Condition", ThrowOnUnexpectedArgument = false)]
+            [Command("cn", Description = "Condition", ThrowOnUnexpectedArgument = false)]
             class ConCmd : ConditionCmd
             {
                 protected override int OnExecute()
@@ -115,11 +115,11 @@ namespace Celin
                 DataCmd = dataCmd;
             }
         }
-        [Command(Description = "Query")]
-        [Subcommand("cn", typeof(CondCmd))]
+        [Command("qry", Description = "Query")]
+        [Subcommand(typeof(CondCmd))]
         class QryCmd : QueryCmd
         {
-            [Command(Description = "Condition", ThrowOnUnexpectedArgument = false)]
+            [Command("cn", Description = "Condition", ThrowOnUnexpectedArgument = false)]
             class CondCmd : ConditionCmd
             {
                 protected override int OnExecute()
@@ -159,7 +159,7 @@ namespace Celin
                 DataCmd = dataCmd;
             }
         }
-        [Command(Description = "Aggregate")]
+        [Command("ag", Description = "Aggregate")]
         class AggCmd : AggregationCmd
         {
             protected override int OnExecute()
@@ -181,7 +181,7 @@ namespace Celin
                 DataCmd = dataCmd;
             }
         }
-        [Command(Description = "Group By")]
+        [Command("gr", Description = "Group By")]
         class GrpCmd : AggregationCmd
         {
             protected override int OnExecute()
@@ -203,7 +203,7 @@ namespace Celin
                 DataCmd = dataCmd;
             }
         }
-        [Command(Description = "Order By")]
+        [Command("or", Description = "Order By")]
         class OrdCmd : AggregationCmd
         {
             protected override int OnExecute()
@@ -226,7 +226,7 @@ namespace Celin
             }
 
         }
-        [Command(Description = "Define")]
+        [Command("d", Description = "Define")]
         class DefCmd : RequestCmd<AIS.DatabrowserRequest>
         {
 
@@ -265,7 +265,7 @@ namespace Celin
                 DataCmd = dataCmd;
             }
         }
-        [Command(Description = "Submit Request")]
+        [Command("s", Description = "Submit Request")]
         class SubCmd : BaseCmd
         {
             DataCmd DataCmd { get; set; }
@@ -280,11 +280,11 @@ namespace Celin
                 DataCmd = dataCmd;
             }
         }
-        [Command(Description = "Response")]
-        [Subcommand("it", typeof(IterCmd))]
+        [Command("r", Description = "Response")]
+        [Subcommand(typeof(IterCmd))]
         class ResCmd : ResponseCmd<AIS.DatabrowserRequest>
         {
-            [Command(Description = "Iterate")]
+            [Command("it", Description = "Iterate")]
             class IterCmd : JArrayCmd
             {
                 protected override int OnExecute()

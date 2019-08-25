@@ -4,29 +4,29 @@ using McMaster.Extensions.CommandLineUtils;
 namespace Celin
 {
     [Command("fm", Description = "Form Context")]
-    [Subcommand("d", typeof(DefCmd))]
-    [Subcommand("fi", typeof(FormInpCmd))]
-    [Subcommand("fa", typeof(FormActCmd))]
-    [Subcommand("gi", typeof(GridInsCmd))]
-    [Subcommand("gu", typeof(GridUpdCmd))]
-    [Subcommand("qry", typeof(QryCmd))]
-    [Subcommand("cpq", typeof(CpqCmd))]
-    [Subcommand("s", typeof(SubCmd))]
-    [Subcommand("exp", typeof(ExpCmd))]
-    [Subcommand("r", typeof(ResCmd))]
-    [Subcommand("save", typeof(SaveCmd))]
-    [Subcommand("load", typeof(LoadCmd))]
+    [Subcommand(typeof(DefCmd))]
+    [Subcommand(typeof(FormInpCmd))]
+    [Subcommand(typeof(FormActCmd))]
+    [Subcommand(typeof(GridInsCmd))]
+    [Subcommand(typeof(GridUpdCmd))]
+    [Subcommand(typeof(QryCmd))]
+    [Subcommand(typeof(CpqCmd))]
+    [Subcommand(typeof(SubCmd))]
+    [Subcommand(typeof(ExpCmd))]
+    [Subcommand(typeof(ResCmd))]
+    [Subcommand(typeof(SaveCmd))]
+    [Subcommand(typeof(LoadCmd))]
     public class FormCmd : BaseCmd
     {
         [Option("-c|--context", CommandOptionType.SingleValue, Description = "Context Id")]
         protected (bool HasValue, string Parameter) Id { get; }
         [Option("-l|--listContexts", CommandOptionType.NoValue, Description = "List Contexts")]
         protected bool List { get; }
-        [Command(Description = "Export Request")]
-        [Subcommand("it", typeof(IterCmd))]
+        [Command("exp", Description = "Export Request")]
+        [Subcommand(typeof(IterCmd))]
         class ExpCmd : JObjectCmd
         {
-            [Command(Description = "Iterate")]
+            [Command("it", Description = "Iterate")]
             class IterCmd : JArrayCmd
             {
                 protected override int OnExecute()
@@ -57,7 +57,7 @@ namespace Celin
                 FormCmd = formCmd;
             }
         }
-        [Command(Description = "Save Definitions")]
+        [Command("save", Description = "Save Definitions")]
         class SaveCmd : BaseCmd
         {
             [Argument(0, Description = "File Name")]
@@ -70,7 +70,7 @@ namespace Celin
                 return 1;
             }
         }
-        [Command(Description = "Load Definitions")]
+        [Command("load", Description = "Load Definitions")]
         class LoadCmd : BaseCmd
         {
             [Argument(0, Description = "File Name")]
@@ -84,11 +84,11 @@ namespace Celin
                 return 1;
             }
         }
-        [Command(Description = "Response")]
-        [Subcommand("it", typeof(IterCmd))]
+        [Command("r", Description = "Response")]
+        [Subcommand(typeof(IterCmd))]
         class ResCmd : ResponseCmd<AIS.FormRequest>
         {
-            [Command(Description = "Iterate")]
+            [Command("it", Description = "Iterate")]
             class IterCmd : JArrayCmd
             {
                 protected override int OnExecute()
@@ -109,11 +109,11 @@ namespace Celin
                 Responses = FormCtx.Responses;
             }
         }
-        [Command(Description = "Complex Query")]
-        [Subcommand("cn", typeof(ConCmd))]
+        [Command("cpq", Description = "Complex Query")]
+        [Subcommand(typeof(ConCmd))]
         class CpqCmd : ComplexQueryCmd
         {
-            [Command(Description = "Condition", ThrowOnUnexpectedArgument = false)]
+            [Command("cn", Description = "Condition", ThrowOnUnexpectedArgument = false)]
             class ConCmd : ConditionCmd
             {
                 protected override int OnExecute()
@@ -142,11 +142,11 @@ namespace Celin
                 FormReqCmd = formReqCmd;
             }
         }
-        [Command(Description = "Query")]
-        [Subcommand("cn", typeof(CondCmd))]
+        [Command("qry", Description = "Query")]
+        [Subcommand(typeof(CondCmd))]
         class QryCmd : QueryCmd
         {
-            [Command(Description = "Condition", ThrowOnUnexpectedArgument = false)]
+            [Command("cn", Description = "Condition", ThrowOnUnexpectedArgument = false)]
             class CondCmd : ConditionCmd
             {
                 protected override int OnExecute()
@@ -186,7 +186,7 @@ namespace Celin
                 FormCmd = formCmd;
             }
         }
-        [Command(Description = "Grid Insert")]
+        [Command("gi", Description = "Grid Insert")]
         public class GridInsCmd : GridActionCmd<AIS.GridInsert>
         {
             public override List<AIS.RowEvent> RowEvents(AIS.GridInsert action)
@@ -206,7 +206,7 @@ namespace Celin
                 FormCmd = formCmd;
             }
         }
-        [Command(Description = "Grid Update")]
+        [Command("gu", Description = "Grid Update")]
         public class GridUpdCmd : GridActionCmd<AIS.GridUpdate>
         {
             public override List<AIS.RowEvent> RowEvents(AIS.GridUpdate action)
@@ -226,7 +226,7 @@ namespace Celin
                 FormCmd = formCmd;
             }
         }
-        [Command(Description = "Form Input", ThrowOnUnexpectedArgument = false)]
+        [Command("fi", Description = "Form Input", ThrowOnUnexpectedArgument = false)]
         public class FormInpCmd : FormInputCmd
         {
             FormCmd FormCmd { get; set; }
@@ -242,7 +242,7 @@ namespace Celin
                 FormCmd = formCmd;
             }
         }
-        [Command(Description = "Form Action", ThrowOnUnexpectedArgument = false)]
+        [Command("fa", Description = "Form Action", ThrowOnUnexpectedArgument = false)]
         public class FormActCmd : FormActionCmd
         {
             FormCmd FormCmd { get; set; }
@@ -258,7 +258,7 @@ namespace Celin
                 FormCmd = formCmd;
             }
         }
-        [Command(Description = "Form Definition")]
+        [Command("d", Description = "Form Definition")]
         public class DefCmd : FormRequestCmd
         {
             FormCmd FormCmd { get; set; }
@@ -285,7 +285,7 @@ namespace Celin
                 FormCmd = formCmd;
             }
         }
-        [Command(Description = "Submit Request")]
+        [Command("s", Description = "Submit Request")]
         class SubCmd : BaseCmd
         {
             FormCmd FormCmd { get; set; }

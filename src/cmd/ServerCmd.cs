@@ -5,19 +5,19 @@ using McMaster.Extensions.CommandLineUtils;
 namespace Celin
 {
     [Command("sv", Description = "Server Context")]
-    [Subcommand("d", typeof(DefCmd))]
-    [Subcommand("c", typeof(ConCmd))]
-    [Subcommand("lo", typeof(LogoutCmd))]
-    [Subcommand("exp", typeof(ExpCmd))]
-    [Subcommand("save", typeof(SaveCmd))]
-    [Subcommand("load", typeof(LoadCmd))]
+    [Subcommand(typeof(DefCmd))]
+    [Subcommand(typeof(ConCmd))]
+    [Subcommand(typeof(LogoutCmd))]
+    [Subcommand(typeof(ExpCmd))]
+    [Subcommand(typeof(SaveCmd))]
+    [Subcommand(typeof(LoadCmd))]
     public class ServerCmd : BaseCmd
     {
         [Option("-c|--context", CommandOptionType.SingleValue, Description = "Server Context")]
         protected (bool HasValue, string Parameter) Id { get; private set; }
         [Option("-l|--listContexts", CommandOptionType.NoValue, Description = "List Contexts")]
         bool List { get; }
-        [Command(Description = "Export Servers")]
+        [Command("exp", Description = "Export Servers")]
         class ExpCmd : JObjectCmd
         {
             ServerCmd ServerCmd { get; set; }
@@ -34,7 +34,7 @@ namespace Celin
                 ServerCmd = serverCmd;
             }
         }
-        [Command(Description = "Load Definitions")]
+        [Command("load", Description = "Load Definitions")]
         class LoadCmd : BaseCmd
         {
             [Argument(0, Description = "File Name")]
@@ -47,7 +47,7 @@ namespace Celin
                 return 1;
             }
         }
-        [Command(Description = "Save Definitions")]
+        [Command("save", Description = "Save Definitions")]
         class SaveCmd : BaseCmd
         {
             [Argument(0, Description = "File Name")]
@@ -60,7 +60,7 @@ namespace Celin
                 return 1;
             }
         }
-        [Command(Description = "Define")]
+        [Command("d", Description = "Define")]
         public class DefCmd : BaseCmd
         {
             [Option("-b|--baseUrl", CommandOptionType.SingleValue, Description = "Base Url")]
@@ -110,7 +110,7 @@ namespace Celin
                 ServerCmd = serverCmd;
             }
         }
-        [Command(Description = "Connect")]
+        [Command("c", Description = "Connect")]
         public class ConCmd : BaseCmd
         {
             [Option("-u|--user", CommandOptionType.SingleValue, Description = "User name")]
@@ -153,7 +153,7 @@ namespace Celin
                 }
             }
         }
-        [Command(Description = "Logout")]
+        [Command("lo", Description = "Logout")]
         public class LogoutCmd : BaseCmd
         {
             int OnExecute()
