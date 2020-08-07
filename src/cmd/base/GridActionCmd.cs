@@ -75,7 +75,11 @@ namespace Celin
                     Error("Row Number required!");
                     return 0;
                 }
-                rowEvent = new AIS.RowEvent() { rowNumber = RowNumber.Parameter };
+                rowEvent = new AIS.RowEvent()
+                {
+                    rowNumber = RowNumber.Parameter,
+                    gridColumnEvents = new List<AIS.ColumnEvent>()
+                };
                 rowEvents.Add(rowEvent);
             }
             var ce = ColumnID.HasValue ? rowEvent.gridColumnEvents.Find(e => e.columnID.Equals(ColumnID.Parameter, StringComparison.OrdinalIgnoreCase)) : null;

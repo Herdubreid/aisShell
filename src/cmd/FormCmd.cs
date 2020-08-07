@@ -191,12 +191,16 @@ namespace Celin
         {
             public override List<AIS.RowEvent> RowEvents(AIS.GridInsert action)
             {
+                if (action.gridRowInsertEvents == null)
+                    action.gridRowInsertEvents = new List<AIS.RowEvent>();
                 return action.gridRowInsertEvents;
             }
             FormCmd FormCmd { get; set; }
             protected override int OnExecute()
             {
                 if (FormCmd.OnExecute() == 0) return 0;
+                if (FormCtx.Current.Request.formActions == null)
+                    FormCtx.Current.Request.formActions = new List<AIS.Action>();
                 FormActions = FormCtx.Current.Request.formActions;
 
                 return base.OnExecute();
@@ -211,12 +215,16 @@ namespace Celin
         {
             public override List<AIS.RowEvent> RowEvents(AIS.GridUpdate action)
             {
+                if (action.gridRowUpdateEvents == null)
+                    action.gridRowUpdateEvents = new List<AIS.RowEvent>();
                 return action.gridRowUpdateEvents;
             }
             FormCmd FormCmd { get; set; }
             protected override int OnExecute()
             {
                 if (FormCmd.OnExecute() == 0) return 0;
+                if (FormCtx.Current.Request.formActions == null)
+                    FormCtx.Current.Request.formActions = new List<AIS.Action>();
                 FormActions = FormCtx.Current.Request.formActions;
 
                 return base.OnExecute();
@@ -233,6 +241,8 @@ namespace Celin
             protected override int OnExecute()
             {
                 if (FormCmd.OnExecute() == 0) return 0;
+                if (FormCtx.Current.Request.formInputs == null)
+                    FormCtx.Current.Request.formInputs = new List<AIS.Input>();
                 FormInputs = FormCtx.Current.Request.formInputs;
 
                 return base.OnExecute();
@@ -249,6 +259,8 @@ namespace Celin
             protected override int OnExecute()
             {
                 if (FormCmd.OnExecute() == 0) return 0;
+                if (FormCtx.Current.Request.formActions == null)
+                    FormCtx.Current.Request.formActions = new List<AIS.Action>();
                 FormActions = FormCtx.Current.Request.formActions;
 
                 return base.OnExecute();

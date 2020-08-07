@@ -1,5 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk;Microsoft.NET.Sdk.Publish">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.1</TargetFramework>
@@ -13,7 +12,6 @@
     <PackageIconUrl>https://www.gravatar.com/avatar/82cf5b024555fa259f9dd9e448afe2ee</PackageIconUrl>
     <PackageTags>Oracle E1 JDE AIS</PackageTags>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="2.3.4" />
     <PackageReference Include="NuGet.Build.Packaging" Version="0.2.2" />
@@ -47,6 +45,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Celin.AIS\Celin.AIS.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Settings.job">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ProjectExtensions>
     <MonoDevelop>

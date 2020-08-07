@@ -1,4 +1,6 @@
-﻿namespace Celin
+﻿using System.Collections.Generic;
+
+namespace Celin
 {
     public class FormCtx : RequestCtx<AIS.FormRequest, FormCtx>
     {

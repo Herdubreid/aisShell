@@ -178,13 +178,17 @@ namespace Celin
             {
                 public override List<AIS.RowEvent> RowEvents(AIS.GridInsert action)
                 {
+                    if (action.gridRowInsertEvents == null)
+                        action.gridRowInsertEvents = new List<AIS.RowEvent>();
                     return action.gridRowInsertEvents;
                 }
                 FormReqCmd FormReqCmd { get; set; }
                 protected override int OnExecute()
                 {
                     if (FormReqCmd.OnExecute() == 0) return 0;
-                    FormActions = StackFormCtx.Current.Request.formRequest.formActions;
+                    if (FormReqCmd.Request.formActions == null)
+                        FormReqCmd.Request.formActions = new List<AIS.Action>();
+                    FormActions = FormReqCmd.Request.formActions;
 
                     return base.OnExecute();
                 }
@@ -198,6 +202,8 @@ namespace Celin
             {
                 public override List<AIS.RowEvent> RowEvents(AIS.GridUpdate action)
                 {
+                    if (action.gridRowUpdateEvents == null)
+                        action.gridRowUpdateEvents = new List<AIS.RowEvent>();
                     return action.gridRowUpdateEvents;
                 }
                 FormReqCmd FormReqCmd { get; set; }
@@ -220,7 +226,9 @@ namespace Celin
                 protected override int OnExecute()
                 {
                     if (FormReqCmd.OnExecute() == 0) return 0;
-                    FormInputs = StackFormCtx.Current.Request.formRequest.formInputs;
+                    if (FormReqCmd.Request.formInputs == null)
+                        FormReqCmd.Request.formInputs = new List<AIS.Input>();
+                    FormInputs = FormReqCmd.Request.formInputs;
 
                     return base.OnExecute();
                 }
@@ -236,6 +244,8 @@ namespace Celin
                 protected override int OnExecute()
                 {
                     if (FormReqCmd.OnExecute() == 0) return 0;
+                    if (FormReqCmd.Request.formActions == null)
+                       FormReqCmd.Request.formActions = new List<AIS.Action>();
                     FormActions = FormReqCmd.Request.formActions;
 
                     return base.OnExecute();
@@ -258,6 +268,16 @@ namespace Celin
                         Context = StackFormCtx.Current;
                     }
                     else return 0;
+                }
+                if (StackFormCtx.Current.Request.actionRequest != null)
+                {
+                    if (Prompt.GetYesNo("Switch to Stack Action?", false))
+                    {
+                        StackFormCtx.Current.Request.actionRequest = null;
+                        StackFormCtx.Current.Request.formRequest = new AIS.FormRequest();
+                    }
+                    else
+                        return 0;
                 }
                 if (StackFormCmd.NullCtx) return 0;
                 if (StackFormCtx.Current.Request.formRequest is null)
@@ -287,6 +307,8 @@ namespace Celin
                 protected override int OnExecute()
                 {
                     if (StackActCmd.OnExecute() == 0) return 0;
+                    if (StackFormCtx.Current.Request.actionRequest.formActions == null)
+                        StackFormCtx.Current.Request.actionRequest.formActions = new List<AIS.Action>();
                     FormActions = StackFormCtx.Current.Request.actionRequest.formActions;
 
                     return base.OnExecute();
@@ -299,7 +321,8 @@ namespace Celin
             [Option("-rc|--returnControlIds", CommandOptionType.SingleValue, Description = "Return Control IDs")]
             protected (bool HasValue, string Parameter) ReturnControlIDs { get; set; }
             [Option("-fo|--formOID", CommandOptionType.SingleValue, Description = "Open Form Id")]
-            protected (bool HasValue, string Parameter) FormOID { get; set; }
+            [PromptOption]
+            public (bool HasValue, string Parameter) FormOID { get; set; }
             [Option("-sw|--stopOnWarning", CommandOptionType.SingleValue, Description = "Stop on Warning")]
             [AllowedValues(new string[] { "true", "false" })]
             protected (bool HasValue, string Parameter) StopOnWarning { get; set; }
@@ -312,10 +335,21 @@ namespace Celin
                     {
                         PromptOptions();
                         StackFormCtx.Current = new StackFormCtx(StackFormCmd.Id.Parameter);
+                        StackFormCtx.Current.Request.actionRequest = new AIS.ActionRequest();
                         StackFormCtx.List.Add(StackFormCtx.Current);
                         Context = StackFormCtx.Current;
                     }
                     else return 0;
+                }
+                if (StackFormCtx.Current.Request.formRequest != null)
+                {
+                    if (Prompt.GetYesNo("Switch to Form Actin?", false))
+                    {
+                        StackFormCtx.Current.Request.formRequest = null;
+                        StackFormCtx.Current.Request.actionRequest = new AIS.ActionRequest();
+                    }
+                    else
+                        return 0;
                 }
                 if (StackFormCmd.NullCtx) return 0;
                 var rq = StackFormCtx.Current.Request.actionRequest;

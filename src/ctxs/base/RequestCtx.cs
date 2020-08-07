@@ -1,8 +1,7 @@
-﻿using System;
-using System.Threading;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
+using System.Threading;
 namespace Celin
 {
     public abstract class RequestCtx<T1, T2> : BaseCtx<T2>

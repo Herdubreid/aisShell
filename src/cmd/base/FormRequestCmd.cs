@@ -23,6 +23,9 @@ namespace Celin
         [Option("-an|--aliasNaming", CommandOptionType.SingleValue, Description = "Alias Naming")]
         [AllowedValues(new string[] { "true", "false" }, IgnoreCase = true)]
         protected (bool HasValue, string Parameter) AliasNaming { get; private set; }
+        [Option("-be|--bypassER", CommandOptionType.SingleValue, Description = "Bypass Form Service ER Event")]
+        [AllowedValues(new string[] { "true", "false" }, IgnoreCase = true)]
+        protected (bool HasValue, string Parameter) BypassER { get; set; }
         protected virtual int OnExecute()
         {
             var rq = Request;
@@ -33,6 +36,7 @@ namespace Celin
             rq.stopOnWarning = StopOnWarning.HasValue ? StopOnWarning.Parameter.ToUpper() : rq.stopOnWarning;
             rq.queryObjectName = QueryObjectName.HasValue ? QueryObjectName.Parameter : rq.queryObjectName;
             if (AliasNaming.HasValue) _rq.aliasNaming = AliasNaming.Parameter.Equals("true", StringComparison.OrdinalIgnoreCase);
+            if (BypassER.HasValue) _rq.bypassFormServiceEREvent = BypassER.Parameter.Equals("true", StringComparison.OrdinalIgnoreCase);
 
             return 1;
         }
