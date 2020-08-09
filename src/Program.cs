@@ -11,6 +11,8 @@ namespace Celin
             FormCmd.AddCmd();
             StackFormCmd.AddCmd();
             DataCmd.AddCmd();
+            WatchListCmd.AddCmd();
+            PreferenceCmd.AddCmd();
             OutFileCmd.AddCmd();
             HelpCmd.AddCmd();
             ClearCmd.AddCmd();

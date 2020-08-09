@@ -1,11 +1,11 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading;
 namespace Celin
 {
     public abstract class RequestCtx<T1, T2> : BaseCtx<T2>
-        where T1 : AIS.Request, new()
+        where T1 : AIS.Service, new()
         where T2 : IBaseCtx
     {
         public static List<Response<T1>> Responses { get; } = new List<Response<T1>>();
@@ -25,11 +25,11 @@ namespace Celin
                 var cancel = new CancellationTokenSource();
                 try
                 {
-                    var t = ServerCtx.Current.Server.RequestAsync<JObject>(Request, cancel);
+                    var t = ServerCtx.Current.Server.RequestAsync<JsonElement>(Request, cancel);
                     if (Wait(t, cancel))
-                    {                        
-                            Responses.Add(new Response<T1>() { Request = Request, Result = t.Result });
-                            BaseCmd.Success("Responses {0}.", Responses.Count);
+                    {
+                        Responses.Add(new Response<T1>() { Request = Request, Result = t.Result });
+                        BaseCmd.Success("Responses {0}.", Responses.Count);
                     }
                 }
                 catch (Exception ex)
@@ -40,7 +40,6 @@ namespace Celin
         }
         protected RequestCtx(string cmd, string id) : base(cmd, id)
         {
-            Request.maxPageSize = "10";
         }
     }
 }

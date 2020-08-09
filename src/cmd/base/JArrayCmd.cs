@@ -1,6 +1,6 @@
 ﻿using System;
 using McMaster.Extensions.CommandLineUtils;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
 namespace Celin
 {
     public class JArrayCmd : OutCmd
@@ -11,13 +11,12 @@ namespace Celin
         protected int? From { get; }
         [Argument(2, Description = "To")]
         protected int? To { get; }
-        protected JToken JToken { get; set; }
+        protected JsonElement JToken { get; set; }
         protected override int OnExecute()
         {
             base.OnExecute();
 
-            var ja = JToken.Type == JTokenType.Array ? JToken as JArray : null;
-            if (ja is null)
+            if (JToken.ValueKind != JsonValueKind.Array)
             {
                 Error("Not an array!");
                 return 0;
@@ -25,13 +24,10 @@ namespace Celin
             try
             {
                 var keys = Key.HasValue ? Key.Parameter.Split(';') : new string[] { "" };
-                for (var i = From ?? 0; i <= (To ?? ja.Count - 1); i++)
+                foreach (var e in JToken.EnumerateArray())
                 {
-                    var e = ja[i];
-                    if (e.Type == JTokenType.Object) foreach (var k in keys)
-                        {
-                            Output(e.SelectToken(k).ToString() + '\t');
-                        }
+                    if (e.ValueKind == JsonValueKind.Object)
+                        foreach (var k in e.EnumerateObject()) Output(k.ToString() + '\t');
                     else Output(e.ToString() + '\t');
                     OutputLine();
                 }

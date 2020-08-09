@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Celin
 {
@@ -8,5 +9,6 @@ namespace Celin
         {
             Request.formServiceAction = "R";
         }
+        public FormCtx() : this(string.Empty) { }
     }
 }

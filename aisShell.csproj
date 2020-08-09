@@ -35,10 +35,7 @@
     <Compile Remove="RowEventCmd.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="src\" />
-    <Folder Include="src\cmd\" />
     <Folder Include="src\cmd\base\" />
-    <Folder Include="src\ctxs\" />
     <Folder Include="src\ctxs\base\" />
     <Folder Include="files\" />
     <Folder Include="docs\" />

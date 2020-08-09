@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using McMaster.Extensions.CommandLineUtils;
 namespace Celin
 {
-    public abstract class ResponseCmd<T> : JObjectCmd where T : AIS.Request
+    public abstract class ResponseCmd<T> : JObjectCmd where T : AIS.Service
     {
         [Option("-i|--index", CommandOptionType.SingleValue, Description = "Zero Based Index")]
         protected (bool HasValue, int Parameter) Index { get; }
@@ -15,7 +15,7 @@ namespace Celin
             try
             {
                 var res = Index.HasValue ? Responses[Index.Parameter] : Responses.Last();
-                JToken = res.Result.DeepClone();
+                JToken = res.Result.Clone();
                 if (!Iter) Dump();
             }
             catch (Exception e)

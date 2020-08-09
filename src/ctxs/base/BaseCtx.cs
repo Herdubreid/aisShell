@@ -1,49 +1,14 @@
-﻿using System;
+﻿using McMaster.Extensions.CommandLineUtils;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using McMaster.Extensions.CommandLineUtils;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Converters;
+
 namespace Celin
 {
-    class GridConverter : CustomCreationConverter<AIS.Grid>
-    {
-        public override AIS.Grid Create(Type objectType)
-        {
-            return null;
-        }
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            var jsonObject = JObject.Load(reader);
-
-            if (jsonObject.ContainsKey("gridRowInsertEvents"))
-            {
-                return jsonObject.ToObject<AIS.GridInsert>();
-            }
-            return jsonObject.ToObject<AIS.GridUpdate>();
-        }
-    }
-    class ActionConverter : CustomCreationConverter<AIS.Action>
-    {
-        public override AIS.Action Create(Type objectType)
-        {
-            return null;
-        }
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            var jsonObject = JObject.Load(reader);
-            if (jsonObject.ContainsKey("controlID"))
-            {
-                return jsonObject.ToObject<AIS.FormAction>();
-            }
-            var ga = JsonConvert.DeserializeObject<AIS.GridAction>(jsonObject.ToString(), new GridConverter());
-            return ga;
-        }
-    }
     public interface IBaseCtx
     {
         string Cmd { get; set; }
@@ -71,7 +36,15 @@ namespace Celin
             {
                 using (StreamReader sr = File.OpenText(fname))
                 {
-                    var list = JsonConvert.DeserializeObject<List<T>>(sr.ReadToEnd(), new ActionConverter());
+                    var list = JsonSerializer.Deserialize<List<T>>(sr.ReadToEnd(), new JsonSerializerOptions
+                    {
+                        Converters =
+                        {
+                            new ServerJsonConverter(),
+                            new AIS.ActionJsonConverter(),
+                            new AIS.GridActionJsonConverter()
+                        }
+                    });
                     if (list != null && list.Count > 0)
                     {
                         List = list;
@@ -93,7 +66,7 @@ namespace Celin
                 {
                     using (StreamWriter sw = File.CreateText(fname))
                     {
-                        sw.Write(JsonConvert.SerializeObject(List));
+                        sw.Write(JsonSerializer.Serialize(List));
                     }
                 }
                 catch (Exception e)

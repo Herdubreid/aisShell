@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using Newtonsoft.Json.Linq;
+using System.Linq;
+using System.Text.Json;
 namespace Celin
 {
-    public class Response<T> where T : AIS.Request
+    public class Response<T> where T : AIS.Service
     {
         public T Request { get; set; }
-        public JObject Result { get; set; }
+        public JsonElement Result { get; set; }
         public string ResultKey
         {
             get
@@ -26,15 +27,20 @@ namespace Celin
                 return null;
             }
         }
-        public List<ValueTuple<string, JToken>> GridMembers
+        public List<ValueTuple<string, JsonElement>> GridMembers
         {
             get
             {
-                var result = new List<ValueTuple<string, JToken>>();
-                var grid = (JArray)Result.SelectToken(String.Format("{0}.data.gridData.rowset", ResultKey));
-                if (grid is null) BaseCmd.Error("No Grid Member!");
-                else if (grid.Count == 0) BaseCmd.Warning("Grid is Empty!");
-                else foreach (var e in (JObject)grid[0]) result.Add(new ValueTuple<string, JToken>(e.Key, e.Value));
+                var result = new List<ValueTuple<string, JsonElement>>();
+                if (Result.TryGetProperty(ResultKey, out var grid))
+                    if (grid.TryGetProperty("data", out grid))
+                        if (grid.TryGetProperty("gridData", out grid))
+                            if (grid.TryGetProperty("rowset", out grid))
+                            {
+                                if (grid.EnumerateArray().Count() == 0) BaseCmd.Warning("Grid is Empty!");
+                                else foreach (var e in grid[0].EnumerateObject()) result.Add((e.Name, e.Value));
+                            }
+                else BaseCmd.Error("No Grid Member!");
                 return result;
             }
         }

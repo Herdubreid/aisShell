@@ -7,5 +7,6 @@
         {
             Server = new AIS.Server(baseUrl);
         }
+        public ServerCtx() : this(string.Empty, string.Empty) { }
     }
 }

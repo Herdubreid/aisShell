@@ -59,7 +59,7 @@ namespace Celin
                 {
                     ExpCmd.Iter = true;
                     if (ExpCmd.OnExecute() == 0 || ExpCmd.NullJToken) return 0;
-                    JToken = ExpCmd.JToken;
+                    JToken = ExpCmd.JToken.Value;
                     return base.OnExecute();
                 }
                 ExpCmd ExpCmd { get; set; }
@@ -291,7 +291,7 @@ namespace Celin
                 {
                     ResCmd.Iter = true;
                     if (ResCmd.OnExecute() == 0 || ResCmd.NullJToken) return 0;
-                    JToken = ResCmd.JToken;
+                    JToken = ResCmd.JToken.Value;
                     return base.OnExecute();
                 }
                 ResCmd ResCmd { get; set; }

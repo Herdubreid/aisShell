@@ -31,7 +31,7 @@ namespace Celin
                 {
                     ExpCmd.Iter = true;
                     if (ExpCmd.OnExecute() == 0 || ExpCmd.NullJToken) return 0;
-                    JToken = ExpCmd.JToken;
+                    JToken = ExpCmd.JToken.Value;
                     return base.OnExecute();
                 }
                 ExpCmd ExpCmd { get; set; }
@@ -393,9 +393,9 @@ namespace Celin
             try
             {
                 var res = index.HasValue ? StackFormCtx.Responses[index.Value] : StackFormCtx.Responses.Last();
-                ctx.Request.stackId = res.Result["stackId"].ToObject<Int16>();
-                ctx.Request.stateId = res.Result["stateId"].ToObject<Int16>();
-                ctx.Request.rid = res.Result["rid"].ToString();
+                ctx.Request.stackId = res.Result.GetProperty("stackId").GetInt16();
+                ctx.Request.stateId = res.Result.GetProperty("stateId").GetInt16();
+                ctx.Request.rid = res.Result.GetProperty("rid").ToString();
             }
             catch (Exception e)
             {
@@ -456,7 +456,7 @@ namespace Celin
                 {
                     ResCmd.Iter = true;
                     if (ResCmd.OnExecute() == 0 || ResCmd.NullJToken) return 0;
-                    JToken = ResCmd.JToken;
+                    JToken = ResCmd.JToken.Value;
                     return base.OnExecute();
                 }
                 ResCmd ResCmd { get; set; }

@@ -1,62 +1,41 @@
 ﻿using System;
 using McMaster.Extensions.CommandLineUtils;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
 namespace Celin
 {
     public abstract class JObjectCmd : OutCmd
     {
-        private JToken _jToken;
+        private JsonElement? _jToken;
         [Option("-k|--key", CommandOptionType.SingleValue, Description = "Object Key")]
         protected (bool HasValue, string Parameter) Key { get; }
         [Option("-d|--depth", CommandOptionType.SingleValue, Description = "Iteration Depth")]
         protected int? Depth { get; set; }
-        protected void Trim(ref JArray jArray, ref int depth)
+        protected void Trim(ref JsonElement jArray, ref int depth)
         {
-            if (Depth.HasValue && Depth.Value < depth)jArray.RemoveAll();
-            foreach (var e in jArray)
+            if (Depth.HasValue && Depth.Value < depth) return;
+            foreach (var e in jArray.EnumerateArray())
             {
-                switch (e.Type)
+                switch (e.ValueKind)
                 {
-                    case JTokenType.Array:
-                        var a = e as JArray;
+                    case JsonValueKind.Array:
+                        var a = e;
                         Trim(ref a, ref depth);
                         break;
-                    case JTokenType.Object:
-                        var o = e as JObject;
+                    case JsonValueKind.Object:
+                        var o = e;
                         Trim(ref o, ref depth);
                         break;
                 }
             }
         }
-        protected void Trim(ref JObject jObject, ref int depth)
-        {
-            depth++;
-            foreach (var e in jObject)
-            {
-                switch (e.Value.Type)
-                {
-                    case JTokenType.Array:
-                        var a = e.Value as JArray;
-                        Trim(ref a, ref depth);
-                        break;
-                    case JTokenType.Object:
-                        var o = e.Value as JObject;
-                        if (Depth.HasValue && Depth.Value < depth) o.RemoveAll();
-                        else Trim(ref o, ref depth);
-                        break;
-                }
-            }
-            depth--;
-        }
-        protected JToken JToken
+        protected JsonElement? JToken
         {
             get => _jToken;
             set
             {
-                if (Key.HasValue && value.Type == JTokenType.Object)
+                if (Key.HasValue && value.Value.ValueKind == JsonValueKind.Object)
                 {
-                    _jToken = FindKey(value as JObject);
+                    _jToken = FindKey(value.Value);
                 }
                 else
                 {
@@ -65,17 +44,8 @@ namespace Celin
                 if (Depth.HasValue && _jToken != null)
                 {
                     var depth = 0;
-                    switch (JToken.Type)
-                    {
-                        case JTokenType.Object:
-                            var o = JToken as JObject;
-                            Trim(ref o, ref depth);
-                            break;
-                        case JTokenType.Array:
-                            var a = JToken as JArray;
-                            Trim(ref a, ref depth);
-                            break;
-                    }
+                    var o = JToken.Value;
+                    Trim(ref o, ref depth);
                 }
             }
         }
@@ -83,57 +53,37 @@ namespace Celin
         {
             set
             {
-                JToken = JToken.FromObject(value, new JsonSerializer()
+                var json = JsonSerializer.Serialize(value, new JsonSerializerOptions
                 {
-                    NullValueHandling = NullValueHandling.Ignore
-                });
-            }
-        }
-        protected JToken FindKey(JArray json)
-        {
-            JToken res = null;
-            foreach (var e in json)
-            {
-                switch (e.Type)
-                {
-                    case JTokenType.Array:
-                        res = FindKey(e as JArray);
-                        break;
-                    case JTokenType.Object:
-                        res = FindKey(e as JObject);
-                        break;
-                }
-                if (res != null) return res;
-            }
-            return res;
-        }
-        protected JToken FindKey(JObject json)
-        {
-            if (!Key.HasValue) return json;
-            var res = json.SelectToken(Key.Parameter);
-            if (res is null)
-            {
-                foreach (var e in json)
-                {
-                    switch (e.Value.Type)
+                    Converters =
                     {
-                        case JTokenType.Array:
-                            res = FindKey(e.Value as JArray);
-                            break;
-                        case JTokenType.Object:
-                            res = FindKey(e.Value as JObject);
-                            break;
+                        new AIS.ActionJsonConverter(),
+                        new AIS.GridActionJsonConverter()
                     }
+                });
+                _jToken = JsonSerializer.Deserialize<JsonElement>(json);
+            }
+        }
+        protected JsonElement? FindKey(JsonElement json)
+        {
+            if (json.ValueKind == JsonValueKind.Array)
+                foreach (var e in json.EnumerateArray())
+                {
+                    var res = FindKey(e);
                     if (res != null) return res;
                 }
+            else
+            {
+                if (json.TryGetProperty(Key.Parameter, out var res))
+                    return res;
             }
-            return res;
+            return null;
         }
         protected bool NullJToken
         {
             get
             {
-                if (JToken is null)
+                if (!JToken.HasValue)
                 {
                     Warning("Key '{0}' not found!", Key.Parameter);
                     return true;
@@ -145,8 +95,8 @@ namespace Celin
         protected void Dump()
         {
             if (NullJToken) return;
-            if (JToken.Type == JTokenType.Array) foreach (var e in JToken as JArray) OutputLine(e.ToString());
-            else OutputLine(JToken.ToString());
+            if (JToken.Value.ValueKind == JsonValueKind.Array) foreach (var e in JToken.Value.EnumerateArray()) OutputLine(e.ToString());
+            else OutputLine(JsonSerializer.Serialize(JToken, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true }));
         }
         protected bool Iter { get; set; } = false;
         protected override int OnExecute()
